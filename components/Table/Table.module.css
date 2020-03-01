@@ -1,0 +1,50 @@
+.loading {
+  position: relative;
+}
+
+.loading:before {
+  background-color: rgba(222, 222, 222, 0.5);
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.table {
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.thead {
+  border-bottom: 1px solid lightgrey;
+}
+
+.tbody .tr:hover {
+  background-color: lightgrey;
+}
+
+.tfoot {
+  border-top: 1px solid lightgrey;
+}
+
+.th {
+  font-weight: bold;
+}
+
+.th,
+.td {
+  padding: 1rem;
+  white-space: nowrap;
+}
+
+.th:first-child,
+.td:first-child {
+  padding-left: 0;
+}
+
+.th:last-child,
+.td:last-child {
+  padding-right: 0;
+}
