@@ -21,60 +21,86 @@ function tokenizeString(string) {
   return tokens;
 }
 
+function searchStringWithTokens(string, tokens) {
+  const value = string.toString().toLocaleLowerCase();
+
+  return tokens
+    .map(token => [token, Math.floor(value.split(token).length - 1)])
+    .filter(([, value]) => value > 0);
+}
+
+function weighTokenMatches(tokenMatches) {
+  return tokenMatches.reduce(
+    (acc, [token, value]) => (acc += token.length ** token.length * value),
+    0
+  );
+}
+
+const store = {};
+
 onmessage = function(e) {
-  const { data, filter } = JSON.parse(e.data);
+  console.time("onmessage");
+  const { action, payload } = JSON.parse(e.data);
 
-  const tokens = tokenizeString(filter);
+  switch (action) {
+    case "filter": {
+      const { filter, type } = payload;
+      const data = store[type];
 
-  const entriesMatches = data
-    .reduce((acc, { id, ...tornado }) => {
-      const matchWeights = Object.values(tornado)
-        .map(value => {
-          if (!value) {
-            return 0;
+      const tokens = tokenizeString(filter);
+
+      const entriesMatches = data
+        .reduce((acc, { id, ...tornado }) => {
+          const matchWeights = Object.values(tornado)
+            .map(value => {
+              if (!value) {
+                return 0;
+              }
+
+              if (
+                typeof value !== "string" &&
+                typeof value.toString !== "function"
+              ) {
+                return 0;
+              }
+
+              const tokenMatches = searchStringWithTokens(value, tokens);
+
+              return weighTokenMatches(tokenMatches);
+            })
+            .filter(weight => weight > 0);
+
+          if (matchWeights.length === 0) {
+            return acc;
           }
 
-          if (
-            typeof value !== "string" &&
-            typeof value.toString !== "function"
-          ) {
-            return 0;
-          }
+          return [
+            ...acc,
+            [id, matchWeights.reduce((acc, weight) => (acc += weight), 0)]
+          ];
+        }, [])
+        .sort(([, a], [, b]) => b - a)
+        .filter((value, i, arr) => i < 25 || arr[i][1] === arr[24][1]);
 
-          const llcValue = value.toString().toLocaleLowerCase();
+      const matches = Object.fromEntries(entriesMatches);
+      const matchKeys = Object.keys(matches);
 
-          const tokenMatches = tokens
-            .map(token => [token, Math.floor(llcValue.split(token).length - 1)])
-            .filter(([, value]) => value > 0);
+      const filteredData = data
+        .filter(({ id }) => matches[id])
+        .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id));
 
-          const weight = tokenMatches.reduce(
-            (acc, [token, value]) =>
-              (acc += token.length ** token.length * value),
-            0
-          );
+      postMessage(JSON.stringify(filteredData));
 
-          return weight;
-        })
-        .filter(weight => weight > 0);
+      break;
+    }
+    case "store": {
+      store[payload.type] = payload.data;
 
-      if (matchWeights.length === 0) {
-        return acc;
-      }
-
-      return [
-        ...acc,
-        [id, matchWeights.reduce((acc, weight) => (acc += weight), 0)]
-      ];
-    }, [])
-    .sort(([, a], [, b]) => b - a)
-    .filter((value, i, arr) => i < 25 || arr[i][1] === arr[24][1]);
-
-  const matches = Object.fromEntries(entriesMatches);
-  const matchKeys = Object.keys(matches);
-
-  const filteredData = data
-    .filter(({ id }) => matches[id])
-    .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id));
-
-  postMessage(JSON.stringify(filteredData));
+      break;
+    }
+    default: {
+      throw new Error("Unsupported action");
+    }
+  }
+  console.timeEnd("onmessage");
 };

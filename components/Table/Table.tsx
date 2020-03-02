@@ -7,11 +7,12 @@ type Props = {
   data: Array<Tornado>;
   filter: string;
   onSort: (any) => void;
+  type: "tornados";
 };
 
 let worker;
 
-function Table({ data, filter, onSort }: Props) {
+function Table({ data, filter, onSort, type }: Props) {
   const [filteredData, setFilteredData] = useState(data);
   const [loading, setLoading] = useState(false);
 
@@ -32,6 +33,10 @@ function Table({ data, filter, onSort }: Props) {
       }
     };
 
+    worker.postMessage(
+      JSON.stringify({ action: "store", payload: { data, type } })
+    );
+
     return () => {
       worker.terminate();
     };
@@ -46,7 +51,9 @@ function Table({ data, filter, onSort }: Props) {
 
     setLoading(true);
 
-    worker.postMessage(JSON.stringify({ data, filter }));
+    worker.postMessage(
+      JSON.stringify({ action: "filter", payload: { filter, type } })
+    );
   }, [filter]);
 
   if (data.length === 0) {

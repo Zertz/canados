@@ -40,7 +40,12 @@ function HomePage() {
       {loading && <div>Loading...</div>}
       {error && <div>Aw, snap.</div>}
       {tornados && (
-        <Table data={tornados} filter={debouncedFilter} onSort={handleSort} />
+        <Table
+          data={tornados}
+          filter={debouncedFilter}
+          onSort={handleSort}
+          type="tornados"
+        />
       )}
     </div>
   );
