@@ -6,26 +6,35 @@ function tokenizeString(string) {
     .map(v => v.trim())
     .filter(Boolean);
 
-  const tokens = [];
+  const tokens = new Set();
 
   for (let i = 0; i < values.length; i += 1) {
     const value = values[i];
 
     for (let j = 0; j < value.length; j += 1) {
       for (let k = 0; k < value.length - j - 1; k += 1) {
-        tokens.push(value.slice(j, value.length - k));
+        tokens.add(value.slice(j, value.length - k));
       }
     }
   }
 
-  return tokens;
+  return [...tokens].sort((a, b) => b.length - a.length || a.localeCompare(b));
 }
 
 function searchStringWithTokens(string, tokens) {
-  const value = string.toString().toLocaleLowerCase();
+  let value = string.toString().toLocaleLowerCase();
 
   return tokens
-    .map(token => [token, Math.floor(value.split(token).length - 1)])
+    .map(token => {
+      const split = value.split(token);
+
+      value = split
+        .filter(v => v !== token)
+        .join("")
+        .trim();
+
+      return [token, Math.floor(split.length - 1)];
+    })
     .filter(([, value]) => value > 0);
 }
 
