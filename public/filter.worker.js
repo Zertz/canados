@@ -39,7 +39,6 @@ function weighTokenMatches(tokenMatches) {
 const store = {};
 
 onmessage = function(e) {
-  console.time("onmessage");
   const { action, payload } = JSON.parse(e.data);
 
   switch (action) {
@@ -102,5 +101,4 @@ onmessage = function(e) {
       throw new Error("Unsupported action");
     }
   }
-  console.timeEnd("onmessage");
 };
