@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useDebounce } from "../hooks/useDebounce";
-import { useTornadoEvents } from "../hooks/useTornadoEvents";
-import Table from "../components/Table";
+import { useDebounce } from "../../hooks/useDebounce";
+import { useTornadoEvents } from "../../hooks/useTornadoEvents";
+import Table from "../Table";
 
-function HomePage() {
-  const [filter, setFilter] = useState("");
+type Props = {
+  filter: string;
+};
+
+function TornadoEvents({ filter }: Props) {
   const debouncedFilter = useDebounce(filter, 250);
   const [order, setOrder] = useState<Common.Order>("desc");
   const [sortProperty, setSortProperty] = useState<keyof TornadoEvent>("date");
@@ -18,10 +21,6 @@ function HomePage() {
     load();
   }, []);
 
-  const handleChange = e => {
-    setFilter(e.target.value.trim());
-  };
-
   const handleSort = e => {
     if (e.target.dataset.type === sortProperty) {
       setOrder(order === "asc" ? "desc" : "asc");
@@ -34,9 +33,6 @@ function HomePage() {
 
   return (
     <div>
-      <label>
-        <input onChange={handleChange} type="search" />
-      </label>
       {loading && <div>Loading...</div>}
       {error && <div>Aw, snap.</div>}
       {tornadoEvents && (
@@ -51,4 +47,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default TornadoEvents;

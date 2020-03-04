@@ -1,6 +1,6 @@
-import crypto from "crypto";
-import got from "got";
 import { parse } from "date-fns";
+import got from "got";
+import { generateTornadoId } from "../../utils/generateTornadoId";
 
 function check(value) {
   return [-999, "-999"].includes(value) ? null : Number(value);
@@ -71,13 +71,7 @@ export default async (req, res) => {
           };
         }
       )
-      .map(tornado => ({
-        id: crypto
-          .createHash("md5")
-          .update(JSON.stringify(tornado))
-          .digest("hex"),
-        ...tornado
-      }));
+      .map(generateTornadoId);
 
     res.statusCode = 200;
     res.setHeader("Cache-Control", "public, max-age=31536000");
