@@ -1,17 +1,15 @@
 import crypto from "crypto";
 
-export function generateTornadoId({
-  coordinates_start,
-  coordinates_end,
-  ...tornado
-}) {
+export function generateTornadoId(tornado) {
+  const { community, coordinates_start, coordinates_end, date } = tornado;
+
   return {
     id: crypto
       .createHash("md5")
-      .update(JSON.stringify({ coordinates_start, coordinates_end }))
+      .update(
+        JSON.stringify({ community, coordinates_start, coordinates_end, date })
+      )
       .digest("hex"),
-    coordinates_start,
-    coordinates_end,
     ...tornado
   };
 }

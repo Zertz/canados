@@ -1,6 +1,10 @@
+type TornadoId = string;
+
+type TornadoCoordinates = [number, number];
+
 type TornadoEvent = {
-  id: string;
-  coordinates_start: [number, number];
+  id: TornadoId;
+  coordinates_start: TornadoCoordinates;
   coordinates_end: [number?, number?];
   date: Date;
   community: string;
@@ -15,6 +19,10 @@ type TornadoEvent = {
   animal_inj?: number;
   dmg_thous?: number;
   forecast_r: number;
+};
+
+type TornadoTracks = {
+  [key: TornadoId]: TornadoCoordinates[];
 };
 
 declare module Common {

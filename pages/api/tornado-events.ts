@@ -1,6 +1,6 @@
-import { parse } from "date-fns";
 import got from "got";
 import { generateTornadoId } from "../../utils/generateTornadoId";
+import { parseTornadoDate } from "../../utils/parseTornadoDate";
 
 function check(value) {
   return [-999, "-999"].includes(value) ? null : Number(value);
@@ -40,22 +40,15 @@ export default async (req, res) => {
             FORECAST_R
           }
         }) => {
-          const [hh, mm] = HHMM_LOCAL
-            ? [
-                `${(HHMM_LOCAL / 100).toFixed()}`.padStart(2, "0"),
-                `${HHMM_LOCAL}`.substring(`${HHMM_LOCAL}`.length - 2)
-              ]
-            : ["00", "00"];
-
           return {
-            coordinates_start: [check(START_LAT_), check(START_LON_)],
-            coordinates_end: [check(END_LAT_N), check(END_LON_W)],
-            date: parse(
-              `${YYYY_LOCAL}-${MM_LOCAL || "01"}-${DD_LOCAL ||
-                "01"} ${hh}:${mm}`,
-              "yyyy-MM-dd HH:mm",
-              new Date()
-            ),
+            coordinates_start: [check(START_LON_), check(START_LAT_)],
+            coordinates_end: [check(END_LON_W), check(END_LAT_N)],
+            date: parseTornadoDate({
+              HHMM_LOCAL,
+              YYYY_LOCAL,
+              MM_LOCAL,
+              DD_LOCAL
+            }),
             community: NEAR_CMMTY,
             province: PROVINCE,
             fujita: check(FUJITA),

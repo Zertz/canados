@@ -5,9 +5,10 @@ import Table from "../Table";
 
 type Props = {
   filter: string;
+  onClick: (any) => void;
 };
 
-function TornadoEvents({ filter }: Props) {
+function TornadoEvents({ filter, onClick }: Props) {
   const debouncedFilter = useDebounce(filter, 250);
   const [order, setOrder] = useState<Common.Order>("desc");
   const [sortProperty, setSortProperty] = useState<keyof TornadoEvent>("date");
@@ -39,8 +40,9 @@ function TornadoEvents({ filter }: Props) {
         <Table
           data={tornadoEvents}
           filter={debouncedFilter}
+          onClick={onClick}
           onSort={handleSort}
-          type="tornados"
+          type="tornadoEvents"
         />
       )}
     </div>

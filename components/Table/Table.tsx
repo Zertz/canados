@@ -6,13 +6,14 @@ import styles from "./Table.module.css";
 type Props = {
   data: Array<TornadoEvent>;
   filter: string;
+  onClick: (any) => void;
   onSort: (any) => void;
-  type: "tornados";
+  type: "tornadoEvents";
 };
 
 let worker;
 
-function Table({ data, filter, onSort, type }: Props) {
+function Table({ data, filter, onClick, onSort, type }: Props) {
   const [filteredData, setFilteredData] = useState(data);
   const [loading, setLoading] = useState(false);
 
@@ -70,7 +71,7 @@ function Table({ data, filter, onSort, type }: Props) {
         </thead>
         <tbody className={styles.tbody}>
           {filteredData.map(tornado => (
-            <BodyRow key={tornado.id} tornado={tornado} />
+            <BodyRow key={tornado.id} onClick={onClick} tornado={tornado} />
           ))}
         </tbody>
         <tfoot className={styles.tfoot}>
