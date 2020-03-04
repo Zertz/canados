@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Table.module.css";
 
 type Props = {
-  columns: Array<keyof Tornado>;
+  columns: Array<keyof TornadoEvent>;
   onSort: (any) => void;
 };
 

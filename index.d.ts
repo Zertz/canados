@@ -1,4 +1,4 @@
-type Tornado = {
+type TornadoEvent = {
   id: string;
   coordinates_start: [number, number];
   coordinates_end: [number?, number?];

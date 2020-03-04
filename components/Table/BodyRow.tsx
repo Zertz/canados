@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Table.module.css";
 
 type Props = {
-  tornado: Tornado;
+  tornado: TornadoEvent;
 };
 
 const BodyRow = React.memo(function BodyRow({

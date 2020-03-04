@@ -4,7 +4,7 @@ import HeaderFooterRow from "./HeaderFooterRow";
 import styles from "./Table.module.css";
 
 type Props = {
-  data: Array<Tornado>;
+  data: Array<TornadoEvent>;
   filter: string;
   onSort: (any) => void;
   type: "tornados";
@@ -60,7 +60,7 @@ function Table({ data, filter, onSort, type }: Props) {
     return null;
   }
 
-  const columns = Object.keys(data[0]) as (keyof Tornado)[];
+  const columns = Object.keys(data[0]) as (keyof TornadoEvent)[];
 
   return (
     <div className={loading ? styles.loading : undefined}>

@@ -34,30 +34,30 @@ function sorter(order, sortProperty) {
   }
 }
 
-export const useTornados = ({
+export const useTornadoEvents = ({
   order,
   sortProperty
 }: {
   order: Common.Order;
-  sortProperty: keyof Tornado;
+  sortProperty: keyof TornadoEvent;
 }) => {
-  const [tornados, setTornados] = useState<Tornado[] | null>();
-  const { data, error, load, loading } = useAPI("/api/tornados");
+  const [tornadoEvents, setTornadoEvents] = useState<TornadoEvent[] | null>();
+  const { data, error, load, loading } = useAPI("/api/tornado-events");
 
   useEffect(() => {
     if (!data) {
-      setTornados(null);
+      setTornadoEvents(null);
 
       return;
     }
 
-    setTornados(data.sort(sorter(order, sortProperty)));
+    setTornadoEvents(data.sort(sorter(order, sortProperty)));
   }, [data, order, sortProperty]);
 
   return {
     error,
     load,
     loading,
-    tornados
+    tornadoEvents
   };
 };

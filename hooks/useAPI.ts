@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react";
 import ky from "../ky";
 
 type State = {
-  data?: Tornado[];
+  data?: TornadoEvent[];
   loading: boolean;
   error?: Error;
 };
