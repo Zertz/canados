@@ -1,0 +1,8 @@
+.div {
+  display: flex;
+  flex-direction: column;
+}
+
+.map {
+  flex-grow: 1;
+}

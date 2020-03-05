@@ -19,10 +19,7 @@ type TornadoEvent = {
   animal_inj?: number;
   dmg_thous?: number;
   forecast_r: number;
-};
-
-type TornadoTracks = {
-  [key: TornadoId]: TornadoCoordinates[];
+  tracks: TornadoCoordinates[];
 };
 
 declare module Common {

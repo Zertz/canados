@@ -1,57 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useTornadoEvents } from "../../hooks/useTornadoEvents";
 import TornadoEventList from "../TornadoEventList";
 import styles from "./TornadoEvents.module.css";
 
 type Props = {
   filter: string;
   onClick: (any) => void;
+  onSort: (any) => void;
+  tornados: TornadoEvent[];
 };
 
-function TornadoEvents({ filter, onClick }: Props) {
+function TornadoEvents({ filter, onClick, onSort, tornados }: Props) {
   const debouncedFilter = useDebounce(filter, 250);
-  const [order, setOrder] = useState<Common.Order>("desc");
-  const [sortProperty, setSortProperty] = useState<keyof TornadoEvent>("date");
-
-  const { error, load, loading, tornadoEvents } = useTornadoEvents({
-    order,
-    sortProperty
-  });
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  const handleSort = e => {
-    if (e.target.dataset.type === sortProperty) {
-      setOrder(order === "asc" ? "desc" : "asc");
-
-      return;
-    }
-
-    setSortProperty(e.target.dataset.type);
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Aw, snap.</div>;
-  }
-
-  if (!tornadoEvents) {
-    return null;
-  }
 
   return (
     <div className={styles.div}>
       <TornadoEventList
-        data={tornadoEvents}
+        data={tornados}
         filter={debouncedFilter}
         onClick={onClick}
-        onSort={handleSort}
+        onSort={onSort}
         type="tornadoEvents"
       />
     </div>
