@@ -108,6 +108,12 @@ export default async (req, res) => {
       .map(generateTornadoId)
       .map(tornado => ({
         ...tornado,
+        coordinates_start: Array.isArray(tracks[tornado.id])
+          ? tracks[tornado.id][0]
+          : tornado.coordinates_start,
+        coordinates_end: Array.isArray(tracks[tornado.id])
+          ? tracks[tornado.id][tracks[tornado.id].length - 1]
+          : tornado.coordinates_end,
         tracks: tracks[tornado.id]
       }));
 
