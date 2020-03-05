@@ -1,0 +1,22 @@
+.div {
+  display: grid;
+  grid: min-content 1fr / minmax(400px, 1fr) 2fr;
+  grid-gap: 1rem;
+  grid-template-areas:
+    "search search"
+    "events tracks";
+  padding: 1rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.label {
+  grid-area: search;
+}
+
+.input {
+  width: 100%;
+}

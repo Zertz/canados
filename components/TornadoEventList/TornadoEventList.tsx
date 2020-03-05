@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import BodyRow from "./BodyRow";
-import HeaderFooterRow from "./HeaderFooterRow";
-import styles from "./Table.module.css";
+import TornadoEventListItem from "../TornadoEventListItem";
+import styles from "./TornadoEventList.module.css";
 
 type Props = {
   data: Array<TornadoEvent>;
@@ -13,7 +12,7 @@ type Props = {
 
 let worker;
 
-function Table({ data, filter, onClick, onSort, type }: Props) {
+function TornadoEventList({ data, filter, onClick, onSort, type }: Props) {
   const [filteredData, setFilteredData] = useState(data);
   const [loading, setLoading] = useState(false);
 
@@ -57,29 +56,24 @@ function Table({ data, filter, onClick, onSort, type }: Props) {
     );
   }, [filter]);
 
-  if (data.length === 0) {
-    return null;
-  }
-
-  const columns = Object.keys(data[0]) as (keyof TornadoEvent)[];
-
   return (
-    <div className={loading ? styles.loading : undefined}>
-      <table className={styles.table}>
-        <thead className={styles.thead}>
-          <HeaderFooterRow columns={columns} onSort={onSort} />
-        </thead>
-        <tbody className={styles.tbody}>
-          {filteredData.map(tornado => (
-            <BodyRow key={tornado.id} onClick={onClick} tornado={tornado} />
-          ))}
-        </tbody>
-        <tfoot className={styles.tfoot}>
-          <HeaderFooterRow columns={columns} onSort={onSort} />
-        </tfoot>
-      </table>
+    <div className={styles.div}>
+      <select className={styles.select} disabled={loading} onChange={onSort}>
+        <option value="date">Date</option>
+        <option value="fujita">Fujita</option>
+        <option value="community">Location</option>
+      </select>
+      <ul className={styles.ul}>
+        {filteredData.map(tornado => (
+          <TornadoEventListItem
+            key={tornado.id}
+            onClick={onClick}
+            tornado={tornado}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default Table;
+export default TornadoEventList;

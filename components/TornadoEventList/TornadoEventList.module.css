@@ -1,0 +1,15 @@
+.div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.select {
+  margin-bottom: 1rem;
+}
+
+.ul {
+  border: 1px solid lightgrey;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

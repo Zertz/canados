@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useTornadoEvents } from "../../hooks/useTornadoEvents";
-import Table from "../Table";
+import TornadoEventList from "../TornadoEventList";
+import styles from "./TornadoEvents.module.css";
 
 type Props = {
   filter: string;
@@ -32,19 +33,27 @@ function TornadoEvents({ filter, onClick }: Props) {
     setSortProperty(e.target.dataset.type);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Aw, snap.</div>;
+  }
+
+  if (!tornadoEvents) {
+    return null;
+  }
+
   return (
-    <div>
-      {loading && <div>Loading...</div>}
-      {error && <div>Aw, snap.</div>}
-      {tornadoEvents && (
-        <Table
-          data={tornadoEvents}
-          filter={debouncedFilter}
-          onClick={onClick}
-          onSort={handleSort}
-          type="tornadoEvents"
-        />
-      )}
+    <div className={styles.div}>
+      <TornadoEventList
+        data={tornadoEvents}
+        filter={debouncedFilter}
+        onClick={onClick}
+        onSort={handleSort}
+        type="tornadoEvents"
+      />
     </div>
   );
 }

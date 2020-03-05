@@ -1,28 +1,8 @@
-import React, { useState } from "react";
-import TornadoEvents from "../components/TornadoEvents";
-import TornadoTracks from "../components/TornadoTracks";
+import React from "react";
+import Home from "../components/Home";
 
 function HomePage() {
-  const [filter, setFilter] = useState("");
-  const [tornadoId, setTornadoId] = useState<TornadoId>();
-
-  const handleChange = e => {
-    setFilter(e.target.value.trim());
-  };
-
-  const handleClick = e => {
-    setTornadoId(e.currentTarget.id);
-  };
-
-  return (
-    <div>
-      <label>
-        <input onChange={handleChange} type="search" />
-      </label>
-      <TornadoTracks tornadoId={tornadoId} />
-      <TornadoEvents filter={filter} onClick={handleClick} />
-    </div>
-  );
+  return <Home />;
 }
 
 export default HomePage;
