@@ -1,80 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
 
 type Props = {
-  data: Array<TornadoEvent>;
   filter: string;
   onChangeSort: (any) => void;
   onClick: (any) => void;
-  type: "tornadoEvents";
+  tornados: Array<TornadoEvent>;
 };
 
-let worker;
-
-function TornadoEventList({
-  data,
-  filter,
-  onChangeSort,
-  onClick,
-  type
-}: Props) {
-  const [filteredData, setFilteredData] = useState(data);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    worker = new Worker("filter.worker.js");
-
-    worker.onmessage = e => {
-      if (!e.isTrusted) {
-        return;
-      }
-
-      try {
-        setFilteredData(JSON.parse(e.data));
-      } catch {
-        setFilteredData(data);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    worker.postMessage(
-      JSON.stringify({ action: "store", payload: { data, type } })
-    );
-
-    return () => {
-      worker.terminate();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!filter) {
-      setFilteredData(data);
-
-      return;
-    }
-
-    setLoading(true);
-
-    worker.postMessage(
-      JSON.stringify({ action: "filter", payload: { filter, type } })
-    );
-  }, [filter]);
-
+function TornadoEventList({ filter, onChangeSort, onClick, tornados }: Props) {
   return (
     <div className={styles.div}>
       <select
         className={styles.select}
-        disabled={loading}
+        disabled={!!filter}
         onChange={onChangeSort}
       >
         <option value="date">Date</option>
         <option value="fujita">Fujita</option>
-        <option value="province">Location</option>
+        <option value="location">Location</option>
       </select>
       <ul className={styles.ul}>
-        {filteredData.map(tornado => (
+        {tornados.map(tornado => (
           <TornadoEventListItem
             key={tornado.id}
             onClick={onClick}

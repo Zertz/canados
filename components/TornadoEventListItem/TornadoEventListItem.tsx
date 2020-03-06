@@ -14,7 +14,7 @@ const TornadoEventListItem = React.memo(function TornadoEventListItem({
     <li className={styles.li} id={id} onClick={onClick}>
       <p className={styles.location}>{`${community}, ${province}`}</p>
       <p className={styles.fujita}>{`F${fujita}`}</p>
-      <p className={styles.date}>{date}</p>
+      {date && <p className={styles.date}>{date.toLocaleString()}</p>}
     </li>
   );
 });

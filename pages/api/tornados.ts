@@ -36,12 +36,14 @@ export default async (req, res) => {
             coordinates,
             coordinates_start: coordinates[0],
             coordinates_end: coordinates[coordinates.length - 1],
-            date: parseTornadoDate({
-              HHMM_LOCAL,
-              YYYY_LOCAL,
-              MM_LOCAL,
-              DD_LOCAL
-            }),
+            date: {
+              $date: parseTornadoDate({
+                HHMM_LOCAL,
+                YYYY_LOCAL,
+                MM_LOCAL,
+                DD_LOCAL
+              })
+            },
             community: NEAR_CMMTY
           };
         }
@@ -84,12 +86,14 @@ export default async (req, res) => {
           return {
             coordinates_start: [check(START_LAT_), check(START_LON_)],
             coordinates_end: [check(END_LAT_N), check(END_LON_W)],
-            date: parseTornadoDate({
-              HHMM_LOCAL,
-              YYYY_LOCAL,
-              MM_LOCAL,
-              DD_LOCAL
-            }),
+            date: {
+              $date: parseTornadoDate({
+                HHMM_LOCAL,
+                YYYY_LOCAL,
+                MM_LOCAL,
+                DD_LOCAL
+              })
+            },
             community: NEAR_CMMTY,
             province: PROVINCE,
             fujita: check(FUJITA),

@@ -6,7 +6,7 @@ type TornadoEvent = {
   id: TornadoId;
   coordinates_start: TornadoCoordinates;
   coordinates_end: [number?, number?];
-  date: Date;
+  date: ?Date;
   community: string;
   province: string;
   fujita: number;
@@ -24,4 +24,5 @@ type TornadoEvent = {
 
 declare module Common {
   type Order = "asc" | "desc";
+  type SortProperty = "date" | "fujita" | "location"
 }

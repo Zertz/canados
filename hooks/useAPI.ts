@@ -41,6 +41,31 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+function parseObject(object) {
+  const entries = Object.entries(object).map(([key, value]) => [
+    key,
+    parseValue(value)
+  ]);
+
+  return Object.fromEntries(entries as any);
+}
+
+function parseValue(value) {
+  if (!value) {
+    return value;
+  }
+
+  if (typeof value.$date !== "undefined") {
+    if (!value.$date) {
+      return value.$date;
+    }
+
+    return new Date(value.$date);
+  }
+
+  return value;
+}
+
 export const useAPI = url => {
   const [{ data, error, loading }, dispatch] = useReducer(reducer, {
     data: undefined,
@@ -52,9 +77,14 @@ export const useAPI = url => {
     dispatch({ type: "request" });
 
     try {
-      const data = await ky(url).json();
+      const result = await ky(url).json();
 
-      dispatch({ type: "success", data });
+      dispatch({
+        type: "success",
+        data: Array.isArray(result)
+          ? result.map(parseObject)
+          : parseObject(result)
+      });
     } catch (e) {
       dispatch({ type: "failure", error: e });
     }

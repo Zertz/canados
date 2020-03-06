@@ -2,18 +2,19 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { useTornados } from "../../hooks/useTornados";
-import TornadoEvents from "../TornadoEvents";
+import TornadoEventList from "../TornadoEventList";
 import styles from "./Home.module.css";
 
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
 function Home() {
   const [filter, setFilter] = useState("");
-  const [order, setOrder] = useState<Common.Order>("desc");
-  const [sortProperty, setSortProperty] = useState<keyof TornadoEvent>("date");
+  const [order, setOrder] = useState<Common.Order>("asc");
+  const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
   const [tornado, setTornado] = useState<TornadoEvent>();
 
   const { error, load, loading, tornados } = useTornados({
+    filter,
     order,
     sortProperty
   });
@@ -62,10 +63,10 @@ function Home() {
         <input className={styles.input} onChange={handleChange} type="search" />
       </label>
       {Array.isArray(tornados) && (
-        <TornadoEvents
+        <TornadoEventList
           filter={filter}
-          onChangeSort={handleChangeSort}
           onClick={handleClick}
+          onChangeSort={handleChangeSort}
           tornados={tornados}
         />
       )}
