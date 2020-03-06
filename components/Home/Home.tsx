@@ -22,6 +22,14 @@ function Home() {
     load();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Aw, snap.</div>;
+  }
+
   const handleChange = e => {
     setFilter(e.target.value.trim());
   };
@@ -46,14 +54,6 @@ function Home() {
     setSortProperty(e.target.dataset.type);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Aw, snap.</div>;
-  }
-
   return (
     <div className={styles.div}>
       <Head>
@@ -70,8 +70,8 @@ function Home() {
       {Array.isArray(tornados) && (
         <TornadoEvents
           filter={filter}
+          onChangeSort={handleChangeSort}
           onClick={handleClick}
-          onSort={handleSort}
           tornados={tornados}
         />
       )}
