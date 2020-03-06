@@ -31,8 +31,16 @@ function Home() {
     return <div>Aw, snap.</div>;
   }
 
-  const handleChange = e => {
+  const handleChangeFilter = e => {
     setFilter(e.target.value.trim());
+  };
+
+  const handleChangeOrder = e => {
+    setOrder(order === "asc" ? "desc" : "asc");
+  };
+
+  const handleChangeSort = e => {
+    setSortProperty(e.target.value);
   };
 
   const handleClick = e => {
@@ -45,10 +53,6 @@ function Home() {
     setTornado(tornado);
   };
 
-  const handleChangeSort = e => {
-    setSortProperty(e.target.value);
-  };
-
   return (
     <div className={styles.div}>
       <Head>
@@ -59,14 +63,14 @@ function Home() {
           rel="stylesheet"
         />
       </Head>
-      <label className={styles.label}>
-        <input className={styles.input} onChange={handleChange} type="search" />
-      </label>
       {Array.isArray(tornados) && (
         <TornadoEventList
           filter={filter}
-          onClick={handleClick}
+          onChangeFilter={handleChangeFilter}
+          onChangeOrder={handleChangeOrder}
           onChangeSort={handleChangeSort}
+          onClick={handleClick}
+          order={order}
           tornados={tornados}
         />
       )}
