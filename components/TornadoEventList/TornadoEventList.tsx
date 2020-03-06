@@ -5,14 +5,20 @@ import styles from "./TornadoEventList.module.css";
 type Props = {
   data: Array<TornadoEvent>;
   filter: string;
+  onChangeSort: (any) => void;
   onClick: (any) => void;
-  onSort: (any) => void;
   type: "tornadoEvents";
 };
 
 let worker;
 
-function TornadoEventList({ data, filter, onClick, onSort, type }: Props) {
+function TornadoEventList({
+  data,
+  filter,
+  onChangeSort,
+  onClick,
+  type
+}: Props) {
   const [filteredData, setFilteredData] = useState(data);
   const [loading, setLoading] = useState(false);
 
@@ -58,10 +64,14 @@ function TornadoEventList({ data, filter, onClick, onSort, type }: Props) {
 
   return (
     <div className={styles.div}>
-      <select className={styles.select} disabled={loading} onChange={onSort}>
+      <select
+        className={styles.select}
+        disabled={loading}
+        onChange={onChangeSort}
+      >
         <option value="date">Date</option>
         <option value="fujita">Fujita</option>
-        <option value="community">Location</option>
+        <option value="province">Location</option>
       </select>
       <ul className={styles.ul}>
         {filteredData.map(tornado => (

@@ -44,14 +44,8 @@ function Home() {
     setTornado(tornado);
   };
 
-  const handleSort = e => {
-    if (e.target.dataset.type === sortProperty) {
-      setOrder(order === "asc" ? "desc" : "asc");
-
-      return;
-    }
-
-    setSortProperty(e.target.dataset.type);
+  const handleChangeSort = e => {
+    setSortProperty(e.target.value);
   };
 
   return (

@@ -5,12 +5,12 @@ import styles from "./TornadoEvents.module.css";
 
 type Props = {
   filter: string;
+  onChangeSort: (any) => void;
   onClick: (any) => void;
-  onSort: (any) => void;
   tornados: TornadoEvent[];
 };
 
-function TornadoEvents({ filter, onClick, onSort, tornados }: Props) {
+function TornadoEvents({ filter, onChangeSort, onClick, tornados }: Props) {
   const debouncedFilter = useDebounce(filter, 250);
 
   return (
@@ -19,7 +19,7 @@ function TornadoEvents({ filter, onClick, onSort, tornados }: Props) {
         data={tornados}
         filter={debouncedFilter}
         onClick={onClick}
-        onSort={onSort}
+        onChangeSort={onChangeSort}
         type="tornadoEvents"
       />
     </div>
