@@ -78,6 +78,7 @@ function Home() {
             onChangeSort={handleChangeSort}
             onClick={handleClick}
             order={order}
+            selectedTornadoId={selectedTornado ? selectedTornado.id : undefined}
             tornados={tornados}
           />
           <TornadoTracks

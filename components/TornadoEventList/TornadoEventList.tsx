@@ -9,6 +9,7 @@ type Props = {
   onChangeSort: (any) => void;
   onClick: (tornadoId) => () => void;
   order: string;
+  selectedTornadoId?: TornadoId;
   tornados: Array<TornadoEvent>;
 };
 
@@ -19,6 +20,7 @@ function TornadoEventList({
   onChangeSort,
   onClick,
   order,
+  selectedTornadoId,
   tornados
 }: Props) {
   return (
@@ -51,6 +53,7 @@ function TornadoEventList({
           <TornadoEventListItem
             key={tornado.id}
             onClick={onClick(tornado.id)}
+            selected={selectedTornadoId === tornado.id}
             tornado={tornado}
           />
         ))}

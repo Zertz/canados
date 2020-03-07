@@ -6,6 +6,10 @@
   white-space: nowrap;
 }
 
+.liSelected {
+  background-color: lightgrey;
+}
+
 .li:hover {
   background-color: lightgrey;
 }
