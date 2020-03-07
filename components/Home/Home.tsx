@@ -49,12 +49,12 @@ function Home() {
     setSortProperty(e.target.value);
   };
 
-  const handleClick = e => {
+  const handleClick = (tornadoId: TornadoId) => () => {
     if (!Array.isArray(tornados)) {
       return;
     }
 
-    const tornado = tornados.find(({ id }) => id === e.currentTarget.id);
+    const tornado = tornados.find(({ id }) => id === tornadoId);
 
     setSelectedTornado(tornado);
   };
@@ -82,6 +82,7 @@ function Home() {
           />
           <TornadoTracks
             onChangeBounds={handleChangeBounds}
+            onClick={handleClick}
             selectedTornado={selectedTornado}
             tornados={tornados}
           />

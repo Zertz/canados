@@ -4,6 +4,7 @@ import styles from "./TornadoTracks.module.css";
 
 type Props = {
   onChangeBounds: (bounds: Common.Bounds) => void;
+  onClick: (tornadoId: TornadoId) => void;
   selectedTornado?: TornadoEvent;
   tornados: TornadoEvent[];
 };
@@ -57,7 +58,12 @@ type ReactLeaflet = {
   leafletElement: Leaflet;
 };
 
-function TornadoTracks({ onChangeBounds, selectedTornado, tornados }: Props) {
+function TornadoTracks({
+  onChangeBounds,
+  onClick,
+  selectedTornado,
+  tornados
+}: Props) {
   const map = useRef<ReactLeaflet>();
 
   const handleMoveEnd = () => {
@@ -97,7 +103,10 @@ function TornadoTracks({ onChangeBounds, selectedTornado, tornados }: Props) {
 
           return (
             <Fragment key={tornado.id}>
-              <Marker position={getStart(tornado)}>
+              <Marker
+                onClick={onClick(tornado.id)}
+                position={getStart(tornado)}
+              >
                 <Popup>{`Start: ${tornado.community}`}</Popup>
               </Marker>
               {Array.isArray(tornado.tracks) && (
@@ -111,7 +120,7 @@ function TornadoTracks({ onChangeBounds, selectedTornado, tornados }: Props) {
                 />
               )}
               {end && (
-                <Marker position={end}>
+                <Marker onClick={onClick(tornado.id)} position={end}>
                   <Popup>{`Finish: ${tornado.community}`}</Popup>
                 </Marker>
               )}

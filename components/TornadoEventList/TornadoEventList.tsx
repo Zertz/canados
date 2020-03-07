@@ -7,7 +7,7 @@ type Props = {
   onChangeFilter: (any) => void;
   onChangeOrder: (any) => void;
   onChangeSort: (any) => void;
-  onClick: (any) => void;
+  onClick: (tornadoId) => () => void;
   order: string;
   tornados: Array<TornadoEvent>;
 };
@@ -50,7 +50,7 @@ function TornadoEventList({
         {tornados.map(tornado => (
           <TornadoEventListItem
             key={tornado.id}
-            onClick={onClick}
+            onClick={onClick(tornado.id)}
             tornado={tornado}
           />
         ))}
