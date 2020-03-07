@@ -5,7 +5,14 @@ import React, {
   useRef,
   useState
 } from "react";
-import { Map, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
+import {
+  CircleMarker,
+  Map,
+  Marker,
+  Polyline,
+  Popup,
+  TileLayer
+} from "react-leaflet";
 import styles from "./TornadoTracks.module.css";
 import { shuffle } from "../../utils/shuffle";
 
@@ -19,13 +26,13 @@ type Props = {
 const defaultLat = 45.508888;
 const defaultLng = -73.561668;
 
-function getStart(tornado: TornadoEvent) {
+function getStart(tornado: TornadoEvent): Common.Coordinates {
   const { coordinates_start } = tornado;
 
   return coordinates_start;
 }
 
-function getCenter(tornado: TornadoEvent) {
+function getCenter(tornado: TornadoEvent): Common.Coordinates {
   const { coordinates_end, coordinates_start, tracks } = tornado;
 
   if (Array.isArray(tracks)) {
@@ -42,14 +49,17 @@ function getCenter(tornado: TornadoEvent) {
   return [lat || defaultLat, lng || defaultLng];
 }
 
-function getEnd(tornado: TornadoEvent) {
+function getEnd(tornado: TornadoEvent): Common.Coordinates | void {
   const { coordinates_end } = tornado;
 
-  if (coordinates_end.filter(Boolean).length === 0) {
-    return null;
+  if (
+    typeof coordinates_end[0] !== "number" ||
+    typeof coordinates_end[1] !== "number"
+  ) {
+    return undefined;
   }
 
-  return coordinates_end;
+  return coordinates_end as Common.Coordinates;
 }
 
 type LatLng = {
@@ -72,6 +82,12 @@ function TornadoTracks({
   tornados
 }: Props) {
   const map = useRef<ReactLeaflet>();
+
+  const [center, setCenter] = useState<Common.Coordinates>([
+    defaultLat,
+    defaultLng
+  ]);
+
   const [displayedTornados, setDisplayedTornados] = useState<TornadoEvent[]>(
     []
   );
@@ -92,6 +108,16 @@ function TornadoTracks({
   useLayoutEffect(handleMoveEnd, []);
 
   useEffect(() => {
+    if (!selectedTornado) {
+      setCenter([defaultLat, defaultLng] as Common.Coordinates);
+
+      return;
+    }
+
+    setCenter(getCenter(selectedTornado));
+  }, [selectedTornado]);
+
+  useEffect(() => {
     if (!Array.isArray(tornados)) {
       setDisplayedTornados([]);
 
@@ -107,10 +133,6 @@ function TornadoTracks({
     setDisplayedTornados(tornados);
   }, [tornados]);
 
-  const center = selectedTornado
-    ? getCenter(selectedTornado)
-    : [defaultLat, defaultLng];
-
   return (
     <div className={styles.div}>
       <Map
@@ -125,30 +147,36 @@ function TornadoTracks({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {displayedTornados.map(tornado => {
+          const start = getStart(tornado);
           const end = getEnd(tornado);
+
+          const selected = selectedTornado
+            ? selectedTornado.id === tornado.id
+            : false;
 
           return (
             <Fragment key={tornado.id}>
-              <Marker
-                onClick={onClick(tornado.id)}
-                position={getStart(tornado)}
-              >
-                <Popup>{`Start: ${tornado.community}`}</Popup>
+              {selected && (
+                <CircleMarker center={start} color="tomato" radius={10} />
+              )}
+              <Marker onClick={onClick(tornado.id)} position={start}>
+                <Popup>{`Start: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Popup>
               </Marker>
               {Array.isArray(tornado.tracks) && (
                 <Polyline
-                  color={
-                    selectedTornado && selectedTornado.id === tornado.id
-                      ? "tomato"
-                      : "lime"
-                  }
+                  color={selected ? "tomato" : "lime"}
                   positions={tornado.tracks}
                 />
               )}
               {end && (
-                <Marker onClick={onClick(tornado.id)} position={end}>
-                  <Popup>{`Finish: ${tornado.community}`}</Popup>
-                </Marker>
+                <>
+                  {selected && (
+                    <CircleMarker center={end} color="tomato" radius={10} />
+                  )}
+                  <Marker onClick={onClick(tornado.id)} position={end}>
+                    <Popup>{`Finish: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Popup>
+                  </Marker>
+                </>
               )}
             </Fragment>
           );
