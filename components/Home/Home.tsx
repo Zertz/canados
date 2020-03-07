@@ -8,12 +8,14 @@ import styles from "./Home.module.css";
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
 function Home() {
+  const [bounds, setBounds] = useState<Common.Bounds>();
   const [filter, setFilter] = useState("");
   const [order, setOrder] = useState<Common.Order>("asc");
   const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
-  const [tornado, setTornado] = useState<TornadoEvent>();
+  const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
 
   const { error, load, loading, tornados } = useTornados({
+    bounds,
     filter,
     order,
     sortProperty
@@ -30,6 +32,10 @@ function Home() {
   if (error) {
     return <div>Aw, snap.</div>;
   }
+
+  const handleChangeBounds = (bounds: Common.Bounds) => {
+    setBounds(bounds);
+  };
 
   const handleChangeFilter = e => {
     setFilter(e.target.value.trim());
@@ -50,7 +56,7 @@ function Home() {
 
     const tornado = tornados.find(({ id }) => id === e.currentTarget.id);
 
-    setTornado(tornado);
+    setSelectedTornado(tornado);
   };
 
   return (
@@ -64,17 +70,23 @@ function Home() {
         />
       </Head>
       {Array.isArray(tornados) && (
-        <TornadoEventList
-          filter={filter}
-          onChangeFilter={handleChangeFilter}
-          onChangeOrder={handleChangeOrder}
-          onChangeSort={handleChangeSort}
-          onClick={handleClick}
-          order={order}
-          tornados={tornados}
-        />
+        <>
+          <TornadoEventList
+            filter={filter}
+            onChangeFilter={handleChangeFilter}
+            onChangeOrder={handleChangeOrder}
+            onChangeSort={handleChangeSort}
+            onClick={handleClick}
+            order={order}
+            tornados={tornados}
+          />
+          <TornadoTracks
+            onChangeBounds={handleChangeBounds}
+            selectedTornado={selectedTornado}
+            tornados={tornados}
+          />
+        </>
       )}
-      <TornadoTracks tornado={tornado} />
     </div>
   );
 }

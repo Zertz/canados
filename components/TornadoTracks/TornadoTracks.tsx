@@ -1,9 +1,11 @@
-import React from "react";
+import React, { Fragment, useRef, useLayoutEffect } from "react";
 import { Map, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
-  tornado?: TornadoEvent;
+  onChangeBounds: (bounds: Common.Bounds) => void;
+  selectedTornado?: TornadoEvent;
+  tornados: TornadoEvent[];
 };
 
 const defaultLat = 45.508888;
@@ -42,35 +44,80 @@ function getEnd(tornado: TornadoEvent) {
   return coordinates_end;
 }
 
-function TornadoTracks({ tornado }: Props) {
-  const start = tornado ? getStart(tornado) : null;
-  const center = tornado ? getCenter(tornado) : [defaultLat, defaultLng];
-  const end = tornado ? getEnd(tornado) : null;
+type LatLng = {
+  lat: number;
+  lng: number;
+};
+
+type Leaflet = {
+  getBounds: () => { _southWest: LatLng; _northEast: LatLng };
+};
+
+type ReactLeaflet = {
+  leafletElement: Leaflet;
+};
+
+function TornadoTracks({ onChangeBounds, selectedTornado, tornados }: Props) {
+  const map = useRef<ReactLeaflet>();
+
+  const handleMoveEnd = () => {
+    if (!map.current) {
+      return;
+    }
+
+    const bounds = map.current.leafletElement.getBounds();
+
+    onChangeBounds([
+      [bounds._southWest.lat, bounds._northEast.lat],
+      [bounds._southWest.lng, bounds._northEast.lng]
+    ]);
+  };
+
+  useLayoutEffect(handleMoveEnd, []);
+
+  const center = selectedTornado
+    ? getCenter(selectedTornado)
+    : [defaultLat, defaultLng];
 
   return (
     <div className={styles.div}>
-      <Map className={styles.map} center={center} zoom={9}>
+      <Map
+        className={styles.map}
+        center={center}
+        onMoveEnd={handleMoveEnd}
+        ref={map}
+        zoom={10}
+      >
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {tornado && (
-          <>
-            {start && (
+        {tornados.map(tornado => {
+          const end = getEnd(tornado);
+
+          return (
+            <Fragment key={tornado.id}>
               <Marker position={getStart(tornado)}>
-                <Popup>Start</Popup>
+                <Popup>{`Start: ${tornado.community}`}</Popup>
               </Marker>
-            )}
-            {Array.isArray(tornado.tracks) && (
-              <Polyline color="lime" positions={tornado.tracks} />
-            )}
-            {end && (
-              <Marker position={end}>
-                <Popup>Finish</Popup>
-              </Marker>
-            )}
-          </>
-        )}
+              {Array.isArray(tornado.tracks) && (
+                <Polyline
+                  color={
+                    selectedTornado && selectedTornado.id === tornado.id
+                      ? "tomato"
+                      : "lime"
+                  }
+                  positions={tornado.tracks}
+                />
+              )}
+              {end && (
+                <Marker position={end}>
+                  <Popup>{`Finish: ${tornado.community}`}</Popup>
+                </Marker>
+              )}
+            </Fragment>
+          );
+        })}
       </Map>
     </div>
   );

@@ -46,10 +46,12 @@ function getSortFunction(order, sortProperty) {
 let worker;
 
 export const useTornados = ({
+  bounds,
   filter,
   order,
   sortProperty
 }: {
+  bounds?: Common.Bounds;
   filter: string;
   order: Common.Order;
   sortProperty: Common.SortProperty;
@@ -93,6 +95,7 @@ export const useTornados = ({
 
   useEffect(() => {
     if (!debouncedFilter) {
+      // Sort sorts the elements of an array in place so we can safely assume data is already sorted
       setTornados(data);
 
       return;
@@ -115,10 +118,51 @@ export const useTornados = ({
       return;
     }
 
+    const filteredTornados = bounds
+      ? data.filter(({ coordinates_end, coordinates_start, tracks }) => {
+          const [latBounds, lngBounds] = bounds;
+
+          if (
+            coordinates_start[0] > latBounds[0] &&
+            coordinates_start[0] < latBounds[1] &&
+            coordinates_start[1] > lngBounds[0] &&
+            coordinates_start[1] < lngBounds[1]
+          ) {
+            return true;
+          }
+
+          if (
+            coordinates_end[0] &&
+            coordinates_end[0] > latBounds[0] &&
+            coordinates_end[0] < latBounds[1] &&
+            coordinates_end[1] &&
+            coordinates_end[1] > lngBounds[0] &&
+            coordinates_end[1] < lngBounds[1]
+          ) {
+            return true;
+          }
+
+          if (!Array.isArray(tracks)) {
+            return false;
+          }
+
+          return tracks.some(
+            coordinates =>
+              coordinates[0] > latBounds[0] &&
+              coordinates[0] < latBounds[1] &&
+              coordinates[1] > lngBounds[0] &&
+              coordinates[1] < lngBounds[1]
+          );
+        })
+      : data;
+
     const sortFunction = getSortFunction(order, sortProperty);
 
-    setTornados([...data.sort(sortFunction)]);
-  }, [data, order, sortProperty]);
+    // Sort sorts the elements of an array in place so we have to shallow copy to trigger a change
+    const sortedTornados = [...filteredTornados.sort(sortFunction)];
+
+    setTornados(sortedTornados);
+  }, [bounds, data, order, sortProperty]);
 
   return {
     error,
