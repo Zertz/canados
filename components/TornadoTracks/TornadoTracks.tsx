@@ -1,6 +1,13 @@
-import React, { Fragment, useRef, useLayoutEffect } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from "react";
 import { Map, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
 import styles from "./TornadoTracks.module.css";
+import { shuffle } from "../../utils/shuffle";
 
 type Props = {
   onChangeBounds: (bounds: Common.Bounds) => void;
@@ -65,6 +72,9 @@ function TornadoTracks({
   tornados
 }: Props) {
   const map = useRef<ReactLeaflet>();
+  const [displayedTornados, setDisplayedTornados] = useState<TornadoEvent[]>(
+    []
+  );
 
   const handleMoveEnd = () => {
     if (!map.current) {
@@ -80,6 +90,22 @@ function TornadoTracks({
   };
 
   useLayoutEffect(handleMoveEnd, []);
+
+  useEffect(() => {
+    if (!Array.isArray(tornados)) {
+      setDisplayedTornados([]);
+
+      return;
+    }
+
+    if (tornados.length > 100) {
+      setDisplayedTornados(shuffle(tornados, 100));
+
+      return;
+    }
+
+    setDisplayedTornados(tornados);
+  }, [tornados]);
 
   const center = selectedTornado
     ? getCenter(selectedTornado)
@@ -98,7 +124,7 @@ function TornadoTracks({
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {tornados.map(tornado => {
+        {displayedTornados.map(tornado => {
           const end = getEnd(tornado);
 
           return (
