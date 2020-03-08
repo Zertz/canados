@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import styles from "./TornadoEventListItem.module.css";
 
 type Props = {
@@ -13,12 +13,23 @@ const TornadoEventListItem = React.memo(function TornadoEventListItem({
   selected,
   tornado: { community, date, fujita, province }
 }: Props) {
+  const listItem = useRef<HTMLLIElement>(null);
+
+  useLayoutEffect(() => {
+    if (!selected) {
+      return;
+    }
+
+    listItem.current?.scrollIntoView();
+  }, [selected]);
+
   return (
     <li
       className={classnames(styles.li, {
         [styles.liSelected]: selected
       })}
       onClick={onClick}
+      ref={listItem}
     >
       <p className={styles.location}>{`${community}, ${province}`}</p>
       <p className={styles.fujita}>{`F${fujita}`}</p>
