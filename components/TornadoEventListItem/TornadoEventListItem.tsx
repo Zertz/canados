@@ -20,7 +20,11 @@ const TornadoEventListItem = React.memo(function TornadoEventListItem({
       return;
     }
 
-    listItem.current?.scrollIntoView();
+    listItem.current?.scrollIntoView({
+      behavior: "auto",
+      block: "center",
+      inline: "start"
+    });
   }, [selected]);
 
   return (
