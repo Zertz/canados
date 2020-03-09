@@ -92,8 +92,6 @@ function TornadoTracks({
     []
   );
 
-  const [updateBounds, setUpdateBounds] = useState(true);
-
   useEffect(() => {
     if (!selectedTornado) {
       setCenter([defaultLat, defaultLng] as Common.Coordinates);
@@ -125,10 +123,6 @@ function TornadoTracks({
       return;
     }
 
-    if (!updateBounds) {
-      return;
-    }
-
     const bounds = map.current.leafletElement.getBounds();
 
     onChangeBounds([
@@ -144,7 +138,8 @@ function TornadoTracks({
       <Map
         className={styles.map}
         center={center}
-        onMoveEnd={handleMoveEnd}
+        onDragEnd={handleMoveEnd}
+        onZoomEnd={handleMoveEnd}
         ref={map}
         zoom={10}
       >
