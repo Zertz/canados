@@ -161,7 +161,9 @@ function TornadoTracks({
                 <CircleMarker center={start} color="tomato" radius={10} />
               )}
               <Marker onClick={onClick(tornado.id)} position={start}>
-                <Popup>{`Start: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Popup>
+                <Popup>{`${end ? "Start: " : ""}${tornado.community}, ${
+                  tornado.province
+                } (F${tornado.fujita})`}</Popup>
               </Marker>
               {Array.isArray(tornado.tracks) && (
                 <Polyline
