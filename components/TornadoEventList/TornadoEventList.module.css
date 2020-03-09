@@ -24,3 +24,12 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+.li {
+  background-color: white;
+  border-bottom: 1px solid lightgrey;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  position: sticky;
+  top: 0;
+}

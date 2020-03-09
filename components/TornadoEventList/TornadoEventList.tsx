@@ -49,6 +49,9 @@ function TornadoEventList({
         {order}
       </button>
       <ul className={styles.ul}>
+        <li
+          className={styles.li}
+        >{`${tornados.length} tornados in this area`}</li>
         {tornados.map(tornado => (
           <TornadoEventListItem
             key={tornado.id}
