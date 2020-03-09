@@ -11,7 +11,7 @@ type Props = {
 const TornadoEventListItem = React.memo(function TornadoEventListItem({
   onClick,
   selected,
-  tornado: { community, date, fujita, province }
+  tornado: { community, date, fujita, length_m, province }
 }: Props) {
   const listItem = useRef<HTMLLIElement>(null);
 
@@ -31,7 +31,10 @@ const TornadoEventListItem = React.memo(function TornadoEventListItem({
       onClick={onClick}
       ref={listItem}
     >
-      <p className={styles.location}>{`${community}, ${province}`}</p>
+      <p className={styles.location}>
+        <span>{`${community}, ${province}`}</span>
+        {length_m && <span>{`${(length_m / 1000).toFixed(1)}km`}</span>}
+      </p>
       <p className={styles.fujita}>{`F${fujita}`}</p>
       {date && <p className={styles.date}>{date.toLocaleString()}</p>}
     </li>
