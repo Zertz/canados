@@ -1,31 +1,31 @@
 .div {
   display: flex;
   flex-direction: column;
+  background-color: white;
   overflow: hidden;
-  width: 100%;
-}
-
-.label {
-  grid-area: search;
+  padding: 1rem;
+  z-index: 1;
 }
 
 .input {
   width: 100%;
 }
 
-.label,
-.button,
-.select {
+.label {
   margin-bottom: 1rem;
 }
 
 .ul {
+  flex-grow: 1;
   border: 1px solid lightgrey;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 .li {
+  display: grid;
+  grid: 1fr / 1fr repeat(2, min-content);
+  grid-gap: 1rem;
   background-color: white;
   border-bottom: 1px solid lightgrey;
   font-weight: bold;

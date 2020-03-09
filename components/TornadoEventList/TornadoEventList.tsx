@@ -32,26 +32,26 @@ function TornadoEventList({
           type="search"
         />
       </label>
-      <select
-        className={styles.select}
-        disabled={!!filter}
-        onChange={onChangeSort}
-      >
-        <option value="date">Date</option>
-        <option value="fujita">Fujita</option>
-        <option value="location">Location</option>
-      </select>
-      <button
-        className={styles.button}
-        disabled={!!filter}
-        onClick={onChangeOrder}
-      >
-        {order}
-      </button>
       <ul className={styles.ul}>
-        <li
-          className={styles.li}
-        >{`${tornados.length} tornados in this area`}</li>
+        <li className={styles.li}>
+          <span>{`${tornados.length} tornados in this area`}</span>
+          <select
+            className={styles.select}
+            disabled={!!filter}
+            onChange={onChangeSort}
+          >
+            <option value="date">Date</option>
+            <option value="fujita">Fujita</option>
+            <option value="location">Location</option>
+          </select>
+          <button
+            className={styles.button}
+            disabled={!!filter}
+            onClick={onChangeOrder}
+          >
+            {order}
+          </button>
+        </li>
         {tornados.map(tornado => (
           <TornadoEventListItem
             key={tornado.id}

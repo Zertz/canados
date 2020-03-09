@@ -1,9 +1,7 @@
 .div {
   display: grid;
-  grid: 1fr / minmax(400px, 1fr) 2fr;
-  grid-gap: 1rem;
+  grid: 1fr / 500px 1fr;
   grid-template-areas: "events tracks";
-  padding: 1rem;
   position: absolute;
   top: 0;
   right: 0;
