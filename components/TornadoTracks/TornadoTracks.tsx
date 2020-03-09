@@ -13,8 +13,8 @@ import {
   Popup,
   TileLayer
 } from "react-leaflet";
-import styles from "./TornadoTracks.module.css";
 import { shuffle } from "../../utils/shuffle";
+import styles from "./TornadoTracks.module.css";
 
 type Props = {
   onChangeBounds: (bounds: Common.Bounds) => void;
@@ -92,20 +92,7 @@ function TornadoTracks({
     []
   );
 
-  const handleMoveEnd = () => {
-    if (!map.current) {
-      return;
-    }
-
-    const bounds = map.current.leafletElement.getBounds();
-
-    onChangeBounds([
-      [bounds._southWest.lat, bounds._northEast.lat],
-      [bounds._southWest.lng, bounds._northEast.lng]
-    ]);
-  };
-
-  useLayoutEffect(handleMoveEnd, []);
+  const [updateBounds, setUpdateBounds] = useState(true);
 
   useEffect(() => {
     if (!selectedTornado) {
@@ -132,6 +119,25 @@ function TornadoTracks({
 
     setDisplayedTornados(tornados);
   }, [tornados]);
+
+  const handleMoveEnd = () => {
+    if (!map.current) {
+      return;
+    }
+
+    if (!updateBounds) {
+      return;
+    }
+
+    const bounds = map.current.leafletElement.getBounds();
+
+    onChangeBounds([
+      [bounds._southWest.lat, bounds._northEast.lat],
+      [bounds._southWest.lng, bounds._northEast.lng]
+    ]);
+  };
+
+  useLayoutEffect(handleMoveEnd, []);
 
   return (
     <div className={styles.div}>
