@@ -2,6 +2,27 @@ import { useEffect, useState } from "react";
 import { useAPI } from "./useAPI";
 import { useDebounce } from "./useDebounce";
 
+function getFitBounds(filteredTornados: TornadoEvent[]): Common.Bounds {
+  const fitBounds = filteredTornados.reduce(
+    (
+      [southWestBounds, northEastBounds],
+      { coordinates_end, coordinates_start }
+    ) => [
+      [
+        min(southWestBounds[0], coordinates_start[0], coordinates_end[0]),
+        min(southWestBounds[1], coordinates_start[1], coordinates_end[1])
+      ],
+      [
+        max(northEastBounds[0], coordinates_start[0], coordinates_end[0]),
+        max(northEastBounds[1], coordinates_start[1], coordinates_end[1])
+      ]
+    ],
+    [[], []]
+  );
+
+  return fitBounds as Common.Bounds;
+}
+
 function getSortFunction(order, sortProperty) {
   switch (sortProperty) {
     case "date": {
@@ -43,16 +64,16 @@ function getSortFunction(order, sortProperty) {
   }
 }
 
-function max(...values: number[]) {
+function max(...values: any[]): number {
   return values.reduce(
-    (acc, value) => (value && value > acc ? value : acc),
+    (acc, value) => (typeof value === "number" && value > acc ? value : acc),
     -Infinity
   );
 }
 
-function min(...values: number[]) {
+function min(...values: any[]): number {
   return values.reduce(
-    (acc, value) => (value && value < acc ? value : acc),
+    (acc, value) => (typeof value === "number" && value < acc ? value : acc),
     Infinity
   );
 }
@@ -72,8 +93,8 @@ export const useTornados = ({
 }) => {
   const debouncedFilter = useDebounce(filter, 200);
   const [filtering, setFiltering] = useState(false);
-  const [fitBounds, setFitBounds] = useState<Common.Bounds>();
-  const [tornados, setTornados] = useState<TornadoEvent[] | null>();
+  const [fitBounds, setFitBounds] = useState<Common.Bounds | undefined>();
+  const [tornados, setTornados] = useState<TornadoEvent[] | undefined>();
   const { data, error, load, loading } = useAPI("/api/tornados");
 
   useEffect(() => {
@@ -98,38 +119,7 @@ export const useTornados = ({
             return;
           }
 
-          const fitBounds = filteredTornados.reduce(
-            (
-              [southWestBounds, northEastBounds],
-              { coordinates_end, coordinates_start }
-            ) => [
-              [
-                min(
-                  southWestBounds[0],
-                  coordinates_start[0],
-                  coordinates_end[0]
-                ),
-                min(
-                  southWestBounds[1],
-                  coordinates_start[1],
-                  coordinates_end[1]
-                )
-              ],
-              [
-                max(
-                  northEastBounds[0],
-                  coordinates_start[0],
-                  coordinates_end[0]
-                ),
-                max(
-                  northEastBounds[1],
-                  coordinates_start[1],
-                  coordinates_end[1]
-                )
-              ]
-            ],
-            [[], []]
-          );
+          const fitBounds = getFitBounds(filteredTornados);
 
           setFitBounds(fitBounds);
           setTornados(filteredTornados);
@@ -144,6 +134,11 @@ export const useTornados = ({
     worker.postMessage(
       JSON.stringify({ action: "store", payload: { data, type: "tornados" } })
     );
+
+    const fitBounds = getFitBounds(data);
+
+    setFitBounds(fitBounds);
+    setTornados(data);
 
     return () => {
       worker.terminate();
@@ -170,7 +165,7 @@ export const useTornados = ({
 
   useEffect(() => {
     if (!data) {
-      setTornados(null);
+      setTornados(undefined);
 
       return;
     }
@@ -219,7 +214,7 @@ export const useTornados = ({
     const sortedTornados = [...filteredTornados.sort(sortFunction)];
 
     setTornados(sortedTornados);
-  }, [bounds, data, order, sortProperty]);
+  }, [bounds, order, sortProperty]);
 
   return {
     error,

@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState
-} from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
   CircleMarker,
   Map,
@@ -13,6 +7,7 @@ import {
   Popup,
   TileLayer
 } from "react-leaflet";
+import { useThrottle } from "../../hooks/useThrottle";
 import { shuffle } from "../../utils/shuffle";
 import styles from "./TornadoTracks.module.css";
 
@@ -25,9 +20,6 @@ type Props = {
   tornados: TornadoEvent[];
 };
 
-const defaultLat = 45.508888;
-const defaultLng = -73.561668;
-
 function getStart(tornado: TornadoEvent): Common.Coordinates {
   const { coordinates_start } = tornado;
 
@@ -35,20 +27,13 @@ function getStart(tornado: TornadoEvent): Common.Coordinates {
 }
 
 function getCenter(tornado: TornadoEvent): Common.Coordinates {
-  const { coordinates_end, coordinates_start, tracks } = tornado;
+  const { coordinates_start, tracks } = tornado;
 
   if (Array.isArray(tracks)) {
     return tracks[Math.floor(tracks.length / 2)];
   }
 
-  if (!Array.isArray(coordinates_start) || !Array.isArray(coordinates_end)) {
-    return [defaultLat, defaultLng];
-  }
-
-  const lat = (coordinates_start[0] || 0) + (coordinates_end[0] || 0);
-  const lng = (coordinates_start[1] || 0) + (coordinates_end[1] || 0);
-
-  return [lat || defaultLat, lng || defaultLng];
+  return coordinates_start;
 }
 
 function getEnd(tornado: TornadoEvent): Common.Coordinates | void {
@@ -88,10 +73,7 @@ function TornadoTracks({
 }: Props) {
   const map = useRef<ReactLeaflet>();
 
-  const [center, setCenter] = useState<Common.Coordinates>([
-    defaultLat,
-    defaultLng
-  ]);
+  const [center, setCenter] = useState<Common.Coordinates | undefined>();
 
   const [displayedTornados, setDisplayedTornados] = useState<TornadoEvent[]>(
     []
@@ -111,8 +93,6 @@ function TornadoTracks({
 
   useEffect(() => {
     if (!selectedTornado) {
-      setCenter([defaultLat, defaultLng] as Common.Coordinates);
-
       return;
     }
 
@@ -152,17 +132,15 @@ function TornadoTracks({
     ]);
   };
 
-  useLayoutEffect(handleMoveEnd, []);
+  const throttledHandleMoveEnd = useThrottle(handleMoveEnd, 200);
 
   return (
     <div className={styles.div}>
       <Map
         className={styles.map}
         center={center}
-        onDragEnd={handleMoveEnd}
-        onZoomEnd={handleMoveEnd}
+        onMoveEnd={throttledHandleMoveEnd}
         ref={map}
-        zoom={10}
       >
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
