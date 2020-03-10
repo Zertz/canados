@@ -14,7 +14,7 @@ function Home() {
   const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
   const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
 
-  const { error, load, loading, tornados } = useTornados({
+  const { error, filtering, fitBounds, load, loading, tornados } = useTornados({
     bounds,
     filter,
     order,
@@ -82,6 +82,8 @@ function Home() {
             tornados={tornados}
           />
           <TornadoTracks
+            filter={filter}
+            fitBounds={fitBounds}
             onChangeBounds={handleChangeBounds}
             onClick={handleClick}
             selectedTornado={selectedTornado}

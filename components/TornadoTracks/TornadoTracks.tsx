@@ -17,6 +17,8 @@ import { shuffle } from "../../utils/shuffle";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
+  filter: string;
+  fitBounds?: Common.Bounds;
   onChangeBounds: (bounds: Common.Bounds) => void;
   onClick: (tornadoId: TornadoId) => void;
   selectedTornado?: TornadoEvent;
@@ -68,6 +70,7 @@ type LatLng = {
 };
 
 type Leaflet = {
+  fitBounds: (bounds: Common.Bounds) => void;
   getBounds: () => { _southWest: LatLng; _northEast: LatLng };
 };
 
@@ -76,6 +79,8 @@ type ReactLeaflet = {
 };
 
 function TornadoTracks({
+  filter,
+  fitBounds,
   onChangeBounds,
   onClick,
   selectedTornado,
@@ -91,6 +96,18 @@ function TornadoTracks({
   const [displayedTornados, setDisplayedTornados] = useState<TornadoEvent[]>(
     []
   );
+
+  useEffect(() => {
+    if (!fitBounds) {
+      return;
+    }
+
+    if (!map.current) {
+      return;
+    }
+
+    map.current.leafletElement.fitBounds(fitBounds);
+  }, [fitBounds]);
 
   useEffect(() => {
     if (!selectedTornado) {
@@ -119,6 +136,10 @@ function TornadoTracks({
   }, [tornados]);
 
   const handleMoveEnd = () => {
+    if (filter) {
+      return;
+    }
+
     if (!map.current) {
       return;
     }
@@ -126,8 +147,8 @@ function TornadoTracks({
     const bounds = map.current.leafletElement.getBounds();
 
     onChangeBounds([
-      [bounds._southWest.lat, bounds._northEast.lat],
-      [bounds._southWest.lng, bounds._northEast.lng]
+      [bounds._southWest.lat, bounds._southWest.lng],
+      [bounds._northEast.lat, bounds._northEast.lng]
     ]);
   };
 

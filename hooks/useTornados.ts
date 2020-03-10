@@ -43,6 +43,20 @@ function getSortFunction(order, sortProperty) {
   }
 }
 
+function max(...values: number[]) {
+  return values.reduce(
+    (acc, value) => (value && value > acc ? value : acc),
+    -Infinity
+  );
+}
+
+function min(...values: number[]) {
+  return values.reduce(
+    (acc, value) => (value && value < acc ? value : acc),
+    Infinity
+  );
+}
+
 let worker;
 
 export const useTornados = ({
@@ -58,6 +72,7 @@ export const useTornados = ({
 }) => {
   const debouncedFilter = useDebounce(filter, 200);
   const [filtering, setFiltering] = useState(false);
+  const [fitBounds, setFitBounds] = useState<Common.Bounds>();
   const [tornados, setTornados] = useState<TornadoEvent[] | null>();
   const { data, error, load, loading } = useAPI("/api/tornados");
 
@@ -75,7 +90,49 @@ export const useTornados = ({
         }
 
         try {
-          setTornados(JSON.parse(e.data));
+          const filteredTornados = JSON.parse(e.data);
+
+          if (filteredTornados.length === 0) {
+            setTornados([]);
+
+            return;
+          }
+
+          const fitBounds = filteredTornados.reduce(
+            (
+              [southWestBounds, northEastBounds],
+              { coordinates_end, coordinates_start }
+            ) => [
+              [
+                min(
+                  southWestBounds[0],
+                  coordinates_start[0],
+                  coordinates_end[0]
+                ),
+                min(
+                  southWestBounds[1],
+                  coordinates_start[1],
+                  coordinates_end[1]
+                )
+              ],
+              [
+                max(
+                  northEastBounds[0],
+                  coordinates_start[0],
+                  coordinates_end[0]
+                ),
+                max(
+                  northEastBounds[1],
+                  coordinates_start[1],
+                  coordinates_end[1]
+                )
+              ]
+            ],
+            [[], []]
+          );
+
+          setFitBounds(fitBounds);
+          setTornados(filteredTornados);
         } catch {
           setTornados(data);
         } finally {
@@ -120,24 +177,24 @@ export const useTornados = ({
 
     const filteredTornados = bounds
       ? data.filter(({ coordinates_end, coordinates_start, tracks }) => {
-          const [latBounds, lngBounds] = bounds;
+          const [southWestBounds, northEastBounds] = bounds;
 
           if (
-            coordinates_start[0] > latBounds[0] &&
-            coordinates_start[0] < latBounds[1] &&
-            coordinates_start[1] > lngBounds[0] &&
-            coordinates_start[1] < lngBounds[1]
+            coordinates_start[0] > southWestBounds[0] &&
+            coordinates_start[0] < northEastBounds[0] &&
+            coordinates_start[1] > southWestBounds[1] &&
+            coordinates_start[1] < northEastBounds[1]
           ) {
             return true;
           }
 
           if (
             coordinates_end[0] &&
-            coordinates_end[0] > latBounds[0] &&
-            coordinates_end[0] < latBounds[1] &&
+            coordinates_end[0] > southWestBounds[0] &&
+            coordinates_end[0] < northEastBounds[0] &&
             coordinates_end[1] &&
-            coordinates_end[1] > lngBounds[0] &&
-            coordinates_end[1] < lngBounds[1]
+            coordinates_end[1] > southWestBounds[1] &&
+            coordinates_end[1] < northEastBounds[1]
           ) {
             return true;
           }
@@ -148,10 +205,10 @@ export const useTornados = ({
 
           return tracks.some(
             coordinates =>
-              coordinates[0] > latBounds[0] &&
-              coordinates[0] < latBounds[1] &&
-              coordinates[1] > lngBounds[0] &&
-              coordinates[1] < lngBounds[1]
+              coordinates[0] > southWestBounds[0] &&
+              coordinates[0] < northEastBounds[0] &&
+              coordinates[1] > southWestBounds[1] &&
+              coordinates[1] < northEastBounds[1]
           );
         })
       : data;
@@ -166,6 +223,8 @@ export const useTornados = ({
 
   return {
     error,
+    filtering,
+    fitBounds,
     load,
     loading,
     tornados
