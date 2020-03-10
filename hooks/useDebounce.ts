@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useDebounce(value, delay: number) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+  const debouncedValue = useRef(value);
+  const [update, triggerUpdate] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setDebouncedValue(value);
+      debouncedValue.current = value;
+
+      triggerUpdate(!update);
     }, delay);
 
     return () => {
@@ -13,5 +16,5 @@ export function useDebounce(value, delay: number) {
     };
   }, [delay, value]);
 
-  return debouncedValue;
+  return debouncedValue.current;
 }
