@@ -23,47 +23,6 @@ function getFitBounds(filteredTornados: TornadoEvent[]): Common.Bounds {
   return fitBounds as Common.Bounds;
 }
 
-function getSortFunction(order, sortProperty) {
-  switch (sortProperty) {
-    case "date": {
-      return (a, b) =>
-        order === "asc"
-          ? a.date - b.date ||
-            a.fujita - b.fujita ||
-            a.province.localeCompare(b.province) ||
-            a.community.localeCompare(b.community)
-          : b.date - a.date ||
-            b.fujita - a.fujita ||
-            b.province.localeCompare(a.province) ||
-            b.community.localeCompare(a.community);
-    }
-    case "fujita": {
-      return (a, b) =>
-        order === "asc"
-          ? a.fujita - b.fujita ||
-            a.date - b.date ||
-            a.province.localeCompare(b.province) ||
-            a.community.localeCompare(b.community)
-          : b.fujita - a.fujita ||
-            b.date - a.date ||
-            b.province.localeCompare(a.province) ||
-            b.community.localeCompare(a.community);
-    }
-    case "location": {
-      return (a, b) =>
-        order === "asc"
-          ? a.province.localeCompare(b.province) ||
-            a.community.localeCompare(b.community) ||
-            a.date - b.date ||
-            a.fujita - b.fujita
-          : b.province.localeCompare(a.province) ||
-            b.community.localeCompare(a.community) ||
-            b.date - a.date ||
-            b.fujita - a.fujita;
-    }
-  }
-}
-
 function max(...values: any[]): number {
   return values.reduce(
     (acc, value) => (typeof value === "number" && value > acc ? value : acc),
@@ -80,17 +39,12 @@ function min(...values: any[]): number {
 
 let worker;
 
-export const useTornados = ({
-  bounds,
-  filter,
-  order,
-  sortProperty
-}: {
+type Props = {
   bounds?: Common.Bounds;
   filter: string;
-  order: Common.Order;
-  sortProperty: Common.SortProperty;
-}) => {
+};
+
+export const useTornados = ({ bounds, filter }: Props) => {
   const debouncedFilter = useDebounce(filter, 200);
   const [filtering, setFiltering] = useState(false);
   const [fitBounds, setFitBounds] = useState<Common.Bounds | undefined>();
@@ -147,7 +101,6 @@ export const useTornados = ({
 
   useEffect(() => {
     if (!debouncedFilter) {
-      // Sort sorts the elements of an array in place so we can safely assume data is already sorted
       setTornados(data);
 
       return;
@@ -208,13 +161,8 @@ export const useTornados = ({
         })
       : data;
 
-    const sortFunction = getSortFunction(order, sortProperty);
-
-    // Sort sorts the elements of an array in place so we have to shallow copy to trigger a change
-    const sortedTornados = [...filteredTornados.sort(sortFunction)];
-
-    setTornados(sortedTornados);
-  }, [bounds, order, sortProperty]);
+    setTornados(filteredTornados);
+  }, [bounds]);
 
   return {
     error,

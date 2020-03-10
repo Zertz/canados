@@ -10,15 +10,11 @@ const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 function Home() {
   const [bounds, setBounds] = useState<Common.Bounds>();
   const [filter, setFilter] = useState("");
-  const [order, setOrder] = useState<Common.Order>("asc");
-  const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
   const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
 
   const { error, filtering, fitBounds, load, loading, tornados } = useTornados({
     bounds,
-    filter,
-    order,
-    sortProperty
+    filter
   });
 
   useEffect(() => {
@@ -39,14 +35,6 @@ function Home() {
 
   const handleChangeFilter = e => {
     setFilter(e.target.value.trim());
-  };
-
-  const handleChangeOrder = e => {
-    setOrder(order === "asc" ? "desc" : "asc");
-  };
-
-  const handleChangeSort = e => {
-    setSortProperty(e.target.value);
   };
 
   const handleClick = (tornadoId: TornadoId) => () => {
@@ -74,10 +62,7 @@ function Home() {
           <TornadoEventList
             filter={filter}
             onChangeFilter={handleChangeFilter}
-            onChangeOrder={handleChangeOrder}
-            onChangeSort={handleChangeSort}
             onClick={handleClick}
-            order={order}
             selectedTornadoId={selectedTornado ? selectedTornado.id : undefined}
             tornados={tornados}
           />

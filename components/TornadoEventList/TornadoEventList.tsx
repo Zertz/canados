@@ -1,14 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSortedTornados } from "../../hooks/useSortedTornados";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
 
 type Props = {
   filter: string;
   onChangeFilter: (any) => void;
-  onChangeOrder: (any) => void;
-  onChangeSort: (any) => void;
   onClick: (tornadoId) => () => void;
-  order: string;
   selectedTornadoId?: TornadoId;
   tornados: Array<TornadoEvent>;
 };
@@ -16,13 +14,27 @@ type Props = {
 function TornadoEventList({
   filter,
   onChangeFilter,
-  onChangeOrder,
-  onChangeSort,
   onClick,
-  order,
   selectedTornadoId,
   tornados
 }: Props) {
+  const [order, setOrder] = useState<Common.Order>("asc");
+  const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
+
+  const sortedTornados = useSortedTornados({ order, sortProperty, tornados });
+
+  if (!sortedTornados) {
+    return <div>Sorting...</div>;
+  }
+
+  const handleChangeOrder = e => {
+    setOrder(order === "asc" ? "desc" : "asc");
+  };
+
+  const handleChangeSort = e => {
+    setSortProperty(e.target.value);
+  };
+
   return (
     <div className={styles.div}>
       <label className={styles.label}>
@@ -34,11 +46,11 @@ function TornadoEventList({
       </label>
       <ul className={styles.ul}>
         <li className={styles.li}>
-          <span>{`${tornados.length} tornados in this area`}</span>
+          <span>{`${sortedTornados.length} tornados in this area`}</span>
           <select
             className={styles.select}
             disabled={!!filter}
-            onChange={onChangeSort}
+            onChange={handleChangeSort}
           >
             <option value="date">Date</option>
             <option value="fujita">Fujita</option>
@@ -47,12 +59,12 @@ function TornadoEventList({
           <button
             className={styles.button}
             disabled={!!filter}
-            onClick={onChangeOrder}
+            onClick={handleChangeOrder}
           >
             {order}
           </button>
         </li>
-        {tornados.map(tornado => (
+        {sortedTornados.map(tornado => (
           <TornadoEventListItem
             key={tornado.id}
             onClick={onClick(tornado.id)}
