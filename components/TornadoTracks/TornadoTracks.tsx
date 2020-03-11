@@ -13,13 +13,13 @@ import {
   Popup,
   TileLayer
 } from "react-leaflet";
-import { useBoundedTornados } from "../../hooks/useBoundedTornados";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
   fitBounds?: Common.Bounds;
   onClick: (tornadoId: TornadoId) => void;
   selectedTornado?: TornadoEvent;
+  setBounds: (bounds: Common.Bounds) => void;
   tornados: TornadoEvent[];
 };
 
@@ -73,17 +73,12 @@ export default function TornadoTracks({
   fitBounds,
   onClick,
   selectedTornado,
+  setBounds,
   tornados
 }: Props) {
   const map = useRef<ReactLeaflet>();
 
-  const [center, setCenter] = useState<Common.Coordinates | undefined>();
-
-  const [bounds, setBounds] = useState<Common.Bounds>();
-
-  // Rename to useClusteredTornados?
-  const displayedTornados = useBoundedTornados({ bounds, tornados });
-  // List needs access to this count, either change the UI or set count in context?
+  const [center, setCenter] = useState<Common.Coordinates>();
 
   useEffect(() => {
     if (!fitBounds) {
@@ -132,7 +127,7 @@ export default function TornadoTracks({
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {displayedTornados.map(tornado => {
+        {tornados.map(tornado => {
           const start = getStart(tornado);
           const end = getEnd(tornado);
 

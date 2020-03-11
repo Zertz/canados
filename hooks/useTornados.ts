@@ -48,7 +48,7 @@ function weighTokenMatches(tokenMatches) {
 }
 
 export const useTornados = () => {
-  const [tornados, setTornados] = useState<TornadoEvent[] | undefined>();
+  const [tornados, setTornados] = useState<TornadoEvent[]>();
 
   const { data, error, load, loading } = useAPI("/api/tornados");
 

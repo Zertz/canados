@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
+import { useBoundedTornados } from "../../hooks/useBoundedTornados";
 import { useFitBounds } from "../../hooks/useFitBounds";
 import { useTornados } from "../../hooks/useTornados";
 import TornadoEventList from "../TornadoEventList";
@@ -9,9 +10,12 @@ import styles from "./Home.module.css";
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
 export default function Home() {
+  const [bounds, setBounds] = useState<Common.Bounds>();
   const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
   const { error, load, search, tornados } = useTornados();
   const fitBounds = useFitBounds({ tornados });
+
+  const boundedTornados = useBoundedTornados({ bounds, tornados });
 
   useEffect(() => {
     load();
@@ -22,11 +26,11 @@ export default function Home() {
   }
 
   const handleClick = (tornadoId: TornadoId) => () => {
-    if (!Array.isArray(tornados)) {
+    if (!Array.isArray(boundedTornados)) {
       return;
     }
 
-    const tornado = tornados.find(({ id }) => id === tornadoId);
+    const tornado = boundedTornados.find(({ id }) => id === tornadoId);
 
     setSelectedTornado(tornado);
   };
@@ -41,19 +45,20 @@ export default function Home() {
           rel="stylesheet"
         />
       </Head>
-      {Array.isArray(tornados) && (
+      {Array.isArray(boundedTornados) && (
         <>
           <TornadoEventList
             onClick={handleClick}
             search={search}
             selectedTornadoId={selectedTornado ? selectedTornado.id : undefined}
-            tornados={tornados}
+            tornados={boundedTornados}
           />
           <TornadoTracks
             fitBounds={fitBounds}
             onClick={handleClick}
             selectedTornado={selectedTornado}
-            tornados={tornados}
+            setBounds={setBounds}
+            tornados={boundedTornados}
           />
         </>
       )}

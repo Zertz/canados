@@ -40,7 +40,7 @@ type Props = {
 };
 
 export const useFitBounds = ({ tornados }: Props) => {
-  const [fitBounds, setFitBounds] = useState<Common.Bounds | undefined>();
+  const [fitBounds, setFitBounds] = useState<Common.Bounds>();
 
   useEffect(() => {
     if (!Array.isArray(tornados) || tornados.length === 0) {
