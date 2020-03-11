@@ -4,7 +4,7 @@ type TornadoEvent = {
   id: TornadoId;
   coordinates_start: Common.Coordinates;
   coordinates_end: [number?, number?];
-  date: ?Date;
+  date?: Date;
   community: string;
   province: string;
   fujita: number;
@@ -21,8 +21,8 @@ type TornadoEvent = {
 };
 
 declare module Common {
-  type Bounds = [Coordinates, Coordinates]
-  type Coordinates = [number, number]
+  type Bounds = [Coordinates, Coordinates];
+  type Coordinates = [number, number];
   type Order = "asc" | "desc";
-  type SortProperty = "date" | "fujita" | "location"
+  type SortProperty = "date" | "fujita" | "location";
 }

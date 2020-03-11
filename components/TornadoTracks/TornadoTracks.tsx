@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 import {
   CircleMarker,
   Map,
@@ -7,14 +13,11 @@ import {
   Popup,
   TileLayer
 } from "react-leaflet";
-import { useThrottle } from "../../hooks/useThrottle";
-import { shuffle } from "../../utils/shuffle";
+import { useBoundedTornados } from "../../hooks/useBoundedTornados";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
-  filter: string;
   fitBounds?: Common.Bounds;
-  onChangeBounds: (bounds: Common.Bounds) => void;
   onClick: (tornadoId: TornadoId) => void;
   selectedTornado?: TornadoEvent;
   tornados: TornadoEvent[];
@@ -55,7 +58,10 @@ type LatLng = {
 };
 
 type Leaflet = {
-  fitBounds: (bounds: Common.Bounds) => void;
+  fitBounds: (
+    bounds: Common.Bounds,
+    { padding }: { padding: [number, number] }
+  ) => void;
   getBounds: () => { _southWest: LatLng; _northEast: LatLng };
 };
 
@@ -63,10 +69,8 @@ type ReactLeaflet = {
   leafletElement: Leaflet;
 };
 
-function TornadoTracks({
-  filter,
+export default function TornadoTracks({
   fitBounds,
-  onChangeBounds,
   onClick,
   selectedTornado,
   tornados
@@ -75,9 +79,11 @@ function TornadoTracks({
 
   const [center, setCenter] = useState<Common.Coordinates | undefined>();
 
-  const [displayedTornados, setDisplayedTornados] = useState<TornadoEvent[]>(
-    []
-  );
+  const [bounds, setBounds] = useState<Common.Bounds>();
+
+  // Rename to useClusteredTornados?
+  const displayedTornados = useBoundedTornados({ bounds, tornados });
+  // List needs access to this count, either change the UI or set count in context?
 
   useEffect(() => {
     if (!fitBounds) {
@@ -88,7 +94,7 @@ function TornadoTracks({
       return;
     }
 
-    map.current.leafletElement.fitBounds(fitBounds);
+    map.current.leafletElement.fitBounds(fitBounds, { padding: [25, 25] });
   }, [fitBounds]);
 
   useEffect(() => {
@@ -99,47 +105,27 @@ function TornadoTracks({
     setCenter(getCenter(selectedTornado));
   }, [selectedTornado]);
 
-  useEffect(() => {
-    if (!Array.isArray(tornados)) {
-      setDisplayedTornados([]);
-
-      return;
-    }
-
-    if (tornados.length > 100) {
-      setDisplayedTornados(shuffle(tornados, 100));
-
-      return;
-    }
-
-    setDisplayedTornados(tornados);
-  }, [tornados]);
-
-  const handleMoveEnd = () => {
-    if (filter) {
-      return;
-    }
-
+  const handleMoveEnd = useCallback(() => {
     if (!map.current) {
       return;
     }
 
     const bounds = map.current.leafletElement.getBounds();
 
-    onChangeBounds([
+    setBounds([
       [bounds._southWest.lat, bounds._southWest.lng],
       [bounds._northEast.lat, bounds._northEast.lng]
     ]);
-  };
-
-  const throttledHandleMoveEnd = useThrottle(handleMoveEnd, 200);
+  }, []);
 
   return (
     <div className={styles.div}>
       <Map
         className={styles.map}
         center={center}
-        onMoveEnd={throttledHandleMoveEnd}
+        // onDragEnd={handleMoveEnd}
+        onMoveEnd={handleMoveEnd}
+        // onZoomEnd={handleMoveEnd}
         ref={map}
       >
         <TileLayer
@@ -187,5 +173,3 @@ function TornadoTracks({
     </div>
   );
 }
-
-export default TornadoTracks;

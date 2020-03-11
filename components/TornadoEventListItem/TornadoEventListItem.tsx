@@ -3,15 +3,23 @@ import React, { useLayoutEffect, useRef } from "react";
 import styles from "./TornadoEventListItem.module.css";
 
 type Props = {
-  onClick: (any) => void;
+  community: string;
+  date?: Date;
+  fujita: number;
+  length_m?: number;
+  onClick: () => void;
+  province: string;
   selected: boolean;
-  tornado: TornadoEvent;
 };
 
 const TornadoEventListItem = React.memo(function TornadoEventListItem({
+  community,
+  date,
+  fujita,
+  length_m,
   onClick,
-  selected,
-  tornado: { community, date, fujita, length_m, province }
+  province,
+  selected
 }: Props) {
   const listItem = useRef<HTMLLIElement>(null);
 

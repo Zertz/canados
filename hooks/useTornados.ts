@@ -1,175 +1,125 @@
 import { useEffect, useState } from "react";
 import { useAPI } from "./useAPI";
-import { useDebounce } from "./useDebounce";
 
-function getFitBounds(filteredTornados: TornadoEvent[]): Common.Bounds {
-  const fitBounds = filteredTornados.reduce(
-    (
-      [southWestBounds, northEastBounds],
-      { coordinates_end, coordinates_start }
-    ) => [
-      [
-        min(southWestBounds[0], coordinates_start[0], coordinates_end[0]),
-        min(southWestBounds[1], coordinates_start[1], coordinates_end[1])
-      ],
-      [
-        max(northEastBounds[0], coordinates_start[0], coordinates_end[0]),
-        max(northEastBounds[1], coordinates_start[1], coordinates_end[1])
-      ]
-    ],
-    [[], []]
-  );
+function tokenizeString(input: string) {
+  const values = input
+    .toLocaleLowerCase()
+    .split(/\s/)
+    .map(v => v.trim())
+    .filter(Boolean);
 
-  return fitBounds as Common.Bounds;
+  const tokens = new Set<string>();
+
+  for (let i = 0; i < values.length; i += 1) {
+    const value = values[i];
+
+    for (let j = 0; j < value.length; j += 1) {
+      for (let k = 0; k < value.length - j - 1; k += 1) {
+        tokens.add(value.slice(j, value.length - k));
+      }
+    }
+  }
+
+  return [...tokens].sort((a, b) => b.length - a.length || a.localeCompare(b));
 }
 
-function max(...values: any[]): number {
-  return values.reduce(
-    (acc, value) => (typeof value === "number" && value > acc ? value : acc),
-    -Infinity
+function searchStringWithTokens(input: string, tokens: string[]) {
+  let value = input.toLocaleLowerCase();
+
+  return tokens
+    .map(token => {
+      const split = value.split(token);
+
+      value = split
+        .filter(v => v !== token)
+        .join("")
+        .trim();
+
+      return [token, Math.floor(split.length - 1)];
+    })
+    .filter(([, value]) => value > 0);
+}
+
+function weighTokenMatches(tokenMatches) {
+  return tokenMatches.reduce(
+    (acc, [token, value]) => (acc += token.length ** token.length * value),
+    0
   );
 }
 
-function min(...values: any[]): number {
-  return values.reduce(
-    (acc, value) => (typeof value === "number" && value < acc ? value : acc),
-    Infinity
-  );
-}
-
-let worker;
-
-type Props = {
-  bounds?: Common.Bounds;
-  filter: string;
-};
-
-export const useTornados = ({ bounds, filter }: Props) => {
-  const debouncedFilter = useDebounce(filter, 200);
-  const [filtering, setFiltering] = useState(false);
-  const [fitBounds, setFitBounds] = useState<Common.Bounds | undefined>();
+export const useTornados = () => {
   const [tornados, setTornados] = useState<TornadoEvent[] | undefined>();
+
   const { data, error, load, loading } = useAPI("/api/tornados");
 
   useEffect(() => {
+    setTornados(data);
+  }, [data]);
+
+  const search = filter => {
     if (!data) {
       return;
     }
 
-    if (!worker) {
-      worker = new Worker("filter.worker.js");
-
-      worker.onmessage = e => {
-        if (!e.isTrusted) {
-          return;
-        }
-
-        try {
-          const filteredTornados = JSON.parse(e.data);
-
-          if (filteredTornados.length === 0) {
-            setTornados([]);
-
-            return;
-          }
-
-          const fitBounds = getFitBounds(filteredTornados);
-
-          setFitBounds(fitBounds);
-          setTornados(filteredTornados);
-        } catch {
-          setTornados(data);
-        } finally {
-          setFiltering(false);
-        }
-      };
-    }
-
-    worker.postMessage(
-      JSON.stringify({ action: "store", payload: { data, type: "tornados" } })
-    );
-
-    const fitBounds = getFitBounds(data);
-
-    setFitBounds(fitBounds);
-    setTornados(data);
-
-    return () => {
-      worker.terminate();
-    };
-  }, [data]);
-
-  useEffect(() => {
-    if (!debouncedFilter) {
+    if (!filter) {
       setTornados(data);
 
       return;
     }
 
-    setFiltering(true);
+    const tokens = tokenizeString(filter);
 
-    worker.postMessage(
-      JSON.stringify({
-        action: "filter",
-        payload: { filter: debouncedFilter, type: "tornados" }
-      })
+    const entriesMatches = data
+      .reduce((acc, { id, ...tornado }) => {
+        const matchWeights = Object.values(tornado)
+          .map(value => {
+            if (!value) {
+              return 0;
+            }
+
+            if (
+              typeof value !== "string" &&
+              typeof value.toString !== "function"
+            ) {
+              return 0;
+            }
+
+            const tokenMatches = searchStringWithTokens(
+              value.toString(),
+              tokens
+            );
+
+            return weighTokenMatches(tokenMatches);
+          })
+          .filter(weight => weight > 0);
+
+        if (matchWeights.length === 0) {
+          return acc;
+        }
+
+        return [
+          ...acc,
+          [id, matchWeights.reduce((acc, weight) => (acc += weight), 0)]
+        ];
+      }, [])
+      .sort(([, a], [, b]) => b - a)
+      .filter((value, i, arr) => arr[i][1] >= arr[0][1] * 0.125);
+
+    const matches = Object.fromEntries(entriesMatches);
+    const matchKeys = Object.keys(matches);
+
+    setTornados(
+      data
+        .filter(({ id }) => matches[id])
+        .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id))
     );
-  }, [debouncedFilter]);
-
-  useEffect(() => {
-    if (!data) {
-      setTornados(undefined);
-
-      return;
-    }
-
-    const filteredTornados = bounds
-      ? data.filter(({ coordinates_end, coordinates_start, tracks }) => {
-          const [southWestBounds, northEastBounds] = bounds;
-
-          if (
-            coordinates_start[0] > southWestBounds[0] &&
-            coordinates_start[0] < northEastBounds[0] &&
-            coordinates_start[1] > southWestBounds[1] &&
-            coordinates_start[1] < northEastBounds[1]
-          ) {
-            return true;
-          }
-
-          if (
-            coordinates_end[0] &&
-            coordinates_end[0] > southWestBounds[0] &&
-            coordinates_end[0] < northEastBounds[0] &&
-            coordinates_end[1] &&
-            coordinates_end[1] > southWestBounds[1] &&
-            coordinates_end[1] < northEastBounds[1]
-          ) {
-            return true;
-          }
-
-          if (!Array.isArray(tracks)) {
-            return false;
-          }
-
-          return tracks.some(
-            coordinates =>
-              coordinates[0] > southWestBounds[0] &&
-              coordinates[0] < northEastBounds[0] &&
-              coordinates[1] > southWestBounds[1] &&
-              coordinates[1] < northEastBounds[1]
-          );
-        })
-      : data;
-
-    setTornados(filteredTornados);
-  }, [bounds]);
+  };
 
   return {
     error,
-    filtering,
-    fitBounds,
     load,
     loading,
+    search,
     tornados
   };
 };

@@ -1,41 +1,25 @@
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
+import { useFitBounds } from "../../hooks/useFitBounds";
 import { useTornados } from "../../hooks/useTornados";
 import TornadoEventList from "../TornadoEventList";
 import styles from "./Home.module.css";
 
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
-function Home() {
-  const [bounds, setBounds] = useState<Common.Bounds>();
-  const [filter, setFilter] = useState("");
+export default function Home() {
   const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
-
-  const { error, filtering, fitBounds, load, loading, tornados } = useTornados({
-    bounds,
-    filter
-  });
+  const { error, load, search, tornados } = useTornados();
+  const fitBounds = useFitBounds({ tornados });
 
   useEffect(() => {
     load();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   if (error) {
     return <div>Aw, snap.</div>;
   }
-
-  const handleChangeBounds = (bounds: Common.Bounds) => {
-    setBounds(bounds);
-  };
-
-  const handleChangeFilter = e => {
-    setFilter(e.target.value.trim());
-  };
 
   const handleClick = (tornadoId: TornadoId) => () => {
     if (!Array.isArray(tornados)) {
@@ -60,16 +44,13 @@ function Home() {
       {Array.isArray(tornados) && (
         <>
           <TornadoEventList
-            filter={filter}
-            onChangeFilter={handleChangeFilter}
             onClick={handleClick}
+            search={search}
             selectedTornadoId={selectedTornado ? selectedTornado.id : undefined}
             tornados={tornados}
           />
           <TornadoTracks
-            filter={filter}
             fitBounds={fitBounds}
-            onChangeBounds={handleChangeBounds}
             onClick={handleClick}
             selectedTornado={selectedTornado}
             tornados={tornados}
@@ -79,5 +60,3 @@ function Home() {
     </div>
   );
 }
-
-export default Home;

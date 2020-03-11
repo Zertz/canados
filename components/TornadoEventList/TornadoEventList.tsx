@@ -1,31 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSortedTornados } from "../../hooks/useSortedTornados";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
 
 type Props = {
-  filter: string;
-  onChangeFilter: (any) => void;
-  onClick: (tornadoId) => () => void;
+  onClick: (tornadoId: TornadoId) => () => void;
+  search: (string) => void;
   selectedTornadoId?: TornadoId;
   tornados: Array<TornadoEvent>;
 };
 
-function TornadoEventList({
-  filter,
-  onChangeFilter,
+export default function TornadoEventList({
   onClick,
+  search,
   selectedTornadoId,
   tornados
 }: Props) {
+  const [filter, setFilter] = useState("");
   const [order, setOrder] = useState<Common.Order>("asc");
   const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
 
-  const sortedTornados = useSortedTornados({ order, sortProperty, tornados });
+  const sortedTornados = useSortedTornados({
+    filter,
+    order,
+    sortProperty,
+    tornados
+  });
 
-  if (!sortedTornados) {
-    return <div>Sorting...</div>;
-  }
+  useEffect(() => {
+    if (filter) {
+      return;
+    }
+
+    search("");
+  }, [filter]);
+
+  const handleChangeFilter = e => {
+    setFilter(e.target.value.trim());
+  };
 
   const handleChangeOrder = e => {
     setOrder(order === "asc" ? "desc" : "asc");
@@ -35,18 +47,27 @@ function TornadoEventList({
     setSortProperty(e.target.value);
   };
 
+  const handleSubmit = e => {
+    e.preventDefault();
+
+    search(filter);
+  };
+
   return (
     <div className={styles.div}>
-      <label className={styles.label}>
-        <input
-          className={styles.input}
-          onChange={onChangeFilter}
-          type="search"
-        />
-      </label>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <label className={styles.label}>
+          <input
+            className={styles.input}
+            onChange={handleChangeFilter}
+            type="search"
+          />
+        </label>
+        <button type="submit">Search</button>
+      </form>
       <ul className={styles.ul}>
         <li className={styles.li}>
-          <span>{`${sortedTornados.length} tornados in this area`}</span>
+          <span>{`${tornados.length} tornados in this area`}</span>
           <select
             className={styles.select}
             disabled={!!filter}
@@ -64,17 +85,20 @@ function TornadoEventList({
             {order}
           </button>
         </li>
-        {sortedTornados.map(tornado => (
-          <TornadoEventListItem
-            key={tornado.id}
-            onClick={onClick(tornado.id)}
-            selected={selectedTornadoId === tornado.id}
-            tornado={tornado}
-          />
-        ))}
+        {Array.isArray(sortedTornados) &&
+          sortedTornados.map(tornado => (
+            <TornadoEventListItem
+              key={tornado.id}
+              community={tornado.community}
+              date={tornado.date}
+              fujita={tornado.fujita}
+              length_m={tornado.length_m}
+              onClick={onClick(tornado.id)}
+              province={tornado.province}
+              selected={selectedTornadoId === tornado.id}
+            />
+          ))}
       </ul>
     </div>
   );
 }
-
-export default TornadoEventList;
