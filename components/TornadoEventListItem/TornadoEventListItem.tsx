@@ -12,7 +12,7 @@ type Props = {
   selected: boolean;
 };
 
-const TornadoEventListItem = React.memo(function TornadoEventListItem({
+const TornadoEventListItem = function TornadoEventListItem({
   community,
   date,
   fujita,
@@ -51,6 +51,6 @@ const TornadoEventListItem = React.memo(function TornadoEventListItem({
       {date && <p className={styles.date}>{date.toLocaleString()}</p>}
     </li>
   );
-});
+};
 
 export default TornadoEventListItem;

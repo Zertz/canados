@@ -3,19 +3,45 @@ import { useSortedTornados } from "../../hooks/useSortedTornados";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
 
-type Props = {
+type TornadoEventListItemsProps = {
   onClick: (tornadoId: TornadoId) => () => void;
-  search: (string) => void;
   selectedTornadoId?: TornadoId;
   tornados: Array<TornadoEvent>;
 };
+
+type TornadoEventListProps = TornadoEventListItemsProps & {
+  search: (string) => void;
+};
+
+const TornadoEventListItems = React.memo(function TornadoEventListItems({
+  onClick,
+  selectedTornadoId,
+  tornados
+}: TornadoEventListItemsProps) {
+  return (
+    <>
+      {tornados.map(tornado => (
+        <TornadoEventListItem
+          key={tornado.id}
+          community={tornado.community}
+          date={tornado.date}
+          fujita={tornado.fujita}
+          length_m={tornado.length_m}
+          onClick={onClick(tornado.id)}
+          province={tornado.province}
+          selected={selectedTornadoId === tornado.id}
+        />
+      ))}
+    </>
+  );
+});
 
 export default function TornadoEventList({
   onClick,
   search,
   selectedTornadoId,
   tornados
-}: Props) {
+}: TornadoEventListProps) {
   const [filter, setFilter] = useState("");
   const [order, setOrder] = useState<Common.Order>("asc");
   const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
@@ -85,19 +111,13 @@ export default function TornadoEventList({
             {order}
           </button>
         </li>
-        {Array.isArray(sortedTornados) &&
-          sortedTornados.map(tornado => (
-            <TornadoEventListItem
-              key={tornado.id}
-              community={tornado.community}
-              date={tornado.date}
-              fujita={tornado.fujita}
-              length_m={tornado.length_m}
-              onClick={onClick(tornado.id)}
-              province={tornado.province}
-              selected={selectedTornadoId === tornado.id}
-            />
-          ))}
+        {Array.isArray(sortedTornados) && (
+          <TornadoEventListItems
+            onClick={onClick}
+            selectedTornadoId={selectedTornadoId}
+            tornados={sortedTornados}
+          />
+        )}
       </ul>
     </div>
   );
