@@ -14,12 +14,13 @@ import {
   TileLayer
 } from "react-leaflet";
 import styles from "./TornadoTracks.module.css";
+import { useClusteredTornados } from "../../hooks/useClusteredTornados";
 
 type Props = {
   fitBounds?: Common.Bounds;
   onClick: (tornadoId: TornadoId) => void;
   selectedTornado?: TornadoEvent;
-  setBounds: (bounds: Common.Bounds) => void;
+  setScreenBounds: (bounds: Common.Bounds) => void;
   tornados: TornadoEvent[];
 };
 
@@ -73,12 +74,13 @@ export default function TornadoTracks({
   fitBounds,
   onClick,
   selectedTornado,
-  setBounds,
+  setScreenBounds,
   tornados
 }: Props) {
   const map = useRef<ReactLeaflet>();
 
   const [center, setCenter] = useState<Common.Coordinates>();
+  const clusteredTornados = useClusteredTornados({ tornados });
 
   useEffect(() => {
     if (!fitBounds) {
@@ -107,7 +109,7 @@ export default function TornadoTracks({
 
     const bounds = map.current.leafletElement.getBounds();
 
-    setBounds([
+    setScreenBounds([
       [bounds._southWest.lat, bounds._southWest.lng],
       [bounds._northEast.lat, bounds._northEast.lng]
     ]);
@@ -127,43 +129,44 @@ export default function TornadoTracks({
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {tornados.map(tornado => {
-          const start = getStart(tornado);
-          const end = getEnd(tornado);
+        {Array.isArray(clusteredTornados) &&
+          clusteredTornados.map(tornado => {
+            const start = getStart(tornado);
+            const end = getEnd(tornado);
 
-          const selected = selectedTornado
-            ? selectedTornado.id === tornado.id
-            : false;
+            const selected = selectedTornado
+              ? selectedTornado.id === tornado.id
+              : false;
 
-          return (
-            <Fragment key={tornado.id}>
-              {selected && (
-                <CircleMarker center={start} color="tomato" radius={10} />
-              )}
-              <Marker onClick={onClick(tornado.id)} position={start}>
-                <Popup>{`${end ? "Start: " : ""}${tornado.community}, ${
-                  tornado.province
-                } (F${tornado.fujita})`}</Popup>
-              </Marker>
-              {Array.isArray(tornado.tracks) && (
-                <Polyline
-                  color={selected ? "tomato" : "lime"}
-                  positions={tornado.tracks}
-                />
-              )}
-              {end && (
-                <>
-                  {selected && (
-                    <CircleMarker center={end} color="tomato" radius={10} />
-                  )}
-                  <Marker onClick={onClick(tornado.id)} position={end}>
-                    <Popup>{`Finish: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Popup>
-                  </Marker>
-                </>
-              )}
-            </Fragment>
-          );
-        })}
+            return (
+              <Fragment key={tornado.id}>
+                {selected && (
+                  <CircleMarker center={start} color="tomato" radius={10} />
+                )}
+                <Marker onClick={onClick(tornado.id)} position={start}>
+                  <Popup>{`${end ? "Start: " : ""}${tornado.community}, ${
+                    tornado.province
+                  } (F${tornado.fujita})`}</Popup>
+                </Marker>
+                {Array.isArray(tornado.tracks) && (
+                  <Polyline
+                    color={selected ? "tomato" : "lime"}
+                    positions={tornado.tracks}
+                  />
+                )}
+                {end && (
+                  <>
+                    {selected && (
+                      <CircleMarker center={end} color="tomato" radius={10} />
+                    )}
+                    <Marker onClick={onClick(tornado.id)} position={end}>
+                      <Popup>{`Finish: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Popup>
+                    </Marker>
+                  </>
+                )}
+              </Fragment>
+            );
+          })}
       </Map>
     </div>
   );

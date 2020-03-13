@@ -8,6 +8,7 @@ type TornadoEvent = {
   community: string;
   province: string;
   fujita: number;
+  geohash: string;
   length_m?: number;
   motion_deg?: number;
   width_max?: number;
@@ -18,6 +19,10 @@ type TornadoEvent = {
   dmg_thous?: number;
   forecast_r: number;
   tracks: Common.Coordinates[];
+};
+
+type ClusteredTornadoEvent = TornadoEvent & {
+  cluster: number;
 };
 
 declare module Common {

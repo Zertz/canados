@@ -10,12 +10,16 @@ import styles from "./Home.module.css";
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
 export default function Home() {
-  const [bounds, setBounds] = useState<Common.Bounds>();
+  const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
   const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
   const { error, load, search, tornados } = useTornados();
+
   const fitBounds = useFitBounds({ tornados });
 
-  const boundedTornados = useBoundedTornados({ bounds, tornados });
+  const boundedTornados = useBoundedTornados({
+    bounds: screenBounds || fitBounds,
+    tornados
+  });
 
   useEffect(() => {
     load();
@@ -26,11 +30,11 @@ export default function Home() {
   }
 
   const handleClick = (tornadoId: TornadoId) => () => {
-    if (!Array.isArray(boundedTornados)) {
+    if (!Array.isArray(tornados)) {
       return;
     }
 
-    const tornado = boundedTornados.find(({ id }) => id === tornadoId);
+    const tornado = tornados.find(({ id }) => id === tornadoId);
 
     setSelectedTornado(tornado);
   };
@@ -57,7 +61,7 @@ export default function Home() {
             fitBounds={fitBounds}
             onClick={handleClick}
             selectedTornado={selectedTornado}
-            setBounds={setBounds}
+            setScreenBounds={setScreenBounds}
             tornados={boundedTornados}
           />
         </>

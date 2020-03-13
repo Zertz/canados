@@ -1,4 +1,5 @@
 import got from "got";
+import geohash from "ngeohash";
 import { generateTornadoId } from "../../utils/generateTornadoId";
 import { parseTornadoDate } from "../../utils/parseTornadoDate";
 
@@ -110,16 +111,25 @@ export default async (req, res) => {
         }
       )
       .map(generateTornadoId)
-      .map(tornado => ({
-        ...tornado,
-        coordinates_start: Array.isArray(tracks[tornado.id])
+      .map(tornado => {
+        const coordinates_start = Array.isArray(tracks[tornado.id])
           ? tracks[tornado.id][0]
-          : tornado.coordinates_start,
-        coordinates_end: Array.isArray(tracks[tornado.id])
-          ? tracks[tornado.id][tracks[tornado.id].length - 1]
-          : tornado.coordinates_end,
-        tracks: tracks[tornado.id]
-      }));
+          : tornado.coordinates_start;
+
+        return {
+          ...tornado,
+          coordinates_start,
+          coordinates_end: Array.isArray(tracks[tornado.id])
+            ? tracks[tornado.id][tracks[tornado.id].length - 1]
+            : tornado.coordinates_end,
+          geohash: geohash.encode(
+            coordinates_start[0],
+            coordinates_start[1],
+            10
+          ),
+          tracks: tracks[tornado.id]
+        };
+      });
 
     res.statusCode = 200;
     res.setHeader("Cache-Control", "public, max-age=31536000");

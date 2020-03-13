@@ -10,7 +10,7 @@ export const useBoundedTornados = ({ bounds, tornados }: Props) => {
   const [boundedTornados, setBoundedTornados] = useState<TornadoEvent[]>();
 
   useEffect(() => {
-    if (!tornados) {
+    if (!bounds || !tornados) {
       setBoundedTornados(undefined);
 
       return;

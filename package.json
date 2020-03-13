@@ -17,6 +17,7 @@
     "ky": "^0.17.0",
     "leaflet": "^1.6.0",
     "next": "^9.2.1",
+    "ngeohash": "^0.6.3",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-leaflet": "^2.6.1"
