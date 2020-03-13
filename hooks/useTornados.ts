@@ -103,7 +103,7 @@ export const useTornados = () => {
         ];
       }, [])
       .sort(([, a], [, b]) => b - a)
-      .filter((value, i, arr) => arr[i][1] >= arr[0][1] * 0.125);
+      .filter((value, i, arr) => arr[i][1] >= arr[0][1] * 0.05);
 
     const matches = Object.fromEntries(entriesMatches);
     const matchKeys = Object.keys(matches);
