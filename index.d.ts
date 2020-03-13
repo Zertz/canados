@@ -29,5 +29,5 @@ declare module Common {
   type Bounds = [Coordinates, Coordinates];
   type Coordinates = [number, number];
   type Order = "asc" | "desc";
-  type SortProperty = "date" | "fujita" | "location";
+  type SortProperty = "date" | "distance" | "fujita" | "location";
 }

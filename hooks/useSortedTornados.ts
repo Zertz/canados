@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
-function getSortFunction(order, sortProperty) {
+function getSortFunction(
+  order: "asc" | "desc",
+  sortProperty: Common.SortProperty
+) {
   switch (sortProperty) {
     case "date": {
       return (a, b) =>
@@ -13,6 +16,21 @@ function getSortFunction(order, sortProperty) {
             b.fujita - a.fujita ||
             b.province.localeCompare(a.province) ||
             b.community.localeCompare(a.community);
+    }
+    case "distance": {
+      return (a, b) => {
+        if (typeof a.length_m !== "number") {
+          return 1;
+        }
+
+        if (typeof b.length_m !== "number") {
+          return -1;
+        }
+
+        return order === "asc"
+          ? a.length_m - b.length_m
+          : b.length_m - a.length_m;
+      };
     }
     case "fujita": {
       return (a, b) =>
@@ -65,7 +83,7 @@ export const useSortedTornados = ({
 
     const sortFunction = getSortFunction(order, sortProperty);
 
-    // Sort sorts the elements of an array in place so we have to shallow copy to trigger a change
+    // Sort sorts the elements of an array in place so we have to shallow copy to trigger a state change
     setSortedTornados([...tornados.sort(sortFunction)]);
   }, [filter, order, sortProperty, tornados]);
 

@@ -100,6 +100,7 @@ export default function TornadoEventList({
             onChange={handleChangeSort}
           >
             <option value="date">Date</option>
+            <option value="distance">Distance</option>
             <option value="fujita">Fujita</option>
             <option value="location">Location</option>
           </select>
