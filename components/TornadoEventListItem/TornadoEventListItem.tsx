@@ -44,8 +44,14 @@ const TornadoEventListItem = function TornadoEventListItem({
       ref={listItem}
     >
       <p className={styles.location}>
-        <span>{`${community}, ${province}`}</span>
-        {length_m && <span>{`${(length_m / 1000).toFixed(1)}km`}</span>}
+        <span
+          className={styles.locationName}
+        >{`${community}, ${province}`}</span>
+        {length_m && (
+          <span className={styles.locationLength}>{`${(length_m / 1000).toFixed(
+            1
+          )}km`}</span>
+        )}
       </p>
       <p className={styles.fujita}>{`F${fujita}`}</p>
       {date && <p className={styles.date}>{date.toLocaleString()}</p>}
