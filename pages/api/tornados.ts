@@ -1,4 +1,5 @@
 import got from "got";
+import haversine from "fast-haversine";
 import geohash from "ngeohash";
 import { generateTornadoId } from "../../utils/generateTornadoId";
 import { parseTornadoDate } from "../../utils/parseTornadoDate";
@@ -116,17 +117,30 @@ export default async (req, res) => {
           ? tracks[tornado.id][0]
           : tornado.coordinates_start;
 
+        const coordinates_end = Array.isArray(tracks[tornado.id])
+          ? tracks[tornado.id][tracks[tornado.id].length - 1]
+          : tornado.coordinates_end;
+
+        const length_m = tornado.length_m
+          ? tornado.length_m
+          : typeof coordinates_end[0] === "number" &&
+            typeof coordinates_end[1] === "number"
+          ? haversine(
+              { lat: coordinates_start[0], lon: coordinates_start[1] },
+              { lat: coordinates_end[0], lon: coordinates_end[1] }
+            )
+          : undefined;
+
         return {
           ...tornado,
           coordinates_start,
-          coordinates_end: Array.isArray(tracks[tornado.id])
-            ? tracks[tornado.id][tracks[tornado.id].length - 1]
-            : tornado.coordinates_end,
+          coordinates_end,
           geohash: geohash.encode(
             coordinates_start[0],
             coordinates_start[1],
             10
           ),
+          length_m,
           tracks: tracks[tornado.id]
         };
       });
