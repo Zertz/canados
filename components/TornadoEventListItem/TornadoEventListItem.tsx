@@ -50,7 +50,7 @@ const TornadoEventListItem = function TornadoEventListItem({
         {length_m && (
           <span className={styles.locationLength}>{`${(length_m / 1000).toFixed(
             1
-          )}km`}</span>
+          )} km`}</span>
         )}
       </p>
       <p className={styles.fujita}>{`F${fujita}`}</p>
