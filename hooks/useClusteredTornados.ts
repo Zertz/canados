@@ -10,7 +10,7 @@ export const useClusteredTornados = ({ tornados }: Props) => {
   >();
 
   useEffect(() => {
-    if (tornados.length <= 500) {
+    if (tornados.length <= 350) {
       setClusteredTornados(
         tornados.map(tornado => ({
           ...tornado,
@@ -42,7 +42,7 @@ export const useClusteredTornados = ({ tornados }: Props) => {
           ...acc,
           {
             ...tornado,
-            cluster: 0
+            cluster: 1
           }
         ];
       }, [])

@@ -11,7 +11,7 @@ const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
 export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
-  const [selectedTornado, setSelectedTornado] = useState<TornadoEvent>();
+  const [selectedTornadoId, setSelectedTornadoId] = useState<TornadoId>();
   const { error, load, search, tornados } = useTornados();
 
   const fitBounds = useFitBounds({ tornados });
@@ -30,13 +30,7 @@ export default function Home() {
   }
 
   const handleClick = (tornadoId: TornadoId) => () => {
-    if (!Array.isArray(tornados)) {
-      return;
-    }
-
-    const tornado = tornados.find(({ id }) => id === tornadoId);
-
-    setSelectedTornado(tornado);
+    setSelectedTornadoId(tornadoId);
   };
 
   return (
@@ -54,13 +48,13 @@ export default function Home() {
           <TornadoEventList
             onClick={handleClick}
             search={search}
-            selectedTornadoId={selectedTornado ? selectedTornado.id : undefined}
+            selectedTornadoId={selectedTornadoId}
             tornados={boundedTornados}
           />
           <TornadoTracks
             fitBounds={fitBounds}
             onClick={handleClick}
-            selectedTornado={selectedTornado}
+            selectedTornadoId={selectedTornadoId}
             setScreenBounds={setScreenBounds}
             tornados={boundedTornados}
           />

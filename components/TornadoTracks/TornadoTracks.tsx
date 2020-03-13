@@ -10,16 +10,16 @@ import {
   Map,
   Marker,
   Polyline,
-  Popup,
-  TileLayer
+  TileLayer,
+  Tooltip
 } from "react-leaflet";
-import styles from "./TornadoTracks.module.css";
 import { useClusteredTornados } from "../../hooks/useClusteredTornados";
+import styles from "./TornadoTracks.module.css";
 
 type Props = {
   fitBounds?: Common.Bounds;
   onClick: (tornadoId: TornadoId) => void;
-  selectedTornado?: TornadoEvent;
+  selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
   tornados: TornadoEvent[];
 };
@@ -73,7 +73,7 @@ type ReactLeaflet = {
 export default function TornadoTracks({
   fitBounds,
   onClick,
-  selectedTornado,
+  selectedTornadoId,
   setScreenBounds,
   tornados
 }: Props) {
@@ -95,12 +95,18 @@ export default function TornadoTracks({
   }, [fitBounds]);
 
   useEffect(() => {
-    if (!selectedTornado) {
+    if (!selectedTornadoId) {
       return;
     }
 
-    setCenter(getCenter(selectedTornado));
-  }, [selectedTornado]);
+    const tornado = tornados.find(({ id }) => id === selectedTornadoId);
+
+    if (!tornado) {
+      return;
+    }
+
+    setCenter(getCenter(tornado));
+  }, [selectedTornadoId]);
 
   const handleMoveEnd = useCallback(() => {
     if (!map.current) {
@@ -120,9 +126,7 @@ export default function TornadoTracks({
       <Map
         className={styles.map}
         center={center}
-        // onDragEnd={handleMoveEnd}
         onMoveEnd={handleMoveEnd}
-        // onZoomEnd={handleMoveEnd}
         ref={map}
       >
         <TileLayer
@@ -134,9 +138,7 @@ export default function TornadoTracks({
             const start = getStart(tornado);
             const end = getEnd(tornado);
 
-            const selected = selectedTornado
-              ? selectedTornado.id === tornado.id
-              : false;
+            const selected = selectedTornadoId === tornado.id;
 
             return (
               <Fragment key={tornado.id}>
@@ -144,9 +146,13 @@ export default function TornadoTracks({
                   <CircleMarker center={start} color="tomato" radius={10} />
                 )}
                 <Marker onClick={onClick(tornado.id)} position={start}>
-                  <Popup>{`${end ? "Start: " : ""}${tornado.community}, ${
-                    tornado.province
-                  } (F${tornado.fujita})`}</Popup>
+                  <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
+                    {tornado.cluster > 1
+                      ? `${tornado.cluster} tornados around this location`
+                      : `${end ? "Start: " : ""}${tornado.community}, ${
+                          tornado.province
+                        } (F${tornado.fujita})`}
+                  </Tooltip>
                 </Marker>
                 {Array.isArray(tornado.tracks) && (
                   <Polyline
@@ -160,7 +166,11 @@ export default function TornadoTracks({
                       <CircleMarker center={end} color="tomato" radius={10} />
                     )}
                     <Marker onClick={onClick(tornado.id)} position={end}>
-                      <Popup>{`Finish: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Popup>
+                      <Tooltip
+                        direction="right"
+                        offset={[-10, 0]}
+                        opacity={0.9}
+                      >{`Finish: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Tooltip>
                     </Marker>
                   </>
                 )}
