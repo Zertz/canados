@@ -1,2 +1,3 @@
-.next
-node_modules
+/.next
+/ky
+/node_modules
