@@ -3,20 +3,24 @@ import React from "react";
 import styles from "./TornadoEventListActions.module.css";
 
 type Props = {
-  filter: string;
+  display: "bounds" | "search";
   onChangeOrder: (e: any) => void;
   onChangeSort: (e: any) => void;
   order: Common.Order;
+  sortProperty: Common.SortProperty;
   tornadoCount: number;
 };
 
 export default function({
-  filter,
+  display,
   onChangeOrder,
   onChangeSort,
   order,
+  sortProperty,
   tornadoCount
 }: Props) {
+  const searchMode = display === "search";
+
   return (
     <li
       className={classnames(
@@ -24,12 +28,15 @@ export default function({
         styles.li
       )}
     >
-      <span>{`${tornadoCount} tornados in this area`}</span>
+      <span>{`${tornadoCount} tornados ${
+        searchMode ? "match your search" : "in this area"
+      }`}</span>
       <select
         className="block form-select  transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-        disabled={!!filter}
         onChange={onChangeSort}
+        value={sortProperty}
       >
+        {searchMode && <option value="relevance">Relevance</option>}
         <option value="date">Date</option>
         <option value="distance">Distance</option>
         <option value="fujita">Fujita</option>
@@ -38,7 +45,6 @@ export default function({
       <span className="inline-flex rounded-md shadow-sm">
         <button
           className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs leading-4 font-medium rounded text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150"
-          disabled={!!filter}
           onClick={onChangeOrder}
           title={order}
           type="button"

@@ -7,6 +7,7 @@ type Props = {
   length_m?: number;
   onClick: () => void;
   province: string;
+  relevance?: number;
   selected: boolean;
 };
 

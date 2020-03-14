@@ -42,6 +42,7 @@ export default function Home() {
       {Array.isArray(displayedTornados) && (
         <>
           <TornadoEventList
+            display={searchedTornados ? "search" : "bounds"}
             onClick={handleSelectTornado}
             search={search}
             selectedTornadoId={selectedTornadoId}

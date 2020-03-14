@@ -56,36 +56,31 @@ function getSortFunction(
             b.date - a.date ||
             b.fujita - a.fujita;
     }
+    case "relevance": {
+      return (a, b) => {
+        return order === "ascending"
+          ? a.relevance - b.relevance
+          : b.relevance - a.relevance;
+      };
+    }
   }
 }
 
 type Props = {
-  filter: string;
   order: Common.Order;
   sortProperty: Common.SortProperty;
   tornados: TornadoEvent[];
 };
 
-export const useSortedTornados = ({
-  filter,
-  order,
-  sortProperty,
-  tornados
-}: Props) => {
+export const useSortedTornados = ({ order, sortProperty, tornados }: Props) => {
   const [sortedTornados, setSortedTornados] = useState<TornadoEvent[]>();
 
   useEffect(() => {
-    if (filter) {
-      setSortedTornados(tornados);
-
-      return;
-    }
-
     const sortFunction = getSortFunction(order, sortProperty);
 
     // Sort sorts the elements of an array in place so we have to shallow copy to trigger a state change
     setSortedTornados([...tornados.sort(sortFunction)]);
-  }, [filter, order, sortProperty, tornados]);
+  }, [order, sortProperty, tornados]);
 
   return sortedTornados;
 };

@@ -51,7 +51,9 @@ type Props = {
 };
 
 export const useSearch = ({ tornados }: Props) => {
-  const [searchedTornados, setSearchedTornados] = useState<TornadoEvent[]>();
+  const [searchedTornados, setSearchedTornados] = useState<
+    SearchedTornadoEvent[]
+  >();
 
   const search = filter => {
     if (!Array.isArray(tornados) || !filter) {
@@ -98,6 +100,11 @@ export const useSearch = ({ tornados }: Props) => {
       .sort(([, a], [, b]) => b - a)
       .filter((value, i, arr) => arr[i][1] >= arr[0][1] * 0.05);
 
+    for (let i = entriesMatches.length - 1; i >= 0; i -= 1) {
+      entriesMatches[i][1] =
+        (100 * entriesMatches[i][1]) / entriesMatches[0][1];
+    }
+
     const matches = Object.fromEntries(entriesMatches);
     const matchKeys = Object.keys(matches);
 
@@ -105,6 +112,10 @@ export const useSearch = ({ tornados }: Props) => {
       tornados
         .filter(({ id }) => matches[id])
         .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id))
+        .map(searchedTornado => ({
+          ...searchedTornado,
+          relevance: matches[searchedTornado.id]
+        }))
     );
   };
 

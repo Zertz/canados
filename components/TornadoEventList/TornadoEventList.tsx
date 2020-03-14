@@ -8,10 +8,11 @@ import styles from "./TornadoEventList.module.css";
 type TornadoEventListItemsProps = {
   onClick: (tornadoId: TornadoId) => () => void;
   selectedTornadoId?: TornadoId;
-  tornados: Array<TornadoEvent>;
+  tornados: Array<TornadoEvent | SearchedTornadoEvent>;
 };
 
 type TornadoEventListProps = TornadoEventListItemsProps & {
+  display: "bounds" | "search";
   search: (string) => void;
 };
 
@@ -39,6 +40,7 @@ const TornadoEventListItems = React.memo(function TornadoEventListItems({
 });
 
 export default function TornadoEventList({
+  display,
   onClick,
   search,
   selectedTornadoId,
@@ -49,11 +51,23 @@ export default function TornadoEventList({
   const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
 
   const sortedTornados = useSortedTornados({
-    filter,
     order,
     sortProperty,
     tornados
   });
+
+  useEffect(() => {
+    if (display !== "search") {
+      if (sortProperty === "relevance") {
+        setSortProperty("date");
+      }
+
+      return;
+    }
+
+    setOrder("descending");
+    setSortProperty("relevance");
+  }, [display]);
 
   useEffect(() => {
     if (filter) {
@@ -86,10 +100,11 @@ export default function TornadoEventList({
       <SearchForm onChange={handleChangeFilter} onSubmit={handleSubmit} />
       <ul className="bg-white flex-grow overflow-x-hidden overflow-y-auto shadow sm:rounded-md">
         <TornadoEventListActions
-          filter={filter}
+          display={display}
           onChangeOrder={handleChangeOrder}
           onChangeSort={handleChangeSort}
           order={order}
+          sortProperty={sortProperty}
           tornadoCount={tornados.length}
         />
         {Array.isArray(sortedTornados) && (

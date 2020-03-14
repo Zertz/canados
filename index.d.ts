@@ -25,9 +25,13 @@ type ClusteredTornadoEvent = TornadoEvent & {
   cluster: number;
 };
 
+type SearchedTornadoEvent = TornadoEvent & {
+  relevance: number;
+};
+
 declare module Common {
   type Bounds = [Coordinates, Coordinates];
   type Coordinates = [number, number];
   type Order = "ascending" | "descending";
-  type SortProperty = "date" | "distance" | "fujita" | "location";
+  type SortProperty = "date" | "distance" | "fujita" | "location" | "relevance";
 }
