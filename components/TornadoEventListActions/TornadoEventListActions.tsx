@@ -28,9 +28,15 @@ export default function({
         styles.li
       )}
     >
-      <span>{`${tornadoCount} tornados ${
-        searchMode ? "match your search" : "in this area"
-      }`}</span>
+      <span>
+        {tornadoCount === 1
+          ? `${tornadoCount} tornado ${
+              searchMode ? "matches your search" : "in this area"
+            }`
+          : `${tornadoCount} tornados ${
+              searchMode ? "match your search" : "in this area"
+            }`}
+      </span>
       <select
         className="block form-select  transition duration-150 ease-in-out sm:text-sm sm:leading-5"
         onChange={onChangeSort}
