@@ -3,13 +3,18 @@ import { shuffle } from "../utils/shuffle";
 
 type Props = {
   bounds?: Common.Bounds;
+  search: boolean;
   tornados?: TornadoEvent[];
 };
 
-export const useBoundedTornados = ({ bounds, tornados }: Props) => {
+export const useBoundedTornados = ({ bounds, search, tornados }: Props) => {
   const [boundedTornados, setBoundedTornados] = useState<TornadoEvent[]>();
 
   useEffect(() => {
+    if (search) {
+      return;
+    }
+
     if (!bounds || !tornados) {
       setBoundedTornados(undefined);
 
@@ -55,7 +60,7 @@ export const useBoundedTornados = ({ bounds, tornados }: Props) => {
       : tornados;
 
     setBoundedTornados(filteredTornados);
-  }, [bounds, tornados]);
+  }, [bounds, search, tornados]);
 
   return boundedTornados;
 };
