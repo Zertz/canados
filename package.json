@@ -6,9 +6,9 @@
   "author": "Pier-Luc Gendreau",
   "license": "MIT",
   "scripts": {
-    "dev": "ln -sf node_modules/ky ky && next",
-    "build": "next build",
-    "start": "next start"
+    "build": "yarn transpile && next build",
+    "start": "yarn transpile && next",
+    "transpile": "ln -sf node_modules/ky ky"
   },
   "dependencies": {
     "classnames": "^2.2.6",
