@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
 function getSortFunction(
-  order: "asc" | "desc",
+  order: Common.Order,
   sortProperty: Common.SortProperty
 ) {
   switch (sortProperty) {
     case "date": {
       return (a, b) =>
-        order === "asc"
+        order === "ascending"
           ? a.date - b.date ||
             a.fujita - b.fujita ||
             a.province.localeCompare(b.province) ||
@@ -27,14 +27,14 @@ function getSortFunction(
           return -1;
         }
 
-        return order === "asc"
+        return order === "ascending"
           ? a.length_m - b.length_m
           : b.length_m - a.length_m;
       };
     }
     case "fujita": {
       return (a, b) =>
-        order === "asc"
+        order === "ascending"
           ? a.fujita - b.fujita ||
             a.date - b.date ||
             a.province.localeCompare(b.province) ||
@@ -46,7 +46,7 @@ function getSortFunction(
     }
     case "location": {
       return (a, b) =>
-        order === "asc"
+        order === "ascending"
           ? a.province.localeCompare(b.province) ||
             a.community.localeCompare(b.community) ||
             a.date - b.date ||

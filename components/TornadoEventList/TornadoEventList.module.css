@@ -4,26 +4,9 @@
   background-color: white;
   overflow: hidden;
   padding: 1rem;
-  z-index: 1;
-}
-
-.form {
-  display: flex;
-  margin-bottom: 1rem;
-}
-
-.label {
-  flex-grow: 1;
-  margin-right: 1rem;
-}
-
-.input {
-  width: 100%;
 }
 
 .ul {
-  flex-grow: 1;
-  border: 1px solid lightgrey;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -32,10 +15,7 @@
   display: grid;
   grid: 1fr / 1fr repeat(2, min-content);
   grid-gap: 1rem;
-  background-color: white;
-  border-bottom: 1px solid lightgrey;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
+  align-items: center;
   position: sticky;
   top: 0;
 }

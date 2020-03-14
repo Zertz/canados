@@ -28,6 +28,6 @@ type ClusteredTornadoEvent = TornadoEvent & {
 declare module Common {
   type Bounds = [Coordinates, Coordinates];
   type Coordinates = [number, number];
-  type Order = "asc" | "desc";
+  type Order = "ascending" | "descending";
   type SortProperty = "date" | "distance" | "fujita" | "location";
 }
