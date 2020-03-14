@@ -5,17 +5,3 @@
   overflow: hidden;
   padding: 1rem;
 }
-
-.ul {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.li {
-  display: grid;
-  grid: 1fr / 1fr repeat(2, min-content);
-  grid-gap: 1rem;
-  align-items: center;
-  position: sticky;
-  top: 0;
-}
