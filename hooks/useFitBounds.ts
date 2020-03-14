@@ -51,6 +51,15 @@ export const useFitBounds = ({ tornados }: Props) => {
 
     const fitBounds = getFitBounds(tornados);
 
+    if (JSON.stringify(fitBounds[0]) === JSON.stringify(fitBounds[1])) {
+      setFitBounds([
+        [(fitBounds[0][0] -= 0.1), (fitBounds[0][1] -= 0.1)],
+        [(fitBounds[1][0] += 0.1), (fitBounds[1][1] += 0.1)]
+      ]);
+
+      return;
+    }
+
     setFitBounds(fitBounds);
   }, [tornados]);
 
