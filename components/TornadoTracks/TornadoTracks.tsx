@@ -21,7 +21,7 @@ type Props = {
   onClick: (tornadoId: TornadoId) => void;
   selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
-  tornados: TornadoEvent[];
+  tornados?: TornadoEvent[];
 };
 
 function getStart(tornado: TornadoEvent): Common.Coordinates {
@@ -95,7 +95,7 @@ export default function TornadoTracks({
   }, [fitBounds]);
 
   useEffect(() => {
-    if (!selectedTornadoId) {
+    if (!selectedTornadoId || !Array.isArray(tornados)) {
       return;
     }
 

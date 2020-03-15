@@ -44,23 +44,25 @@ export default function Home() {
 
   return (
     <div className={styles.div}>
-      {Array.isArray(displayedTornados) && (
-        <>
-          <TornadoEventList
-            onClick={handleSelectTornado}
-            search={search}
-            selectedTornadoId={selectedTornadoId}
-            status={status}
-            tornados={displayedTornados}
-          />
-          <TornadoTracks
-            fitBounds={fitBounds}
-            onClick={handleSelectTornado}
-            selectedTornadoId={selectedTornadoId}
-            setScreenBounds={setScreenBounds}
-            tornados={displayedTornados}
-          />
-        </>
+      <TornadoEventList
+        onClick={handleSelectTornado}
+        search={search}
+        selectedTornadoId={selectedTornadoId}
+        status={status}
+        tornados={displayedTornados}
+      />
+      <TornadoTracks
+        fitBounds={fitBounds}
+        onClick={handleSelectTornado}
+        selectedTornadoId={selectedTornadoId}
+        setScreenBounds={setScreenBounds}
+        tornados={displayedTornados}
+      />
+      {!Array.isArray(displayedTornados) && (
+        <LoadingOverlay
+          title="Loading..."
+          subtitle="This may take a few moments."
+        />
       )}
       {status === "searching" && (
         <LoadingOverlay

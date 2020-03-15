@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 type Props = {
-  tornados: TornadoEvent[];
+  tornados?: TornadoEvent[];
 };
 
 export const useClusteredTornados = ({ tornados }: Props) => {
@@ -10,6 +10,12 @@ export const useClusteredTornados = ({ tornados }: Props) => {
   >();
 
   useEffect(() => {
+    if (!tornados) {
+      setClusteredTornados(undefined);
+
+      return;
+    }
+
     if (tornados.length <= 350) {
       setClusteredTornados(
         tornados.map(tornado => ({

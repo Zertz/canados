@@ -69,13 +69,19 @@ function getSortFunction(
 type Props = {
   order: Common.Order;
   sortProperty: Common.SortProperty;
-  tornados: TornadoEvent[];
+  tornados?: TornadoEvent[];
 };
 
 export const useSortedTornados = ({ order, sortProperty, tornados }: Props) => {
   const [sortedTornados, setSortedTornados] = useState<TornadoEvent[]>();
 
   useEffect(() => {
+    if (!tornados) {
+      setSortedTornados(undefined);
+
+      return;
+    }
+
     const sortFunction = getSortFunction(order, sortProperty);
 
     // Sort sorts the elements of an array in place so we have to shallow copy to trigger a state change

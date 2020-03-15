@@ -5,15 +5,19 @@ import TornadoEventListActions from "../TornadoEventListActions";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
 
-type TornadoEventListItemsProps = {
+type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
   selectedTornadoId?: TornadoId;
+};
+
+type TornadoEventListItemsProps = CommonProps & {
   tornados: Array<TornadoEvent | SearchedTornadoEvent>;
 };
 
-type TornadoEventListProps = TornadoEventListItemsProps & {
+type TornadoEventListProps = CommonProps & {
   search: (string) => void;
   status: Common.SearchStatus;
+  tornados?: Array<TornadoEvent | SearchedTornadoEvent>;
 };
 
 const TornadoEventListItems = React.memo(function TornadoEventListItems({
@@ -107,14 +111,16 @@ export default function TornadoEventList({
     <div className={styles.div}>
       <SearchForm onChange={handleChangeFilter} onSubmit={handleSubmit} />
       <ul className="bg-white flex-grow overflow-x-hidden overflow-y-auto shadow sm:rounded-md">
-        <TornadoEventListActions
-          onChangeOrder={handleChangeOrder}
-          onChangeSort={handleChangeSort}
-          order={order}
-          sortProperty={sortProperty}
-          status={status}
-          tornadoCount={tornados.length}
-        />
+        {Array.isArray(tornados) && (
+          <TornadoEventListActions
+            onChangeOrder={handleChangeOrder}
+            onChangeSort={handleChangeSort}
+            order={order}
+            sortProperty={sortProperty}
+            status={status}
+            tornadoCount={tornados.length}
+          />
+        )}
         {Array.isArray(sortedTornados) && (
           <TornadoEventListItems
             onClick={onClick}
