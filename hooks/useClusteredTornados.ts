@@ -20,7 +20,7 @@ export const useClusteredTornados = ({ tornados }: Props) => {
       setClusteredTornados(
         tornados.map(tornado => ({
           ...tornado,
-          cluster: 0
+          cluster: []
         }))
       );
 
@@ -39,7 +39,7 @@ export const useClusteredTornados = ({ tornados }: Props) => {
         );
 
         if (clusteredTornado) {
-          clusteredTornado.cluster += 1;
+          clusteredTornado.cluster.push(tornado);
 
           return acc;
         }
@@ -48,7 +48,7 @@ export const useClusteredTornados = ({ tornados }: Props) => {
           ...acc,
           {
             ...tornado,
-            cluster: 1
+            cluster: []
           }
         ];
       }, [])

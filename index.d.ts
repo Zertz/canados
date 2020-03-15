@@ -22,7 +22,7 @@ type TornadoEvent = {
 };
 
 type ClusteredTornadoEvent = TornadoEvent & {
-  cluster: number;
+  cluster: TornadoEvent[];
 };
 
 type SearchedTornadoEvent = TornadoEvent & {

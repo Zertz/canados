@@ -147,8 +147,9 @@ export default function TornadoTracks({
                 )}
                 <Marker onClick={onClick(tornado.id)} position={start}>
                   <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
-                    {tornado.cluster > 1
-                      ? `${tornado.cluster} tornados around this location`
+                    {tornado.cluster.length > 0
+                      ? `${tornado.cluster.length +
+                          1} tornados around this location`
                       : `${end ? "Start: " : ""}${tornado.community}, ${
                           tornado.province
                         } (F${tornado.fujita})`}
