@@ -33,5 +33,6 @@ declare module Common {
   type Bounds = [Coordinates, Coordinates];
   type Coordinates = [number, number];
   type Order = "ascending" | "descending";
+  type SearchStatus = "idle" | "searching" | "done";
   type SortProperty = "date" | "distance" | "fujita" | "location" | "relevance";
 }

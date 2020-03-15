@@ -3,23 +3,23 @@ import React from "react";
 import styles from "./TornadoEventListActions.module.css";
 
 type Props = {
-  display: "bounds" | "search";
   onChangeOrder: (e: any) => void;
   onChangeSort: (e: any) => void;
   order: Common.Order;
   sortProperty: Common.SortProperty;
+  status: Common.SearchStatus;
   tornadoCount: number;
 };
 
 export default function({
-  display,
   onChangeOrder,
   onChangeSort,
   order,
   sortProperty,
+  status,
   tornadoCount
 }: Props) {
-  const searchMode = display === "search";
+  const searchMode = status === "done";
 
   return (
     <li

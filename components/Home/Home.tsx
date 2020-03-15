@@ -4,6 +4,7 @@ import { useBoundedTornados } from "../../hooks/useBoundedTornados";
 import { useFitBounds } from "../../hooks/useFitBounds";
 import { useSearch } from "../../hooks/useSearch";
 import { useTornados } from "../../hooks/useTornados";
+import LoadingOverlay from "../LoadingOverlay";
 import TornadoEventList from "../TornadoEventList";
 import styles from "./Home.module.css";
 
@@ -13,13 +14,15 @@ export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
   const [selectedTornadoId, setSelectedTornadoId] = useState<TornadoId>();
   const { error, load, tornados } = useTornados();
-  const { search, searchedTornados } = useSearch({ tornados });
+  const { results, search, status } = useSearch({ tornados });
 
-  const fitBounds = useFitBounds({ tornados: searchedTornados || tornados });
+  const fitBounds = useFitBounds({
+    tornados: status === "done" ? results : tornados
+  });
 
   const boundedTornados = useBoundedTornados({
-    bounds: searchedTornados ? fitBounds : screenBounds || fitBounds,
-    search: !!searchedTornados,
+    bounds: status === "done" ? fitBounds : screenBounds || fitBounds,
+    search: status === "done",
     tornados
   });
 
@@ -35,17 +38,19 @@ export default function Home() {
     setSelectedTornadoId(tornadoId);
   };
 
-  const displayedTornados = searchedTornados || boundedTornados;
+  const displayedTornados = ["searching", "done"].includes(status)
+    ? results
+    : boundedTornados;
 
   return (
     <div className={styles.div}>
       {Array.isArray(displayedTornados) && (
         <>
           <TornadoEventList
-            display={searchedTornados ? "search" : "bounds"}
             onClick={handleSelectTornado}
             search={search}
             selectedTornadoId={selectedTornadoId}
+            status={status}
             tornados={displayedTornados}
           />
           <TornadoTracks
@@ -56,6 +61,12 @@ export default function Home() {
             tornados={displayedTornados}
           />
         </>
+      )}
+      {status === "searching" && (
+        <LoadingOverlay
+          title="Searching..."
+          subtitle="This may take a few moments."
+        />
       )}
     </div>
   );

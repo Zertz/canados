@@ -12,8 +12,8 @@ type TornadoEventListItemsProps = {
 };
 
 type TornadoEventListProps = TornadoEventListItemsProps & {
-  display: "bounds" | "search";
   search: (string) => void;
+  status: Common.SearchStatus;
 };
 
 const TornadoEventListItems = React.memo(function TornadoEventListItems({
@@ -40,10 +40,10 @@ const TornadoEventListItems = React.memo(function TornadoEventListItems({
 });
 
 export default function TornadoEventList({
-  display,
   onClick,
   search,
   selectedTornadoId,
+  status,
   tornados
 }: TornadoEventListProps) {
   const [filter, setFilter] = useState("");
@@ -57,17 +57,25 @@ export default function TornadoEventList({
   });
 
   useEffect(() => {
-    if (display !== "search") {
-      if (sortProperty === "relevance") {
-        setSortProperty("date");
+    switch (status) {
+      case "idle": {
+        if (sortProperty === "relevance") {
+          setSortProperty("date");
+        }
+
+        break;
       }
+      case "searching": {
+        break;
+      }
+      case "done": {
+        setOrder("descending");
+        setSortProperty("relevance");
 
-      return;
+        break;
+      }
     }
-
-    setOrder("descending");
-    setSortProperty("relevance");
-  }, [display]);
+  }, [status]);
 
   useEffect(() => {
     if (filter) {
@@ -100,11 +108,11 @@ export default function TornadoEventList({
       <SearchForm onChange={handleChangeFilter} onSubmit={handleSubmit} />
       <ul className="bg-white flex-grow overflow-x-hidden overflow-y-auto shadow sm:rounded-md">
         <TornadoEventListActions
-          display={display}
           onChangeOrder={handleChangeOrder}
           onChangeSort={handleChangeSort}
           order={order}
           sortProperty={sortProperty}
+          status={status}
           tornadoCount={tornados.length}
         />
         {Array.isArray(sortedTornados) && (
