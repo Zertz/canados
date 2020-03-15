@@ -42,11 +42,11 @@ export default function({
         onChange={onChangeSort}
         value={sortProperty}
       >
-        {searchMode && <option value="relevance">Relevance</option>}
         <option value="date">Date</option>
         <option value="distance">Distance</option>
         <option value="fujita">Fujita</option>
         <option value="location">Location</option>
+        {searchMode && <option value="relevance">Relevance</option>}
       </select>
       <span className="inline-flex rounded-md shadow-sm">
         <button
