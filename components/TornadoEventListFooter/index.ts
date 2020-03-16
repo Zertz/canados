@@ -1,3 +1,3 @@
-import TornadoEventListActions from "./TornadoEventListActions";
+import TornadoEventListFooter from "./TornadoEventListFooter";
 
-export default TornadoEventListActions;
+export default TornadoEventListFooter;
