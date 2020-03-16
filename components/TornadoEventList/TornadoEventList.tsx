@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSortedTornados } from "../../hooks/useSortedTornados";
 import SearchForm from "../SearchForm";
-import TornadoEventListActions from "../TornadoEventListActions";
+import TornadoEventListFooter from "../TornadoEventListFooter/TornadoEventListFooter";
+import TornadoEventListHeader from "../TornadoEventListHeader";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
 
@@ -51,6 +52,11 @@ export default function TornadoEventList({
   tornados
 }: TornadoEventListProps) {
   const [filter, setFilter] = useState("");
+
+  const [listState, setListState] = useState<"collapsed" | "expanded">(
+    "collapsed"
+  );
+
   const [order, setOrder] = useState<Common.Order>("ascending");
   const [sortProperty, setSortProperty] = useState<Common.SortProperty>("date");
 
@@ -63,6 +69,8 @@ export default function TornadoEventList({
   useEffect(() => {
     switch (status) {
       case "idle": {
+        setListState("collapsed");
+
         if (sortProperty === "relevance") {
           setSortProperty("date");
         }
@@ -73,6 +81,7 @@ export default function TornadoEventList({
         break;
       }
       case "done": {
+        setListState("expanded");
         setOrder("descending");
         setSortProperty("relevance");
 
@@ -93,6 +102,10 @@ export default function TornadoEventList({
     setFilter(e.target.value.trim());
   };
 
+  const handleChangeListState = () => {
+    setListState(listState === "collapsed" ? "expanded" : "collapsed");
+  };
+
   const handleChangeOrder = () => {
     setOrder(order === "ascending" ? "descending" : "ascending");
   };
@@ -110,22 +123,31 @@ export default function TornadoEventList({
   return (
     <div className={styles.div}>
       <SearchForm onChange={handleChangeFilter} onSubmit={handleSubmit} />
-      <ul className="bg-white flex-grow overflow-x-hidden overflow-y-auto shadow sm:rounded-md">
+      <ul className="bg-white overflow-x-hidden overflow-y-auto shadow sm:rounded-md">
+        {listState === "expanded" && (
+          <>
+            <TornadoEventListHeader
+              onChangeOrder={handleChangeOrder}
+              onChangeSort={handleChangeSort}
+              order={order}
+              sortProperty={sortProperty}
+              status={status}
+            />
+            {Array.isArray(sortedTornados) && (
+              <TornadoEventListItems
+                onClick={onClick}
+                selectedTornadoId={selectedTornadoId}
+                tornados={sortedTornados}
+              />
+            )}
+          </>
+        )}
         {Array.isArray(tornados) && (
-          <TornadoEventListActions
-            onChangeOrder={handleChangeOrder}
-            onChangeSort={handleChangeSort}
-            order={order}
-            sortProperty={sortProperty}
+          <TornadoEventListFooter
+            listState={listState}
+            onChangeListState={handleChangeListState}
             status={status}
             tornadoCount={tornados.length}
-          />
-        )}
-        {Array.isArray(sortedTornados) && (
-          <TornadoEventListItems
-            onClick={onClick}
-            selectedTornadoId={selectedTornadoId}
-            tornados={sortedTornados}
           />
         )}
       </ul>

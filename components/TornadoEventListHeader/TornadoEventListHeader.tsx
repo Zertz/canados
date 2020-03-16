@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import React from "react";
-import styles from "./TornadoEventListActions.module.css";
+import styles from "./TornadoEventListHeader.module.css";
 
 type Props = {
   onChangeOrder: (e: any) => void;
@@ -8,16 +8,14 @@ type Props = {
   order: Common.Order;
   sortProperty: Common.SortProperty;
   status: Common.SearchStatus;
-  tornadoCount: number;
 };
 
-export default function({
+export default function TornadoEventListHeader({
   onChangeOrder,
   onChangeSort,
   order,
   sortProperty,
-  status,
-  tornadoCount
+  status
 }: Props) {
   const searchMode = status === "done";
 
@@ -28,15 +26,6 @@ export default function({
         styles.li
       )}
     >
-      <span>
-        {tornadoCount === 1
-          ? `${tornadoCount} tornado ${
-              searchMode ? "matches your search" : "in this area"
-            }`
-          : `${tornadoCount} tornados ${
-              searchMode ? "match your search" : "in this area"
-            }`}
-      </span>
       <select
         className="block form-select  transition duration-150 ease-in-out sm:text-sm sm:leading-5"
         onChange={onChangeSort}
