@@ -34,9 +34,6 @@ const TornadoEventListItem = function TornadoEventListItem({
     });
   }, [selected]);
 
-  // TODO: When running a search, date is a string because of JSON.parse. Maybe it should always be a string?
-  const d = date ? new Date(date) : date;
-
   return (
     <li
       className="border-b border-gray-200 block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out"
@@ -65,14 +62,14 @@ const TornadoEventListItem = function TornadoEventListItem({
                     clipRule="evenodd"
                   />
                 </svg>
-                {d && (
+                {date && (
                   <span>
                     {`On `}
                     <time
-                      dateTime={`${d.getFullYear()}-${d.getMonth() +
-                        1}-${d.getDate()}`}
+                      dateTime={`${date.getFullYear()}-${date.getMonth() +
+                        1}-${date.getDate()}`}
                     >
-                      {d.toLocaleString()}
+                      {date.toLocaleString()}
                     </time>
                   </span>
                 )}

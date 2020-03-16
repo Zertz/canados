@@ -96,17 +96,8 @@ onmessage = function(e) {
       }
 
       const matches = Object.fromEntries(entriesMatches);
-      const matchKeys = Object.keys(matches);
 
-      const results = dataCache
-        .filter(({ id }) => matches[id])
-        .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id))
-        .map(result => ({
-          ...result,
-          relevance: matches[result.id]
-        }));
-
-      postMessage(JSON.stringify(results));
+      postMessage(JSON.stringify(matches));
 
       break;
     }

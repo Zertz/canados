@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useCallback } from "react";
 import { useWorker } from "./useWorker";
 
 type Props = {
@@ -41,14 +41,32 @@ export const useSearch = ({ tornados }: Props) => {
     status: "idle"
   });
 
-  const receive = (payload: SearchedTornadoEvent[]) => {
-    dispatch({ type: "results", payload });
-  };
+  const receive = useCallback(
+    data => {
+      if (!Array.isArray(tornados)) {
+        return;
+      }
+
+      const matches = JSON.parse(data);
+      const matchKeys = Object.keys(matches);
+
+      const payload = tornados
+        .filter(({ id }) => matches[id])
+        .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id))
+        .map(result => ({
+          ...result,
+          relevance: matches[result.id]
+        }));
+
+      dispatch({ type: "results", payload });
+    },
+    [tornados]
+  );
 
   const send = useWorker("search.worker.js", receive);
 
   useEffect(() => {
-    if (!tornados) {
+    if (!Array.isArray(tornados)) {
       return;
     }
 
