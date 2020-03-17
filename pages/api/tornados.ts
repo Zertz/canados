@@ -1,6 +1,7 @@
-import got from "got";
 import haversine from "fast-haversine";
+import got from "got";
 import geohash from "ngeohash";
+import { GEOHASH_LENGTH } from "../../constants";
 import { generateTornadoId } from "../../utils/generateTornadoId";
 import { parseTornadoDate } from "../../utils/parseTornadoDate";
 
@@ -138,7 +139,7 @@ export default async (req, res) => {
           geohash: geohash.encode(
             coordinates_start[0],
             coordinates_start[1],
-            10
+            GEOHASH_LENGTH
           ),
           length_m,
           tracks: tracks[tornado.id]
