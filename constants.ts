@@ -1,1 +1,2 @@
 export const GEOHASH_LENGTH = 10;
+export const MAXIMUM_DISPLAYED_TORNADOS = 250;

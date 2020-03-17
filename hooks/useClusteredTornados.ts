@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 
 type Props = {
   tornados?: TornadoEvent[];
@@ -16,7 +17,7 @@ export const useClusteredTornados = ({ tornados }: Props) => {
       return;
     }
 
-    if (tornados.length <= 350) {
+    if (tornados.length <= MAXIMUM_DISPLAYED_TORNADOS) {
       setClusteredTornados(
         tornados.map(tornado => ({
           ...tornado,
@@ -27,31 +28,49 @@ export const useClusteredTornados = ({ tornados }: Props) => {
       return;
     }
 
-    setClusteredTornados(
-      tornados.reduce((acc: ClusteredTornadoEvent[], tornado) => {
-        const currentGeohash = tornado.geohash.substring(
-          0,
-          tornados.length >= 750 ? 3 : 4
-        );
+    const clusteredTornadoIds: TornadoId[] = [];
+    const clusters: TornadoEvent[][] = [];
 
-        const clusteredTornado = acc.find(({ geohash }) =>
-          geohash.startsWith(currentGeohash)
-        );
+    for (let i = GEOHASH_LENGTH; i > 0; i -= 1) {
+      const geohashClusters: { [key: string]: TornadoEvent[] } = {};
 
-        if (clusteredTornado) {
-          clusteredTornado.cluster.push(tornado);
-
-          return acc;
+      for (let j = 0; j < tornados.length; j += 1) {
+        if (clusteredTornadoIds.includes(tornados[j].id)) {
+          continue;
         }
 
-        return [
-          ...acc,
-          {
-            ...tornado,
-            cluster: []
-          }
-        ];
-      }, [])
+        const geohash = tornados[j].geohash.substring(0, i);
+
+        if (!Array.isArray(geohashClusters[geohash])) {
+          geohashClusters[geohash] = [];
+        }
+
+        geohashClusters[geohash].push(tornados[j]);
+      }
+
+      const currentClusters = Object.values(geohashClusters).filter(
+        cluster => cluster.length > 3
+      );
+
+      for (let j = 0; j < currentClusters.length - 1; j += 1) {
+        clusteredTornadoIds.push(...currentClusters[j].map(({ id }) => id));
+
+        if (
+          clusters.length + tornados.length - clusteredTornadoIds.length <=
+          MAXIMUM_DISPLAYED_TORNADOS
+        ) {
+          clusters.push(...currentClusters[j].map(cluster => [cluster]));
+        } else {
+          clusters.push(currentClusters[j]);
+        }
+      }
+    }
+
+    setClusteredTornados(
+      clusters.map(cluster => ({
+        ...cluster[0],
+        cluster: cluster.slice(1)
+      }))
     );
   }, [tornados]);
 
