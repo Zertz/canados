@@ -3,8 +3,8 @@ import ky from "../ky";
 
 type State = {
   data?: TornadoEvent[];
-  loading: boolean;
   error?: Error;
+  status: Common.Status;
 };
 
 type Action =
@@ -18,21 +18,21 @@ function reducer(state: State, action: Action): State {
       return {
         data: undefined,
         error: action.error,
-        loading: false
+        status: "idle"
       };
     }
     case "request": {
       return {
         data: undefined,
         error: undefined,
-        loading: true
+        status: "busy"
       };
     }
     case "success": {
       return {
         data: action.data,
         error: undefined,
-        loading: false
+        status: "done"
       };
     }
     default: {
@@ -67,10 +67,10 @@ function parseValue(value) {
 }
 
 export const useAPI = url => {
-  const [{ data, error, loading }, dispatch] = useReducer(reducer, {
+  const [{ data, error, status }, dispatch] = useReducer(reducer, {
     data: undefined,
     error: undefined,
-    loading: false
+    status: "idle"
   });
 
   const load = async () => {
@@ -102,6 +102,6 @@ export const useAPI = url => {
     data,
     error,
     load,
-    loading
+    status
   };
 };

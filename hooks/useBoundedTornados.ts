@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { shuffle } from "../utils/shuffle";
 
 type Props = {
   bounds?: Common.Bounds;

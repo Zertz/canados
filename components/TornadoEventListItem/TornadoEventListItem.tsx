@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef } from "react";
 
 type Props = {
+  clusterCount: number;
   community: string;
   date?: Date;
   fujita: number;
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const TornadoEventListItem = function TornadoEventListItem({
+  clusterCount,
   community,
   date,
   fujita,
@@ -44,7 +46,7 @@ const TornadoEventListItem = function TornadoEventListItem({
         <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
             <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
-              {`F${fujita}`}
+              {`${clusterCount} F${fujita}`}
               <span className="ml-1 font-normal text-gray-500">
                 {`in ${community}, ${province}`}
               </span>

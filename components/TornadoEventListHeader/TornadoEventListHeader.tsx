@@ -7,7 +7,7 @@ type Props = {
   onChangeSort: (e: any) => void;
   order: Common.Order;
   sortProperty: Common.SortProperty;
-  status: Common.SearchStatus;
+  status: Common.Status;
 };
 
 export default function TornadoEventListHeader({

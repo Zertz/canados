@@ -1,8 +1,5 @@
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
-import { useBoundedTornados } from "../../hooks/useBoundedTornados";
-import { useFitBounds } from "../../hooks/useFitBounds";
-import { useSearch } from "../../hooks/useSearch";
 import { useTornados } from "../../hooks/useTornados";
 import LoadingOverlay from "../LoadingOverlay";
 import TornadoEventList from "../TornadoEventList";
@@ -13,18 +10,16 @@ const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
   const [selectedTornadoId, setSelectedTornadoId] = useState<TornadoId>();
-  const { error, load, tornados } = useTornados();
-  const { results, search, status } = useSearch({ tornados });
 
-  const fitBounds = useFitBounds({
-    tornados: status === "done" ? results : tornados
-  });
-
-  const boundedTornados = useBoundedTornados({
-    bounds: status === "done" ? fitBounds : screenBounds || fitBounds,
-    search: status === "done",
-    tornados
-  });
+  const {
+    clusteredTornados,
+    displayedTornados,
+    error,
+    fitBounds,
+    load,
+    search,
+    status
+  } = useTornados({ screenBounds });
 
   useEffect(() => {
     load();
@@ -38,10 +33,6 @@ export default function Home() {
     setSelectedTornadoId(tornadoId);
   };
 
-  const displayedTornados = ["searching", "done"].includes(status)
-    ? results
-    : boundedTornados;
-
   return (
     <div className={styles.div}>
       <TornadoEventList
@@ -49,22 +40,27 @@ export default function Home() {
         search={search}
         selectedTornadoId={selectedTornadoId}
         status={status}
-        tornados={displayedTornados}
+        tornadoCount={
+          Array.isArray(displayedTornados)
+            ? displayedTornados.length
+            : undefined
+        }
+        tornados={clusteredTornados}
       />
       <TornadoTracks
         fitBounds={fitBounds}
         onClick={handleSelectTornado}
         selectedTornadoId={selectedTornadoId}
         setScreenBounds={setScreenBounds}
-        tornados={displayedTornados}
+        tornados={clusteredTornados}
       />
-      {!Array.isArray(displayedTornados) && (
+      {!Array.isArray(clusteredTornados) && (
         <LoadingOverlay
           title="Loading..."
           subtitle="This may take a few moments."
         />
       )}
-      {status === "searching" && (
+      {status === "busy" && (
         <LoadingOverlay
           title="Searching..."
           subtitle="This may take a few moments."

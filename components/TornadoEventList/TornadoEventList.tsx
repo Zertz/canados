@@ -12,13 +12,14 @@ type CommonProps = {
 };
 
 type TornadoEventListItemsProps = CommonProps & {
-  tornados: Array<TornadoEvent | SearchedTornadoEvent>;
+  tornados: Array<ClusteredTornadoEvent | SearchedTornadoEvent>;
 };
 
 type TornadoEventListProps = CommonProps & {
   search: (string) => void;
-  status: Common.SearchStatus;
-  tornados?: Array<TornadoEvent | SearchedTornadoEvent>;
+  status: Common.Status;
+  tornadoCount?: number;
+  tornados?: Array<ClusteredTornadoEvent | SearchedTornadoEvent>;
 };
 
 const TornadoEventListItems = React.memo(function TornadoEventListItems({
@@ -31,6 +32,7 @@ const TornadoEventListItems = React.memo(function TornadoEventListItems({
       {tornados.map(tornado => (
         <TornadoEventListItem
           key={tornado.id}
+          clusterCount={"cluster" in tornado ? tornado.cluster.length : 0}
           community={tornado.community}
           date={tornado.date}
           fujita={tornado.fujita}
@@ -49,6 +51,7 @@ export default function TornadoEventList({
   search,
   selectedTornadoId,
   status,
+  tornadoCount,
   tornados
 }: TornadoEventListProps) {
   const [filter, setFilter] = useState("");
@@ -77,7 +80,7 @@ export default function TornadoEventList({
 
         break;
       }
-      case "searching": {
+      case "busy": {
         break;
       }
       case "done": {
@@ -142,12 +145,12 @@ export default function TornadoEventList({
             )}
           </>
         )}
-        {Array.isArray(tornados) && (
+        {typeof tornadoCount === "number" && (
           <TornadoEventListFooter
             listState={listState}
             onChangeListState={handleChangeListState}
             status={status}
-            tornadoCount={tornados.length}
+            tornadoCount={tornadoCount}
           />
         )}
       </ul>

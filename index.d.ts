@@ -34,6 +34,6 @@ declare module Common {
   type Coordinates = [number, number];
   type ListState = "collapsed" | "expanded";
   type Order = "ascending" | "descending";
-  type SearchStatus = "idle" | "searching" | "done";
+  type Status = "idle" | "busy" | "done";
   type SortProperty = "date" | "distance" | "fujita" | "location" | "relevance";
 }

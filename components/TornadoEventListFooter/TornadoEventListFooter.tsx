@@ -5,7 +5,7 @@ import styles from "./TornadoEventListFooter.module.css";
 type Props = {
   listState: Common.ListState;
   onChangeListState: (e: any) => void;
-  status: Common.SearchStatus;
+  status: Common.Status;
   tornadoCount: number;
 };
 

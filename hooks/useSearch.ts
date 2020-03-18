@@ -7,12 +7,12 @@ type Props = {
 
 type State = {
   results: SearchedTornadoEvent[];
-  status: Common.SearchStatus;
+  status: Common.Status;
 };
 
 type Action =
   | { type: "results"; payload: SearchedTornadoEvent[] }
-  | { type: "status"; payload: Common.SearchStatus };
+  | { type: "status"; payload: Common.Status };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -83,7 +83,7 @@ export const useSearch = ({ tornados }: Props) => {
       return;
     }
 
-    dispatch({ type: "status", payload: "searching" });
+    dispatch({ type: "status", payload: "busy" });
 
     setTimeout(() => {
       send({

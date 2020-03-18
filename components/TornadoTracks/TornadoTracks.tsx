@@ -13,7 +13,6 @@ import {
   TileLayer,
   Tooltip
 } from "react-leaflet";
-import { useClusteredTornados } from "../../hooks/useClusteredTornados";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
@@ -21,7 +20,7 @@ type Props = {
   onClick: (tornadoId: TornadoId) => void;
   selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
-  tornados?: TornadoEvent[];
+  tornados?: ClusteredTornadoEvent[];
 };
 
 function getStart(tornado: TornadoEvent): Common.Coordinates {
@@ -80,7 +79,6 @@ export default function TornadoTracks({
   const map = useRef<ReactLeaflet>();
 
   const [center, setCenter] = useState<Common.Coordinates>();
-  const clusteredTornados = useClusteredTornados({ tornados });
 
   useEffect(() => {
     if (!fitBounds) {
@@ -133,8 +131,8 @@ export default function TornadoTracks({
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {Array.isArray(clusteredTornados) &&
-          clusteredTornados.map(tornado => {
+        {Array.isArray(tornados) &&
+          tornados.map(tornado => {
             const start = getStart(tornado);
             const end = getEnd(tornado);
 
