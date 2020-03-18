@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTornados } from "../../hooks/useTornados";
 import LoadingOverlay from "../LoadingOverlay";
 import TornadoEventList from "../TornadoEventList";
@@ -12,18 +12,14 @@ export default function Home() {
   const [selectedTornadoId, setSelectedTornadoId] = useState<TornadoId>();
 
   const {
+    apiStatus,
     clusteredTornados,
-    displayedTornados,
     error,
     fitBounds,
-    load,
     search,
-    status
+    searchStatus,
+    tornadoCount
   } = useTornados({ screenBounds });
-
-  useEffect(() => {
-    load();
-  }, []);
 
   if (error) {
     return <div>Aw, snap.</div>;
@@ -39,12 +35,8 @@ export default function Home() {
         onClick={handleSelectTornado}
         search={search}
         selectedTornadoId={selectedTornadoId}
-        status={status}
-        tornadoCount={
-          Array.isArray(displayedTornados)
-            ? displayedTornados.length
-            : undefined
-        }
+        status={searchStatus}
+        tornadoCount={tornadoCount}
         tornados={clusteredTornados}
       />
       <TornadoTracks
@@ -54,13 +46,13 @@ export default function Home() {
         setScreenBounds={setScreenBounds}
         tornados={clusteredTornados}
       />
-      {!Array.isArray(clusteredTornados) && (
+      {apiStatus === "busy" && (
         <LoadingOverlay
           title="Loading..."
           subtitle="This may take a few moments."
         />
       )}
-      {status === "busy" && (
+      {searchStatus === "busy" && (
         <LoadingOverlay
           title="Searching..."
           subtitle="This may take a few moments."
