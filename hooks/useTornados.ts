@@ -106,7 +106,7 @@ export const useTornados = ({ screenBounds }: Props) => {
       type: "fitBounds",
       payload: fitBounds
     });
-  }, [data, searchResults]);
+  }, [apiStatus, searchStatus]);
 
   useEffect(() => {
     if (!fitBounds && !screenBounds) {
