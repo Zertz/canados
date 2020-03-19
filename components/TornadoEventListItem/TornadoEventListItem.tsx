@@ -12,7 +12,7 @@ type Props = {
   selected: boolean;
 };
 
-const TornadoEventListItem = function TornadoEventListItem({
+export default function TornadoEventListItem({
   clusterCount,
   community,
   date,
@@ -134,6 +134,4 @@ const TornadoEventListItem = function TornadoEventListItem({
       </div>
     </li>
   );
-};
-
-export default TornadoEventListItem;
+}
