@@ -3,7 +3,7 @@ import React, { useLayoutEffect, useRef } from "react";
 type Props = {
   clusterCount: number;
   community: string;
-  date?: Date;
+  date: Date;
   fujitas: number[];
   length_m?: number;
   onClick: () => void;
@@ -85,17 +85,15 @@ export default function TornadoEventListItem({
                         clipRule="evenodd"
                       />
                     </svg>
-                    {date && (
-                      <span>
-                        {`On `}
-                        <time
-                          dateTime={`${date.getFullYear()}-${date.getMonth() +
-                            1}-${date.getDate()}`}
-                        >
-                          {date.toLocaleString()}
-                        </time>
-                      </span>
-                    )}
+                    <span>
+                      {`On `}
+                      <time
+                        dateTime={`${date.getFullYear()}-${date.getMonth() +
+                          1}-${date.getDate()}`}
+                      >
+                        {date.toLocaleString()}
+                      </time>
+                    </span>
                   </div>
                 )}
                 {length_m && (

@@ -4,7 +4,7 @@ type TornadoEvent = {
   id: TornadoId;
   coordinates_start: Common.Coordinates;
   coordinates_end: [number?, number?];
-  date?: Date;
+  date: Date;
   community: string;
   province: string;
   fujita: number;
