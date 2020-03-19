@@ -22,12 +22,12 @@ export default function TornadoEventListHeader({
   return (
     <li
       className={classnames(
-        "bg-white border-b border-gray-200 px-4 py-2 text-gray-800",
+        "bg-white border-b border-gray-200 p-4 text-gray-800",
         styles.li
       )}
     >
       <select
-        className="block form-select  transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+        className="block form-select transition duration-150 ease-in-out sm:text-sm sm:leading-5"
         onChange={onChangeSort}
         value={sortProperty}
       >

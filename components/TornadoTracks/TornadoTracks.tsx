@@ -126,6 +126,7 @@ export default function TornadoTracks({
         center={center}
         onMoveEnd={handleMoveEnd}
         ref={map}
+        zoomControl={false}
       >
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

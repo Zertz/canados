@@ -20,7 +20,7 @@ export default function TornadoEventListFooter({
   return (
     <li
       className={classnames(
-        "bg-white border-b border-gray-200 px-4 py-2 text-gray-800",
+        "bg-white border-b border-gray-200 p-4 text-gray-800",
         styles.li
       )}
     >
@@ -39,24 +39,7 @@ export default function TornadoEventListFooter({
           onClick={onChangeListState}
           type="button"
         >
-          {listState === "collapsed" ? (
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          ) : (
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
-          <span className="sr-only">{listState}</span>
+          {listState === "collapsed" ? "Show list" : "Hide list"}
         </button>
       </span>
     </li>

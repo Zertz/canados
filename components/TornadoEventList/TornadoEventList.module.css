@@ -1,7 +1,6 @@
 .div {
   display: flex;
   flex-direction: column;
-  background-color: white;
   border-radius: 0.5rem;
   overflow: hidden;
   padding: 1rem;
