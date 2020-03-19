@@ -13,6 +13,7 @@ export default function Home() {
 
   const {
     apiStatus,
+    boundedTornados,
     clusteredTornados,
     error,
     fitBounds,
@@ -37,7 +38,7 @@ export default function Home() {
         selectedTornadoId={selectedTornadoId}
         status={searchStatus}
         tornadoCount={tornadoCount}
-        tornados={clusteredTornados}
+        tornados={boundedTornados}
       />
       <TornadoTracks
         fitBounds={fitBounds}

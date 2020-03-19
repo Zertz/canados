@@ -6,6 +6,7 @@ import { useAPI } from "./useAPI";
 import { useSearch } from "./useSearch";
 
 type State = {
+  boundedTornados?: TornadoEvent[];
   clusteredTornados?: ClusteredTornadoEvent[];
   fitBounds?: Common.Bounds;
   status: Common.Status;
@@ -16,6 +17,7 @@ type Action =
   | {
       type: "cluster";
       payload: {
+        boundedTornados: TornadoEvent[];
         clusteredTornados: ClusteredTornadoEvent[];
         tornadoCount: number;
       };
@@ -62,9 +64,10 @@ export const useTornados = ({ screenBounds }: Props) => {
   });
 
   const [
-    { clusteredTornados, fitBounds, status, tornadoCount },
+    { boundedTornados, clusteredTornados, fitBounds, status, tornadoCount },
     dispatch
   ] = useReducer(reducer, {
+    boundedTornados: undefined,
     clusteredTornados: undefined,
     fitBounds: undefined,
     status: "idle",
@@ -136,15 +139,18 @@ export const useTornados = ({ screenBounds }: Props) => {
           return;
         }
 
-        const bounded = searchMode
+        const boundedTornados = searchMode
           ? tornados
           : getBoundedTornados({ bounds, tornados });
 
         dispatch({
           type: "cluster",
           payload: {
-            clusteredTornados: getClusteredTornados({ tornados: bounded }),
-            tornadoCount: bounded.length
+            boundedTornados,
+            clusteredTornados: getClusteredTornados({
+              tornados: boundedTornados
+            }),
+            tornadoCount: boundedTornados.length
           }
         });
 
@@ -158,6 +164,7 @@ export const useTornados = ({ screenBounds }: Props) => {
 
   return {
     apiStatus,
+    boundedTornados,
     clusteredTornados,
     error,
     fitBounds,

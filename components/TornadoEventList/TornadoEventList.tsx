@@ -5,55 +5,49 @@ import TornadoEventListFooter from "../TornadoEventListFooter/TornadoEventListFo
 import TornadoEventListHeader from "../TornadoEventListHeader";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
+import { FixedSizeList } from "react-window";
 
 type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
   selectedTornadoId?: TornadoId;
 };
 
-type TornadoEventListItemsProps = CommonProps & {
-  tornados: Array<ClusteredTornadoEvent | SearchedTornadoEvent>;
-};
-
 type TornadoEventListProps = CommonProps & {
   search: (string) => void;
   status: Common.Status;
   tornadoCount?: number;
-  tornados?: Array<ClusteredTornadoEvent | SearchedTornadoEvent>;
+  tornados?: Array<TornadoEvent | SearchedTornadoEvent>;
 };
 
-const TornadoEventListItems = React.memo(function TornadoEventListItems({
-  onClick,
-  selectedTornadoId,
-  tornados
-}: TornadoEventListItemsProps) {
+type FixedSizeListRowProps = CommonProps & {
+  sortedTornados: Array<TornadoEvent | SearchedTornadoEvent>;
+};
+
+const FixedSizeListRow = ({
+  data: { onClick, selectedTornadoId, sortedTornados },
+  index,
+  style
+}: {
+  data: FixedSizeListRowProps;
+  index: number;
+  style: React.CSSProperties;
+}) => {
+  const tornado = sortedTornados[index];
+
   return (
-    <>
-      {tornados.map(tornado => (
-        <TornadoEventListItem
-          key={tornado.id}
-          clusterCount={"cluster" in tornado ? tornado.cluster.length : 0}
-          community={tornado.community}
-          date={tornado.date}
-          fujitas={
-            "cluster" in tornado
-              ? [
-                  ...new Set([
-                    tornado.fujita,
-                    ...tornado.cluster.map(({ fujita }) => fujita)
-                  ])
-                ]
-              : [tornado.fujita]
-          }
-          length_m={tornado.length_m}
-          onClick={onClick(tornado.id)}
-          province={tornado.province}
-          selected={selectedTornadoId === tornado.id}
-        />
-      ))}
-    </>
+    <TornadoEventListItem
+      key={tornado.id}
+      community={tornado.community}
+      date={tornado.date}
+      fujita={tornado.fujita}
+      length_m={tornado.length_m}
+      onClick={onClick(tornado.id)}
+      province={tornado.province}
+      selected={selectedTornadoId === tornado.id}
+      style={style}
+    />
   );
-});
+};
 
 export default function TornadoEventList({
   onClick,
@@ -146,11 +140,19 @@ export default function TornadoEventList({
               status={status}
             />
             {Array.isArray(sortedTornados) && (
-              <TornadoEventListItems
-                onClick={onClick}
-                selectedTornadoId={selectedTornadoId}
-                tornados={sortedTornados}
-              />
+              <FixedSizeList
+                height={window.innerHeight}
+                itemCount={sortedTornados.length}
+                itemData={{
+                  onClick,
+                  selectedTornadoId,
+                  sortedTornados
+                }}
+                itemSize={81}
+                width={"100%"}
+              >
+                {FixedSizeListRow}
+              </FixedSizeList>
             )}
           </>
         )}
