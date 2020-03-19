@@ -49,6 +49,9 @@ const FixedSizeListRow = ({
   );
 };
 
+const itemKey = (index, data: FixedSizeListRowProps) =>
+  data.sortedTornados[index].id;
+
 export default function TornadoEventList({
   onClick,
   search,
@@ -148,6 +151,7 @@ export default function TornadoEventList({
                   selectedTornadoId,
                   sortedTornados
                 }}
+                itemKey={itemKey}
                 itemSize={81}
                 width={"100%"}
               >
