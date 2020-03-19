@@ -35,7 +35,16 @@ const TornadoEventListItems = React.memo(function TornadoEventListItems({
           clusterCount={"cluster" in tornado ? tornado.cluster.length : 0}
           community={tornado.community}
           date={tornado.date}
-          fujita={tornado.fujita}
+          fujitas={
+            "cluster" in tornado
+              ? [
+                  ...new Set([
+                    tornado.fujita,
+                    ...tornado.cluster.map(({ fujita }) => fujita)
+                  ])
+                ]
+              : [tornado.fujita]
+          }
           length_m={tornado.length_m}
           onClick={onClick(tornado.id)}
           province={tornado.province}
