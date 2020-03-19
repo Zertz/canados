@@ -88,7 +88,7 @@ onmessage = function(e) {
           ];
         }, [])
         .sort(([, a], [, b]) => b - a)
-        .filter((value, i, arr) => arr[i][1] >= arr[0][1] * 0.05);
+        .filter((value, i, arr) => i < 5 || arr[i][1] >= arr[0][1] * 0.05);
 
       for (let i = entriesMatches.length - 1; i >= 0; i -= 1) {
         entriesMatches[i][1] =
