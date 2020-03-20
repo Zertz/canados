@@ -15,6 +15,7 @@ export function getClusteredTornados({
   const clusteredTornadoIds: TornadoId[] = [];
   const clusters: TornadoEvent[][] = [];
 
+  // Cluster tornados by their geohash, from closest to furthest
   for (let i = GEOHASH_LENGTH; i > 0; i -= 1) {
     const geohashClusters: { [key: string]: TornadoEvent[] } = {};
 
@@ -38,15 +39,43 @@ export function getClusteredTornados({
 
     for (let j = 0; j < currentClusters.length - 1; j += 1) {
       clusteredTornadoIds.push(...currentClusters[j].map(({ id }) => id));
+      clusters.push(currentClusters[j]);
+    }
+  }
+
+  // Split larger clusters in half until a target number is reached
+  while (MAXIMUM_DISPLAYED_TORNADOS - clusters.length > 0) {
+    const unwindCount = MAXIMUM_DISPLAYED_TORNADOS - clusters.length;
+    const largestClusters: [number, number][] = [];
+
+    for (let i = 0; i < clusters.length; i += 1) {
+      const clusterLength = clusters[i].length;
+
+      if (clusterLength <= 1) {
+        continue;
+      }
 
       if (
-        clusters.length + tornados.length - clusteredTornadoIds.length <=
-        MAXIMUM_DISPLAYED_TORNADOS
+        largestClusters.length === 0 ||
+        largestClusters.some(([, length]) => length < clusterLength)
       ) {
-        clusters.push(...currentClusters[j].map(cluster => [cluster]));
-      } else {
-        clusters.push(currentClusters[j]);
+        largestClusters.push([i, clusterLength]);
       }
+    }
+
+    if (largestClusters.length === 0) {
+      break;
+    }
+
+    if (largestClusters.length > unwindCount) {
+      largestClusters.sort(([, a], [, b]) => b - a).splice(unwindCount);
+    }
+
+    for (let i = 0; i < largestClusters.length; i += 1) {
+      const [clusterIndex] = largestClusters[i];
+      const cluster = clusters[clusterIndex];
+
+      clusters.push(cluster.splice(0, Math.round(cluster.length / 2)));
     }
   }
 
