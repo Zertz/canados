@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { FixedSizeList } from "react-window";
 import { useSortedTornados } from "../../hooks/useSortedTornados";
 import SearchForm from "../SearchForm";
 import TornadoEventListFooter from "../TornadoEventListFooter/TornadoEventListFooter";
 import TornadoEventListHeader from "../TornadoEventListHeader";
 import TornadoEventListItem from "../TornadoEventListItem";
 import styles from "./TornadoEventList.module.css";
-import { FixedSizeList } from "react-window";
 
 type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
@@ -132,7 +132,7 @@ export default function TornadoEventList({
   return (
     <div className={styles.div}>
       <SearchForm onChange={handleChangeFilter} onSubmit={handleSubmit} />
-      <ul className="bg-white overflow-x-hidden overflow-y-auto shadow sm:rounded-md">
+      <div className="flex flex-col bg-white overflow-hidden rounded-md shadow-md">
         {listState === "expanded" && (
           <>
             <TornadoEventListHeader
@@ -145,6 +145,7 @@ export default function TornadoEventList({
             {Array.isArray(sortedTornados) && (
               <FixedSizeList
                 height={window.innerHeight}
+                innerElementType="ul"
                 itemCount={sortedTornados.length}
                 itemData={{
                   onClick,
@@ -168,7 +169,7 @@ export default function TornadoEventList({
             tornadoCount={tornadoCount}
           />
         )}
-      </ul>
+      </div>
     </div>
   );
 }

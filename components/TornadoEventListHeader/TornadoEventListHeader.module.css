@@ -1,8 +1,6 @@
-.li {
+.div {
   display: grid;
   grid: 1fr / 1fr min-content;
   grid-gap: 1rem;
   align-items: center;
-  position: sticky;
-  top: 0;
 }

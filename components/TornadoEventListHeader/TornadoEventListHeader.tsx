@@ -20,10 +20,10 @@ export default function TornadoEventListHeader({
   const searchMode = status === "done";
 
   return (
-    <li
+    <div
       className={classnames(
         "bg-white border-b border-gray-200 p-4 text-gray-800",
-        styles.li
+        styles.div
       )}
     >
       <select
@@ -60,6 +60,6 @@ export default function TornadoEventListHeader({
           <span className="sr-only">{order}</span>
         </button>
       </span>
-    </li>
+    </div>
   );
 }

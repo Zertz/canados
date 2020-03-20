@@ -11,7 +11,7 @@ export default function SearchForm({ onChange, onSubmit }: Props) {
       <label htmlFor="search" className="sr-only">
         Search tornados
       </label>
-      <div className="mt-1 flex rounded-md shadow-sm">
+      <div className="flex rounded-md shadow-md">
         <div className="relative flex-grow focus-within:z-10">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg

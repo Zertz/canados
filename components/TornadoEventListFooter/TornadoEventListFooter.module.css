@@ -1,9 +1,7 @@
-.li {
+.div {
   display: grid;
   grid: 1fr / 1fr min-content;
   grid-gap: 1rem;
   align-items: center;
   white-space: nowrap;
-  position: sticky;
-  bottom: 0;
 }

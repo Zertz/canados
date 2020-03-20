@@ -18,10 +18,10 @@ export default function TornadoEventListFooter({
   const searchMode = status === "done";
 
   return (
-    <li
+    <div
       className={classnames(
-        "bg-white border-b border-gray-200 p-4 text-gray-800",
-        styles.li
+        "bg-white border-t border-gray-200 p-4 text-gray-800",
+        styles.div
       )}
     >
       <span>
@@ -42,6 +42,6 @@ export default function TornadoEventListFooter({
           {listState === "collapsed" ? "Show list" : "Hide list"}
         </button>
       </span>
-    </li>
+    </div>
   );
 }
