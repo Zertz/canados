@@ -5,6 +5,40 @@ import { GEOHASH_LENGTH } from "../../constants";
 import { generateTornadoId } from "../../utils/generateTornadoId";
 import { parseTornadoDate } from "../../utils/parseTornadoDate";
 
+type CanadaProperties = {
+  YYYY_LOCAL: number;
+  MM_LOCAL: number;
+  DD_LOCAL: number;
+  HHMM_LOCAL: number;
+  NEAR_CMMTY: string;
+  PROVINCE: string;
+  FUJITA: number;
+  START_LAT_: number;
+  START_LON_: number;
+  END_LAT_N: number;
+  END_LON_W: number;
+  LENGTH_M: number;
+  MOTION_DEG: number;
+  WIDTH_MAX_: number;
+  HUMAN_FATA: number;
+  HUMAN_INJ: number;
+  ANIMAL_FAT: number;
+  ANIMAL_INJ: number;
+  DMG_THOUS: number;
+  FORECAST_R: string;
+};
+
+type CanadaEvents = {
+  properties: CanadaProperties;
+};
+
+type CanadaTracks = {
+  geometry: {
+    coordinates: Common.Coordinates[];
+  };
+  properties: CanadaProperties;
+};
+
 function check(value) {
   return [-999, "-999"].includes(value) ? null : Number(value);
 }
@@ -16,9 +50,14 @@ export default async (req, res) => {
     const [
       { features: rawEvents },
       { features: rawTracks }
-    ] = await Promise.all<{
-      features: Array<unknown>;
-    }>([
+    ] = await Promise.all<
+      {
+        features: Array<CanadaEvents>;
+      },
+      {
+        features: Array<CanadaTracks>;
+      }
+    >([
       got(
         "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"
       ).json(),
