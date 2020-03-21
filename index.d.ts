@@ -1,3 +1,37 @@
+type CanadaProperties = {
+  YYYY_LOCAL: number;
+  MM_LOCAL: number;
+  DD_LOCAL: number;
+  HHMM_LOCAL: number;
+  NEAR_CMMTY: string;
+  PROVINCE: string;
+  FUJITA: number;
+  START_LAT_: number;
+  START_LON_: number;
+  END_LAT_N: number;
+  END_LON_W: number;
+  LENGTH_M: number;
+  MOTION_DEG: number;
+  WIDTH_MAX_: number;
+  HUMAN_FATA: number;
+  HUMAN_INJ: number;
+  ANIMAL_FAT: number;
+  ANIMAL_INJ: number;
+  DMG_THOUS: number;
+  FORECAST_R: string;
+};
+
+type CanadaEvents = {
+  properties: CanadaProperties;
+};
+
+type CanadaTracks = {
+  geometry: {
+    coordinates: Common.Coordinates[];
+  };
+  properties: CanadaProperties;
+};
+
 type TornadoId = string;
 
 type TornadoEvent = {
