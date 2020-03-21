@@ -5,6 +5,11 @@ export function parseTornadoDate({
   YYYY_LOCAL,
   MM_LOCAL,
   DD_LOCAL
+}: {
+  HHMM_LOCAL: number;
+  YYYY_LOCAL: number;
+  MM_LOCAL: number;
+  DD_LOCAL: number;
 }) {
   const [hh, mm] = HHMM_LOCAL
     ? [
