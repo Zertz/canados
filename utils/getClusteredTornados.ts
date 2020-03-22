@@ -12,7 +12,7 @@ export function getClusteredTornados({
     }));
   }
 
-  const clusteredTornadoIds: TornadoId[] = [];
+  const clusteredTornadoIds = new Set<TornadoId>();
   const clusters: TornadoEvent[][] = [];
 
   // Cluster tornados by their geohash, from closest to furthest
@@ -20,7 +20,7 @@ export function getClusteredTornados({
     const geohashClusters: { [key: string]: TornadoEvent[] } = {};
 
     for (let j = 0; j < tornados.length; j += 1) {
-      if (clusteredTornadoIds.includes(tornados[j].id)) {
+      if (clusteredTornadoIds.has(tornados[j].id)) {
         continue;
       }
 
@@ -34,11 +34,11 @@ export function getClusteredTornados({
     }
 
     const currentClusters = Object.values(geohashClusters).filter(
-      cluster => cluster.length > 3
+      cluster => cluster.length > 5
     );
 
     for (let j = 0; j < currentClusters.length - 1; j += 1) {
-      clusteredTornadoIds.push(...currentClusters[j].map(({ id }) => id));
+      currentClusters[j].forEach(({ id }) => clusteredTornadoIds.add(id));
       clusters.push(currentClusters[j]);
     }
   }
