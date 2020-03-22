@@ -51,16 +51,16 @@ export function formatUnitedStatesData() {
               coordinates_start[1],
               GEOHASH_LENGTH
             ),
-            length_m: Number(json.len) * 1.6,
-            width_max: Number(json.wid) * 0.9144,
-            human_fata: Number(json.fat),
-            human_inj: Number(json.inj),
-            dmg_thous:
-              json.closs === "0.0"
-                ? json.loss === "0.0"
-                  ? undefined
-                  : Number(json.loss)
-                : Number(json.closs) * 1000000
+            length_m: Number(json.len) * 1.6
+            // width_max: Number(json.wid) * 0.9144,
+            // human_fata: Number(json.fat),
+            // human_inj: Number(json.inj),
+            // dmg_thous:
+            //   json.closs === "0.0"
+            //     ? json.loss === "0.0"
+            //       ? undefined
+            //       : Number(json.loss)
+            //     : Number(json.closs) * 1000000
           };
 
           events.push({

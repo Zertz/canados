@@ -113,15 +113,15 @@ export function formatCanadaData(
           community,
           province: PROVINCE,
           fujita: Number(FUJITA),
-          length_m: check(LENGTH_M),
-          motion_deg: check(MOTION_DEG),
-          width_max: check(WIDTH_MAX_),
-          human_fata: check(HUMAN_FATA),
-          human_inj: check(HUMAN_INJ),
-          animal_fat: check(ANIMAL_FAT),
-          animal_inj: check(ANIMAL_INJ),
-          dmg_thous: check(DMG_THOUS) ? DMG_THOUS * 1000 : undefined,
-          forecast_r: FORECAST_R
+          length_m: check(LENGTH_M)
+          // motion_deg: check(MOTION_DEG),
+          // width_max: check(WIDTH_MAX_),
+          // human_fata: check(HUMAN_FATA),
+          // human_inj: check(HUMAN_INJ),
+          // animal_fat: check(ANIMAL_FAT),
+          // animal_inj: check(ANIMAL_INJ),
+          // dmg_thous: check(DMG_THOUS) ? DMG_THOUS * 1000 : undefined,
+          // forecast_r: FORECAST_R
         };
       }
     )
