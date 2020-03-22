@@ -32,13 +32,49 @@ type CanadaTracks = {
   properties: CanadaProperties;
 };
 
+type UnitedStatesProperties = {
+  om: string;
+  yr: string;
+  mo: string;
+  dy: string;
+  date: string;
+  time: string;
+  tz: string;
+  st: string;
+  stf: string;
+  stn: string;
+  mag: string;
+  inj: string;
+  fat: string;
+  loss: string;
+  closs: string;
+  slat: string;
+  slon: string;
+  elat: string;
+  elon: string;
+  len: string;
+  wid: string;
+  ns: string;
+  sn: string;
+  sg: string;
+  f1: string;
+  f2: string;
+  f3: string;
+  f4: string;
+  fc: string;
+};
+
 type TornadoId = string;
 
 type TornadoEvent = {
   id: TornadoId;
   coordinates_start: Common.Coordinates;
   coordinates_end: [number?, number?];
-  date: Date;
+  date:
+    | Date
+    | {
+        $date: Date;
+      };
   community: string;
   province: string;
   fujita: number;
@@ -51,8 +87,8 @@ type TornadoEvent = {
   animal_fat?: number;
   animal_inj?: number;
   dmg_thous?: number;
-  forecast_r: number;
-  tracks: Common.Coordinates[];
+  forecast_r?: string;
+  tracks?: Common.Coordinates[];
 };
 
 type ClusteredTornadoEvent = TornadoEvent & {

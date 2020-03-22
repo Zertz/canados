@@ -1,4 +1,5 @@
 import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
+import { shuffle } from "./shuffle";
 
 export function getClusteredTornados({
   tornados
@@ -79,7 +80,7 @@ export function getClusteredTornados({
     }
   }
 
-  return clusters.map(cluster => ({
+  return shuffle(clusters, MAXIMUM_DISPLAYED_TORNADOS).map(cluster => ({
     ...cluster[0],
     cluster: cluster.slice(1)
   }));

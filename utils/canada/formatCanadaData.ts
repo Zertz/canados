@@ -1,41 +1,51 @@
 import haversine from "fast-haversine";
 import geohash from "ngeohash";
-import { GEOHASH_LENGTH } from "../constants";
-import { generateTornadoId } from "./generateTornadoId";
+import { GEOHASH_LENGTH } from "../../constants";
+import { generateTornadoId } from "../generateTornadoId";
 import { parseTornadoDate } from "./parseTornadoDate";
 
-function check(value) {
-  return [-999, "-999"].includes(value) ? null : Number(value);
+function check(value: number | string): number | undefined {
+  return [-999, "-999"].includes(value) ? undefined : Number(value);
 }
 
 export function formatCanadaData(
   rawEvents: CanadaEvents[],
   rawTracks: CanadaTracks[]
 ) {
-  const tracks = rawTracks
+  const tracks: {
+    [key: string]: Common.Coordinates[];
+  } = rawTracks
     .map(
       ({
         geometry,
         properties: { YYYY_LOCAL, MM_LOCAL, DD_LOCAL, HHMM_LOCAL, NEAR_CMMTY }
       }) => {
+        const community = NEAR_CMMTY;
+
         const coordinates = geometry.coordinates.map(pair => pair.reverse());
+        const coordinates_start = coordinates[0];
+        const coordinates_end = coordinates[coordinates.length - 1];
+
+        const date = {
+          $date: parseTornadoDate({
+            HHMM_LOCAL,
+            YYYY_LOCAL,
+            MM_LOCAL,
+            DD_LOCAL
+          })
+        };
+
         return {
-          coordinates,
-          coordinates_start: coordinates[0],
-          coordinates_end: coordinates[coordinates.length - 1],
-          date: {
-            $date: parseTornadoDate({
-              HHMM_LOCAL,
-              YYYY_LOCAL,
-              MM_LOCAL,
-              DD_LOCAL
-            })
-          },
-          community: NEAR_CMMTY
+          id: generateTornadoId({
+            community: community,
+            coordinates_start: coordinates_start,
+            coordinates_end: coordinates_end,
+            date: date
+          }),
+          coordinates
         };
       }
     )
-    .map(generateTornadoId)
     .reduce(
       (acc, { id, coordinates }) => ({
         ...acc,
@@ -43,7 +53,8 @@ export function formatCanadaData(
       }),
       {}
     );
-  const events = rawEvents
+
+  const events: TornadoEvent[] = rawEvents
     .map(
       ({
         properties: {
@@ -69,20 +80,39 @@ export function formatCanadaData(
           FORECAST_R
         }
       }) => {
+        const community = NEAR_CMMTY;
+
+        const coordinates_start: Common.Coordinates = [
+          check(START_LAT_) || 0,
+          check(START_LON_) || 0
+        ];
+        const coordinates_end: [number?, number?] = [
+          check(END_LAT_N),
+          check(END_LON_W)
+        ];
+
+        const date = {
+          $date: parseTornadoDate({
+            HHMM_LOCAL,
+            YYYY_LOCAL,
+            MM_LOCAL,
+            DD_LOCAL
+          })
+        };
+
         return {
-          coordinates_start: [check(START_LAT_), check(START_LON_)],
-          coordinates_end: [check(END_LAT_N), check(END_LON_W)],
-          date: {
-            $date: parseTornadoDate({
-              HHMM_LOCAL,
-              YYYY_LOCAL,
-              MM_LOCAL,
-              DD_LOCAL
-            })
-          },
-          community: NEAR_CMMTY,
+          id: generateTornadoId({
+            community,
+            coordinates_start,
+            coordinates_end,
+            date
+          }),
+          coordinates_start,
+          coordinates_end,
+          date,
+          community,
           province: PROVINCE,
-          fujita: check(FUJITA),
+          fujita: Number(FUJITA),
           length_m: check(LENGTH_M),
           motion_deg: check(MOTION_DEG),
           width_max: check(WIDTH_MAX_),
@@ -90,19 +120,20 @@ export function formatCanadaData(
           human_inj: check(HUMAN_INJ),
           animal_fat: check(ANIMAL_FAT),
           animal_inj: check(ANIMAL_INJ),
-          dmg_thous: check(DMG_THOUS) ? DMG_THOUS * 1000 : null,
+          dmg_thous: check(DMG_THOUS) ? DMG_THOUS * 1000 : undefined,
           forecast_r: FORECAST_R
         };
       }
     )
-    .map(generateTornadoId)
     .map(tornado => {
       const coordinates_start = Array.isArray(tracks[tornado.id])
         ? tracks[tornado.id][0]
         : tornado.coordinates_start;
+
       const coordinates_end = Array.isArray(tracks[tornado.id])
         ? tracks[tornado.id][tracks[tornado.id].length - 1]
         : tornado.coordinates_end;
+
       const length_m = tornado.length_m
         ? tornado.length_m
         : typeof coordinates_end[0] === "number" &&
@@ -112,6 +143,7 @@ export function formatCanadaData(
             { lat: coordinates_end[0], lon: coordinates_end[1] }
           )
         : undefined;
+
       return {
         ...tornado,
         coordinates_start,
