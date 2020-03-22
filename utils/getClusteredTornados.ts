@@ -35,7 +35,7 @@ export function getClusteredTornados({
     }
 
     const currentClusters = Object.values(geohashClusters).filter(
-      cluster => cluster.length > 5
+      cluster => cluster.length > Math.ceil(tornados.length / 650)
     );
 
     for (let j = 0; j < currentClusters.length - 1; j += 1) {
