@@ -66,22 +66,25 @@ type UnitedStatesProperties = {
 
 type TornadoId = string;
 
-type TornadoEvent = {
+type RawTornado = {
   id: TornadoId;
   coordinates_start: Common.Coordinates;
   coordinates_end: [number?, number?];
   date: Date;
   fujita: number;
-  geohash: string;
-  length_m: number;
   location: string;
 };
 
-type ClusteredTornadoEvent = TornadoEvent & {
-  cluster: TornadoEvent[];
+type Tornado = RawTornado & {
+  geohash: string;
+  length_m: number;
 };
 
-type SearchedTornadoEvent = TornadoEvent & {
+type ClusteredTornado = Tornado & {
+  cluster: Tornado[];
+};
+
+type SearchedTornado = Tornado & {
   relevance: number;
 };
 

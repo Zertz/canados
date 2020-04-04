@@ -1,4 +1,4 @@
-export function getFitBounds(filteredTornados: TornadoEvent[]): Common.Bounds {
+export function getFitBounds(filteredTornados: Tornado[]): Common.Bounds {
   const fitBounds = filteredTornados.reduce(
     (
       [southWestBounds, northEastBounds],

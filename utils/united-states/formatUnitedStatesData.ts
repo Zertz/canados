@@ -7,9 +7,9 @@ function check(value: string): number | undefined {
   return ["0", "0.0"].includes(value) ? undefined : Number(value);
 }
 
-export function formatUnitedStatesData(): Promise<TornadoEvent[]> {
+export function formatUnitedStatesData(): Promise<RawTornado[]> {
   return new Promise((resolve, reject) => {
-    const events: TornadoEvent[] = [];
+    const events: RawTornado[] = [];
 
     csvtojson({
       downstreamFormat: "array",

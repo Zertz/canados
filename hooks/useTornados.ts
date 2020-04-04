@@ -6,8 +6,8 @@ import { useAPI } from "./useAPI";
 import { useSearch } from "./useSearch";
 
 type State = {
-  boundedTornados?: TornadoEvent[];
-  clusteredTornados?: ClusteredTornadoEvent[];
+  boundedTornados?: Tornado[];
+  clusteredTornados?: ClusteredTornado[];
   fitBounds?: Common.Bounds;
   status: Common.Status;
   tornadoCount?: number;
@@ -17,8 +17,8 @@ type Action =
   | {
       type: "cluster";
       payload: {
-        boundedTornados: TornadoEvent[];
-        clusteredTornados: ClusteredTornadoEvent[];
+        boundedTornados: Tornado[];
+        clusteredTornados: ClusteredTornado[];
         tornadoCount: number;
       };
     }

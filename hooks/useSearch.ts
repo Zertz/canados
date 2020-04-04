@@ -2,16 +2,16 @@ import { useEffect, useReducer, useCallback } from "react";
 import { useWorker } from "./useWorker";
 
 type Props = {
-  tornados?: TornadoEvent[];
+  tornados?: Tornado[];
 };
 
 type State = {
-  results: SearchedTornadoEvent[];
+  results: SearchedTornado[];
   status: Common.Status;
 };
 
 type Action =
-  | { type: "results"; payload: SearchedTornadoEvent[] }
+  | { type: "results"; payload: SearchedTornado[] }
   | { type: "status"; payload: Common.Status };
 
 function reducer(state: State, action: Action): State {

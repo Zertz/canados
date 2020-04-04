@@ -16,11 +16,11 @@ type TornadoEventListProps = CommonProps & {
   search: (string) => void;
   status: Common.Status;
   tornadoCount?: number;
-  tornados?: Array<TornadoEvent | SearchedTornadoEvent>;
+  tornados?: Array<Tornado | SearchedTornado>;
 };
 
 type FixedSizeListRowProps = CommonProps & {
-  sortedTornados: Array<TornadoEvent | SearchedTornadoEvent>;
+  sortedTornados: Array<Tornado | SearchedTornado>;
 };
 
 const FixedSizeListRow = ({

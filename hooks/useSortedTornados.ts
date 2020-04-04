@@ -4,12 +4,12 @@ import { getSortFunction } from "../utils/getSortFunction";
 type Props = {
   order: Common.Order;
   sortProperty: Common.SortProperty;
-  tornados?: Array<TornadoEvent | SearchedTornadoEvent>;
+  tornados?: Array<Tornado | SearchedTornado>;
 };
 
 export const useSortedTornados = ({ order, sortProperty, tornados }: Props) => {
   const [sortedTornados, setSortedTornados] = useState<
-    Array<TornadoEvent | SearchedTornadoEvent>
+    Array<Tornado | SearchedTornado>
   >();
 
   useEffect(() => {

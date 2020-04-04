@@ -21,7 +21,7 @@ export default async (req, res) => {
       {
         features: Array<CanadaTracks>;
       },
-      TornadoEvent[]
+      RawTornado[]
     >([
       got(
         "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"

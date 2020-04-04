@@ -54,7 +54,7 @@ export function formatCanadaData(
       {}
     );
 
-  const events: TornadoEvent[] = rawEvents
+  const events: RawTornado[] = rawEvents
     .map(
       ({
         properties: {

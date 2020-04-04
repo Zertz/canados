@@ -5,7 +5,7 @@ import { GEOHASH_LENGTH } from "../constants";
 import ky from "../ky";
 
 type State = {
-  data?: TornadoEvent[];
+  data?: Tornado[];
   error?: Error;
   status: Common.Status;
 };

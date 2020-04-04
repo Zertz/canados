@@ -1,11 +1,7 @@
 import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 import { shuffle } from "./shuffle";
 
-export function getClusteredTornados({
-  tornados,
-}: {
-  tornados: TornadoEvent[];
-}) {
+export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
   if (tornados.length <= MAXIMUM_DISPLAYED_TORNADOS) {
     return tornados.map((tornado) => ({
       ...tornado,
@@ -14,11 +10,11 @@ export function getClusteredTornados({
   }
 
   const clusteredTornadoIds = new Set<TornadoId>();
-  const clusters: TornadoEvent[][] = [];
+  const clusters: Tornado[][] = [];
 
   // Cluster tornados by their geohash, from closest to furthest
   for (let i = GEOHASH_LENGTH; i > 0; i -= 1) {
-    const geohashClusters: { [key: string]: TornadoEvent[] } = {};
+    const geohashClusters: { [key: string]: Tornado[] } = {};
 
     for (let j = 0; j < tornados.length; j += 1) {
       if (clusteredTornadoIds.has(tornados[j].id)) {

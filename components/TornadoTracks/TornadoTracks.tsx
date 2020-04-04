@@ -20,16 +20,16 @@ type Props = {
   onClick: (tornadoId: TornadoId) => void;
   selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
-  tornados?: ClusteredTornadoEvent[];
+  tornados?: ClusteredTornado[];
 };
 
-function getStart(tornado: TornadoEvent): Common.Coordinates {
+function getStart(tornado: Tornado): Common.Coordinates {
   const { coordinates_start } = tornado;
 
   return coordinates_start;
 }
 
-function getCenter(tornado: TornadoEvent): Common.Coordinates {
+function getCenter(tornado: Tornado): Common.Coordinates {
   const { coordinates_start, coordinates_end } = tornado;
 
   if (
@@ -45,7 +45,7 @@ function getCenter(tornado: TornadoEvent): Common.Coordinates {
   return coordinates_start;
 }
 
-function getEnd(tornado: TornadoEvent): Common.Coordinates | void {
+function getEnd(tornado: Tornado): Common.Coordinates | void {
   const { coordinates_end } = tornado;
 
   if (

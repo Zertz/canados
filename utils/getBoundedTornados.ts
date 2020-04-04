@@ -3,7 +3,7 @@ export function getBoundedTornados({
   tornados,
 }: {
   bounds: Common.Bounds;
-  tornados: TornadoEvent[];
+  tornados: Tornado[];
 }) {
   return tornados.filter(({ coordinates_end, coordinates_start }) => {
     const [southWestBounds, northEastBounds] = bounds;
