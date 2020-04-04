@@ -75,6 +75,15 @@ type RawTornado = {
   location: string;
 };
 
+type TupleTornado = [
+  TornadoId,
+  Common.Coordinates,
+  [number?, number?],
+  Date,
+  number,
+  string
+];
+
 type Tornado = RawTornado & {
   geohash: string;
   length_m: number;

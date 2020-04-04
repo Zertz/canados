@@ -64,19 +64,20 @@ export const useAPI = (url) => {
     dispatch({ type: "request" });
 
     try {
-      const result: unknown[][] = await ky(url, {
-        timeout: 60000,
-      }).json();
+      const [resultCanada, resultUnitedStates] = await Promise.all<
+        TupleTornado[],
+        TupleTornado[]
+      >([
+        ky(`${url}?country=ca`, {
+          timeout: 60000,
+        }).json(),
+        ky(`${url}?country=us`, {
+          timeout: 60000,
+        }).json(),
+      ]);
 
-      const results = result.map(
-        ([id, coordinates_start, coordinates_end, $date, fujita, location]: [
-          string,
-          Common.Coordinates,
-          [number?, number?],
-          string,
-          number,
-          string
-        ]) => {
+      const results = [...resultCanada, ...resultUnitedStates].map(
+        ([id, coordinates_start, coordinates_end, $date, fujita, location]) => {
           const length_m =
             typeof coordinates_end[0] === "number" &&
             typeof coordinates_end[1] === "number"
