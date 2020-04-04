@@ -2,6 +2,10 @@ import got from "got";
 import { formatCanadaData } from "../../utils/canada/formatCanadaData";
 import { formatUnitedStatesData } from "../../utils/united-states/formatUnitedStatesData";
 
+function arrayify(tornados: Object[]) {
+  return tornados.map((tornado) => Object.values(tornado));
+}
+
 export default async (req, res) => {
   res.setHeader("Content-Type", "application/json");
 
@@ -17,7 +21,7 @@ export default async (req, res) => {
       {
         features: Array<CanadaTracks>;
       },
-      any
+      TornadoEvent[]
     >([
       got(
         "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"
@@ -32,8 +36,11 @@ export default async (req, res) => {
 
     res.statusCode = 200;
     res.setHeader("Cache-Control", "public, max-age=31536000");
-    res.end(JSON.stringify([...canadaData, ...unitedStatesData]));
+    res.end(
+      JSON.stringify([...arrayify(canadaData), ...arrayify(unitedStatesData)])
+    );
   } catch (e) {
+    console.error(e);
     res.statusCode = 500;
     res.end(JSON.stringify({ error: e.message }));
   }

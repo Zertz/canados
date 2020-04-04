@@ -8,47 +8,28 @@ export function getSortFunction(
         order === "ascending"
           ? a.date - b.date ||
             a.fujita - b.fujita ||
-            a.province.localeCompare(b.province) ||
-            a.community.localeCompare(b.community)
+            a.location.localeCompare(b.location)
           : b.date - a.date ||
             b.fujita - a.fujita ||
-            b.province.localeCompare(a.province) ||
-            b.community.localeCompare(a.community);
-    }
-    case "distance": {
-      return (a, b) => {
-        if (typeof a.length_m !== "number") {
-          return 1;
-        }
-        if (typeof b.length_m !== "number") {
-          return -1;
-        }
-        return order === "ascending"
-          ? a.length_m - b.length_m
-          : b.length_m - a.length_m;
-      };
+            b.location.localeCompare(a.location);
     }
     case "fujita": {
       return (a, b) =>
         order === "ascending"
           ? a.fujita - b.fujita ||
             a.date - b.date ||
-            a.province.localeCompare(b.province) ||
-            a.community.localeCompare(b.community)
+            a.location.localeCompare(b.location)
           : b.fujita - a.fujita ||
             b.date - a.date ||
-            b.province.localeCompare(a.province) ||
-            b.community.localeCompare(a.community);
+            b.location.localeCompare(a.location);
     }
     case "location": {
       return (a, b) =>
         order === "ascending"
-          ? a.province.localeCompare(b.province) ||
-            a.community.localeCompare(b.community) ||
+          ? a.location.localeCompare(b.location) ||
             a.date - b.date ||
             a.fujita - b.fujita
-          : b.province.localeCompare(a.province) ||
-            b.community.localeCompare(a.community) ||
+          : b.location.localeCompare(a.location) ||
             b.date - a.date ||
             b.fujita - a.fujita;
     }

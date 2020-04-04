@@ -1,24 +1,22 @@
 import React, { useLayoutEffect, useRef } from "react";
 
 type Props = {
-  community: string;
   date: Date;
   fujita: number;
   length_m?: number;
+  location: string;
   onClick: () => void;
-  province: string;
   relevance?: number;
   selected: boolean;
   style: React.CSSProperties;
 };
 
 export default function TornadoEventListItem({
-  community,
   date,
   fujita,
   length_m,
+  location,
   onClick,
-  province,
   selected,
   style,
 }: Props) {
@@ -49,7 +47,7 @@ export default function TornadoEventListItem({
             <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
               {`F${fujita}`}
               <span className="ml-1 font-normal text-gray-500">
-                {`in ${community}, ${province}`}
+                {`in ${location}`}
               </span>
             </div>
             <div className="mt-2 flex">
@@ -68,9 +66,8 @@ export default function TornadoEventListItem({
                 <span>
                   {`On `}
                   <time
-                    dateTime={`${date.getFullYear()}-${
-                      date.getMonth() + 1
-                    }-${date.getDate()}`}
+                    dateTime={`${date.getFullYear()}-${date.getMonth() +
+                      1}-${date.getDate()}`}
                   >
                     {date.toLocaleString()}
                   </time>

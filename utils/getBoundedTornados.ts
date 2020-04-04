@@ -5,7 +5,7 @@ export function getBoundedTornados({
   bounds: Common.Bounds;
   tornados: TornadoEvent[];
 }) {
-  return tornados.filter(({ coordinates_end, coordinates_start, tracks }) => {
+  return tornados.filter(({ coordinates_end, coordinates_start }) => {
     const [southWestBounds, northEastBounds] = bounds;
 
     if (
@@ -28,16 +28,6 @@ export function getBoundedTornados({
       return true;
     }
 
-    if (!Array.isArray(tracks)) {
-      return false;
-    }
-
-    return tracks.some(
-      (coordinates) =>
-        coordinates[0] > southWestBounds[0] &&
-        coordinates[0] < northEastBounds[0] &&
-        coordinates[1] > southWestBounds[1] &&
-        coordinates[1] < northEastBounds[1]
-    );
+    return false;
   });
 }

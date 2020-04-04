@@ -37,12 +37,11 @@ const FixedSizeListRow = ({
   return (
     <TornadoEventListItem
       key={tornado.id}
-      community={tornado.community}
       date={tornado.date as Date}
       fujita={tornado.fujita}
       length_m={tornado.length_m}
+      location={tornado.location}
       onClick={onClick(tornado.id)}
-      province={tornado.province}
       selected={selectedTornadoId === tornado.id}
       style={style}
     />

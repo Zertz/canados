@@ -30,10 +30,16 @@ function getStart(tornado: TornadoEvent): Common.Coordinates {
 }
 
 function getCenter(tornado: TornadoEvent): Common.Coordinates {
-  const { coordinates_start, tracks } = tornado;
+  const { coordinates_start, coordinates_end } = tornado;
 
-  if (Array.isArray(tracks)) {
-    return tracks[Math.floor(tracks.length / 2)];
+  if (
+    typeof coordinates_end[0] === "number" &&
+    typeof coordinates_end[1] === "number"
+  ) {
+    return [
+      (coordinates_start[0] + coordinates_end[0]) / 2,
+      (coordinates_start[1] + coordinates_end[1]) / 2,
+    ];
   }
 
   return coordinates_start;
@@ -147,20 +153,23 @@ export default function TornadoTracks({
                 <Marker onClick={onClick(tornado.id)} position={start}>
                   <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
                     {tornado.cluster.length > 0
-                      ? `${
-                          tornado.cluster.length + 1
-                        } tornados around this location`
-                      : `${end ? "Start: " : ""}${tornado.community}, ${
-                          tornado.province
-                        } (F${tornado.fujita})`}
+                      ? `${tornado.cluster.length +
+                          1} tornados around this location`
+                      : `${end ? "Start: " : ""}${tornado.location} (F${
+                          tornado.fujita
+                        })`}
                   </Tooltip>
                 </Marker>
-                {Array.isArray(tornado.tracks) && (
-                  <Polyline
-                    color={selected ? "tomato" : "lime"}
-                    positions={tornado.tracks}
-                  />
-                )}
+                {typeof tornado.coordinates_end[0] === "number" &&
+                  typeof tornado.coordinates_end[1] === "number" && (
+                    <Polyline
+                      color={selected ? "tomato" : "lime"}
+                      positions={[
+                        tornado.coordinates_start,
+                        tornado.coordinates_end,
+                      ]}
+                    />
+                  )}
                 {end && (
                   <>
                     {selected && (
@@ -171,7 +180,7 @@ export default function TornadoTracks({
                         direction="right"
                         offset={[-10, 0]}
                         opacity={0.9}
-                      >{`Finish: ${tornado.community}, ${tornado.province} (F${tornado.fujita})`}</Tooltip>
+                      >{`Finish: ${tornado.location} (F${tornado.fujita})`}</Tooltip>
                     </Marker>
                   </>
                 )}

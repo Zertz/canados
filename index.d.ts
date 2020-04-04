@@ -70,25 +70,11 @@ type TornadoEvent = {
   id: TornadoId;
   coordinates_start: Common.Coordinates;
   coordinates_end: [number?, number?];
-  date:
-    | Date
-    | {
-        $date: Date;
-      };
-  community: string;
-  province: string;
+  date: Date;
   fujita: number;
   geohash: string;
-  length_m?: number;
-  motion_deg?: number;
-  width_max?: number;
-  human_fata?: number;
-  human_inj?: number;
-  animal_fat?: number;
-  animal_inj?: number;
-  dmg_thous?: number;
-  forecast_r?: string;
-  tracks?: Common.Coordinates[];
+  length_m: number;
+  location: string;
 };
 
 type ClusteredTornadoEvent = TornadoEvent & {

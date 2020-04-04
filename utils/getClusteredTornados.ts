@@ -80,8 +80,8 @@ export function getClusteredTornados({
     }
   }
 
-  return shuffle(clusters, MAXIMUM_DISPLAYED_TORNADOS).map(cluster => ({
+  return shuffle(clusters, MAXIMUM_DISPLAYED_TORNADOS).map((cluster) => ({
     ...cluster[0],
-    cluster: cluster.slice(1)
+    cluster: cluster.slice(1),
   }));
 }

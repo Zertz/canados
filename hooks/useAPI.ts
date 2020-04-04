@@ -1,4 +1,7 @@
+import haversine from "fast-haversine";
+import geohash from "ngeohash";
 import { useEffect, useReducer } from "react";
+import { GEOHASH_LENGTH } from "../constants";
 import ky from "../ky";
 
 type State = {
@@ -43,27 +46,11 @@ function reducer(state: State, action: Action): State {
 
 function parseObject(object) {
   const entries = Object.entries(object).map(([key, value]) => [
-    key,
-    parseValue(value),
+    key.startsWith("$") ? key.substring(1) : key,
+    key.startsWith("$") && value ? new Date(value as string) : value,
   ]);
 
   return Object.fromEntries(entries as any);
-}
-
-function parseValue(value) {
-  if (!value) {
-    return value;
-  }
-
-  if (typeof value.$date !== "undefined") {
-    if (!value.$date) {
-      return value.$date;
-    }
-
-    return new Date(value.$date);
-  }
-
-  return value;
 }
 
 export const useAPI = (url) => {
@@ -77,13 +64,48 @@ export const useAPI = (url) => {
     dispatch({ type: "request" });
 
     try {
-      const result = await ky(url).json();
+      const result: unknown[][] = await ky(url, {
+        timeout: 60000,
+      }).json();
+
+      const results = result.map(
+        ([id, coordinates_start, coordinates_end, $date, fujita, location]: [
+          string,
+          Common.Coordinates,
+          [number?, number?],
+          string,
+          number,
+          string
+        ]) => {
+          const length_m =
+            typeof coordinates_end[0] === "number" &&
+            typeof coordinates_end[1] === "number"
+              ? haversine(
+                  { lat: coordinates_start[0], lon: coordinates_start[1] },
+                  { lat: coordinates_end[0], lon: coordinates_end[1] }
+                )
+              : undefined;
+
+          return {
+            id,
+            coordinates_start,
+            coordinates_end,
+            $date,
+            fujita,
+            geohash: geohash.encode(
+              coordinates_start[0],
+              coordinates_start[1],
+              GEOHASH_LENGTH
+            ),
+            length_m,
+            location,
+          };
+        }
+      );
 
       dispatch({
         type: "success",
-        data: Array.isArray(result)
-          ? result.map(parseObject)
-          : parseObject(result),
+        data: results.map(parseObject),
       });
     } catch (e) {
       dispatch({ type: "failure", error: e });
