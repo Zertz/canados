@@ -4,7 +4,7 @@ export function parseTornadoDate({
   HHMM_LOCAL,
   YYYY_LOCAL,
   MM_LOCAL,
-  DD_LOCAL
+  DD_LOCAL,
 }: {
   HHMM_LOCAL: number;
   YYYY_LOCAL: number;
@@ -14,7 +14,7 @@ export function parseTornadoDate({
   const [hh, mm] = HHMM_LOCAL
     ? [
         `${Math.floor(HHMM_LOCAL / 100).toFixed()}`.padStart(2, "0"),
-        `${HHMM_LOCAL}`.substring(`${HHMM_LOCAL}`.length - 2)
+        `${HHMM_LOCAL}`.substring(`${HHMM_LOCAL}`.length - 2),
       ]
     : ["00", "00"];
 

@@ -13,7 +13,7 @@ export default function TornadoEventListFooter({
   listState,
   onChangeListState,
   status,
-  tornadoCount
+  tornadoCount,
 }: Props) {
   const searchMode = status === "done";
 

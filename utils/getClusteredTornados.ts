@@ -2,14 +2,14 @@ import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 import { shuffle } from "./shuffle";
 
 export function getClusteredTornados({
-  tornados
+  tornados,
 }: {
   tornados: TornadoEvent[];
 }) {
   if (tornados.length <= MAXIMUM_DISPLAYED_TORNADOS) {
-    return tornados.map(tornado => ({
+    return tornados.map((tornado) => ({
       ...tornado,
-      cluster: []
+      cluster: [],
     }));
   }
 
@@ -35,7 +35,7 @@ export function getClusteredTornados({
     }
 
     const currentClusters = Object.values(geohashClusters).filter(
-      cluster => cluster.length > Math.ceil(tornados.length / 650)
+      (cluster) => cluster.length > Math.ceil(tornados.length / 650)
     );
 
     for (let j = 0; j < currentClusters.length - 1; j += 1) {

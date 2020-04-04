@@ -3,7 +3,7 @@ function tokenizeString(input) {
   const values = input
     .toLocaleLowerCase()
     .split(/\s/)
-    .map(v => v.trim())
+    .map((v) => v.trim())
     .filter(Boolean);
 
   const tokens = new Set();
@@ -25,11 +25,11 @@ function searchStringWithTokens(input, tokens) {
   let value = input.toLocaleLowerCase();
 
   return tokens
-    .map(token => {
+    .map((token) => {
       const split = value.split(token);
 
       value = split
-        .filter(v => v !== token)
+        .filter((v) => v !== token)
         .join("")
         .trim();
 
@@ -47,7 +47,7 @@ function weighTokenMatches(tokenMatches) {
 
 let dataCache;
 
-onmessage = function(e) {
+onmessage = function (e) {
   const { action, payload } = JSON.parse(e.data);
 
   switch (action) {
@@ -57,7 +57,7 @@ onmessage = function(e) {
       const entriesMatches = dataCache
         .reduce((acc, { id, ...rest }) => {
           const matchWeights = Object.values(rest)
-            .map(value => {
+            .map((value) => {
               if (!value) {
                 return 0;
               }
@@ -76,7 +76,7 @@ onmessage = function(e) {
 
               return weighTokenMatches(tokenMatches);
             })
-            .filter(weight => weight > 0);
+            .filter((weight) => weight > 0);
 
           if (matchWeights.length === 0) {
             return acc;
@@ -84,7 +84,7 @@ onmessage = function(e) {
 
           return [
             ...acc,
-            [id, matchWeights.reduce((acc, weight) => (acc += weight), 0)]
+            [id, matchWeights.reduce((acc, weight) => (acc += weight), 0)],
           ];
         }, [])
         .sort(([, a], [, b]) => b - a)

@@ -9,7 +9,7 @@ export default async (req, res) => {
     const [
       { features: rawEvents },
       { features: rawTracks },
-      unitedStatesData
+      unitedStatesData,
     ] = await Promise.all<
       {
         features: Array<CanadaEvents>;
@@ -25,7 +25,7 @@ export default async (req, res) => {
       got(
         "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-tracks-1980-2009-public-gis-en/GIS_CAN_VerifiedTracks_1980-2009.json"
       ).json(),
-      formatUnitedStatesData()
+      formatUnitedStatesData(),
     ]);
 
     const canadaData = formatCanadaData(rawEvents, rawTracks);

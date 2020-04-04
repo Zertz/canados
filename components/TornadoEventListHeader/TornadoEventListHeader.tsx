@@ -15,7 +15,7 @@ export default function TornadoEventListHeader({
   onChangeSort,
   order,
   sortProperty,
-  status
+  status,
 }: Props) {
   const searchMode = status === "done";
 

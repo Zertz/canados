@@ -19,7 +19,7 @@ export default function Home() {
     fitBounds,
     search,
     searchStatus,
-    tornadoCount
+    tornadoCount,
   } = useTornados({ screenBounds });
 
   if (error) {

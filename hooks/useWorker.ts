@@ -12,7 +12,7 @@ export function useWorker(url: string, receive: (data: any) => void) {
   }, []);
 
   useEffect(() => {
-    worker.onmessage = e => {
+    worker.onmessage = (e) => {
       if (!e.isTrusted) {
         return;
       }

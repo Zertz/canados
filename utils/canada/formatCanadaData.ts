@@ -18,11 +18,11 @@ export function formatCanadaData(
     .map(
       ({
         geometry,
-        properties: { YYYY_LOCAL, MM_LOCAL, DD_LOCAL, HHMM_LOCAL, NEAR_CMMTY }
+        properties: { YYYY_LOCAL, MM_LOCAL, DD_LOCAL, HHMM_LOCAL, NEAR_CMMTY },
       }) => {
         const community = NEAR_CMMTY;
 
-        const coordinates = geometry.coordinates.map(pair => pair.reverse());
+        const coordinates = geometry.coordinates.map((pair) => pair.reverse());
         const coordinates_start = coordinates[0];
         const coordinates_end = coordinates[coordinates.length - 1];
 
@@ -31,8 +31,8 @@ export function formatCanadaData(
             HHMM_LOCAL,
             YYYY_LOCAL,
             MM_LOCAL,
-            DD_LOCAL
-          })
+            DD_LOCAL,
+          }),
         };
 
         return {
@@ -40,16 +40,16 @@ export function formatCanadaData(
             community: community,
             coordinates_start: coordinates_start,
             coordinates_end: coordinates_end,
-            date: date
+            date: date,
           }),
-          coordinates
+          coordinates,
         };
       }
     )
     .reduce(
       (acc, { id, coordinates }) => ({
         ...acc,
-        [id]: coordinates
+        [id]: coordinates,
       }),
       {}
     );
@@ -77,18 +77,18 @@ export function formatCanadaData(
           ANIMAL_FAT,
           ANIMAL_INJ,
           DMG_THOUS,
-          FORECAST_R
-        }
+          FORECAST_R,
+        },
       }) => {
         const community = NEAR_CMMTY;
 
         const coordinates_start: Common.Coordinates = [
           check(START_LAT_) || 0,
-          check(START_LON_) || 0
+          check(START_LON_) || 0,
         ];
         const coordinates_end: [number?, number?] = [
           check(END_LAT_N),
-          check(END_LON_W)
+          check(END_LON_W),
         ];
 
         const date = {
@@ -96,8 +96,8 @@ export function formatCanadaData(
             HHMM_LOCAL,
             YYYY_LOCAL,
             MM_LOCAL,
-            DD_LOCAL
-          })
+            DD_LOCAL,
+          }),
         };
 
         return {
@@ -105,7 +105,7 @@ export function formatCanadaData(
             community,
             coordinates_start,
             coordinates_end,
-            date
+            date,
           }),
           coordinates_start,
           coordinates_end,
@@ -113,7 +113,7 @@ export function formatCanadaData(
           community,
           province: PROVINCE,
           fujita: Number(FUJITA),
-          length_m: check(LENGTH_M)
+          length_m: check(LENGTH_M),
           // motion_deg: check(MOTION_DEG),
           // width_max: check(WIDTH_MAX_),
           // human_fata: check(HUMAN_FATA),
@@ -125,7 +125,7 @@ export function formatCanadaData(
         };
       }
     )
-    .map(tornado => {
+    .map((tornado) => {
       const coordinates_start = Array.isArray(tracks[tornado.id])
         ? tracks[tornado.id][0]
         : tornado.coordinates_start;
@@ -154,7 +154,7 @@ export function formatCanadaData(
           GEOHASH_LENGTH
         ),
         length_m,
-        tracks: tracks[tornado.id]
+        tracks: tracks[tornado.id],
       };
     });
   return events;

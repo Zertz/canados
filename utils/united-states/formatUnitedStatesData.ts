@@ -14,7 +14,7 @@ export function formatUnitedStatesData() {
     const events: TornadoEvent[] = [];
 
     csvtojson({
-      downstreamFormat: "array"
+      downstreamFormat: "array",
     })
       .fromStream(
         got.stream(
@@ -25,12 +25,12 @@ export function formatUnitedStatesData() {
         (json: UnitedStatesProperties) => {
           const coordinates_start: [number, number] = [
             Number(json.slat),
-            Number(json.slon)
+            Number(json.slon),
           ];
 
           const coordinates_end: [number?, number?] = [
             check(json.elat),
-            check(json.elon)
+            check(json.elon),
           ];
 
           const event = {
@@ -65,7 +65,7 @@ export function formatUnitedStatesData() {
 
           events.push({
             id: generateTornadoId(event),
-            ...event
+            ...event,
           });
         },
         reject,

@@ -26,7 +26,7 @@ type FixedSizeListRowProps = CommonProps & {
 const FixedSizeListRow = ({
   data: { onClick, selectedTornadoId, sortedTornados },
   index,
-  style
+  style,
 }: {
   data: FixedSizeListRowProps;
   index: number;
@@ -58,7 +58,7 @@ export default function TornadoEventList({
   selectedTornadoId,
   status,
   tornadoCount,
-  tornados
+  tornados,
 }: TornadoEventListProps) {
   const [filter, setFilter] = useState("");
 
@@ -72,7 +72,7 @@ export default function TornadoEventList({
   const sortedTornados = useSortedTornados({
     order,
     sortProperty,
-    tornados
+    tornados,
   });
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function TornadoEventList({
     search("");
   }, [filter]);
 
-  const handleChangeFilter = e => {
+  const handleChangeFilter = (e) => {
     setFilter(e.target.value.trim());
   };
 
@@ -119,11 +119,11 @@ export default function TornadoEventList({
     setOrder(order === "ascending" ? "descending" : "ascending");
   };
 
-  const handleChangeSort = e => {
+  const handleChangeSort = (e) => {
     setSortProperty(e.target.value);
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     search(filter);
@@ -150,7 +150,7 @@ export default function TornadoEventList({
                 itemData={{
                   onClick,
                   selectedTornadoId,
-                  sortedTornados
+                  sortedTornados,
                 }}
                 itemKey={itemKey}
                 itemSize={81}

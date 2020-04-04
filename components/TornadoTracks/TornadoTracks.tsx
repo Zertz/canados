@@ -3,7 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import {
   CircleMarker,
@@ -11,7 +11,7 @@ import {
   Marker,
   Polyline,
   TileLayer,
-  Tooltip
+  Tooltip,
 } from "react-leaflet";
 import styles from "./TornadoTracks.module.css";
 
@@ -74,7 +74,7 @@ export default function TornadoTracks({
   onClick,
   selectedTornadoId,
   setScreenBounds,
-  tornados
+  tornados,
 }: Props) {
   const map = useRef<ReactLeaflet>();
 
@@ -115,7 +115,7 @@ export default function TornadoTracks({
 
     setScreenBounds([
       [bounds._southWest.lat, bounds._southWest.lng],
-      [bounds._northEast.lat, bounds._northEast.lng]
+      [bounds._northEast.lat, bounds._northEast.lng],
     ]);
   }, []);
 
@@ -133,7 +133,7 @@ export default function TornadoTracks({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {Array.isArray(tornados) &&
-          tornados.map(tornado => {
+          tornados.map((tornado) => {
             const start = getStart(tornado);
             const end = getEnd(tornado);
 
@@ -147,8 +147,9 @@ export default function TornadoTracks({
                 <Marker onClick={onClick(tornado.id)} position={start}>
                   <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
                     {tornado.cluster.length > 0
-                      ? `${tornado.cluster.length +
-                          1} tornados around this location`
+                      ? `${
+                          tornado.cluster.length + 1
+                        } tornados around this location`
                       : `${end ? "Start: " : ""}${tornado.community}, ${
                           tornado.province
                         } (F${tornado.fujita})`}

@@ -20,13 +20,13 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         results: action.payload,
-        status: "done"
+        status: "done",
       };
     }
     case "status": {
       return {
         ...state,
-        status: action.payload
+        status: action.payload,
       };
     }
     default: {
@@ -38,11 +38,11 @@ function reducer(state: State, action: Action): State {
 export const useSearch = ({ tornados }: Props) => {
   const [{ results, status }, dispatch] = useReducer(reducer, {
     results: [],
-    status: "idle"
+    status: "idle",
   });
 
   const receive = useCallback(
-    data => {
+    (data) => {
       if (!Array.isArray(tornados)) {
         return;
       }
@@ -53,9 +53,9 @@ export const useSearch = ({ tornados }: Props) => {
       const payload = tornados
         .filter(({ id }) => matches[id])
         .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id))
-        .map(result => ({
+        .map((result) => ({
           ...result,
-          relevance: matches[result.id]
+          relevance: matches[result.id],
         }));
 
       dispatch({ type: "results", payload });
@@ -72,11 +72,11 @@ export const useSearch = ({ tornados }: Props) => {
 
     send({
       action: "store",
-      payload: tornados
+      payload: tornados,
     });
   }, [tornados]);
 
-  const search = filter => {
+  const search = (filter) => {
     if (!Array.isArray(tornados) || !filter) {
       dispatch({ type: "status", payload: "idle" });
 
@@ -88,7 +88,7 @@ export const useSearch = ({ tornados }: Props) => {
     setTimeout(() => {
       send({
         action: "search",
-        payload: filter
+        payload: filter,
       });
     });
   };
@@ -96,6 +96,6 @@ export const useSearch = ({ tornados }: Props) => {
   return {
     results,
     search,
-    status
+    status,
   };
 };

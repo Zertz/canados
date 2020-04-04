@@ -18,21 +18,21 @@ function reducer(state: State, action: Action): State {
       return {
         data: undefined,
         error: action.error,
-        status: "idle"
+        status: "idle",
       };
     }
     case "request": {
       return {
         data: undefined,
         error: undefined,
-        status: "busy"
+        status: "busy",
       };
     }
     case "success": {
       return {
         data: action.data,
         error: undefined,
-        status: "done"
+        status: "done",
       };
     }
     default: {
@@ -44,7 +44,7 @@ function reducer(state: State, action: Action): State {
 function parseObject(object) {
   const entries = Object.entries(object).map(([key, value]) => [
     key,
-    parseValue(value)
+    parseValue(value),
   ]);
 
   return Object.fromEntries(entries as any);
@@ -66,11 +66,11 @@ function parseValue(value) {
   return value;
 }
 
-export const useAPI = url => {
+export const useAPI = (url) => {
   const [{ data, error, status }, dispatch] = useReducer(reducer, {
     data: undefined,
     error: undefined,
-    status: "idle"
+    status: "idle",
   });
 
   const load = async () => {
@@ -83,7 +83,7 @@ export const useAPI = url => {
         type: "success",
         data: Array.isArray(result)
           ? result.map(parseObject)
-          : parseObject(result)
+          : parseObject(result),
       });
     } catch (e) {
       dispatch({ type: "failure", error: e });
@@ -102,6 +102,6 @@ export const useAPI = url => {
     data,
     error,
     load,
-    status
+    status,
   };
 };

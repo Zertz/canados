@@ -1,6 +1,6 @@
 export function getBoundedTornados({
   bounds,
-  tornados
+  tornados,
 }: {
   bounds: Common.Bounds;
   tornados: TornadoEvent[];
@@ -33,7 +33,7 @@ export function getBoundedTornados({
     }
 
     return tracks.some(
-      coordinates =>
+      (coordinates) =>
         coordinates[0] > southWestBounds[0] &&
         coordinates[0] < northEastBounds[0] &&
         coordinates[1] > southWestBounds[1] &&

@@ -20,7 +20,7 @@ export default function TornadoEventListItem({
   onClick,
   province,
   selected,
-  style
+  style,
 }: Props) {
   const listItem = useRef<HTMLLIElement>(null);
 
@@ -32,7 +32,7 @@ export default function TornadoEventListItem({
     listItem.current?.scrollIntoView({
       behavior: "auto",
       block: "center",
-      inline: "start"
+      inline: "start",
     });
   }, [selected]);
 
@@ -68,8 +68,9 @@ export default function TornadoEventListItem({
                 <span>
                   {`On `}
                   <time
-                    dateTime={`${date.getFullYear()}-${date.getMonth() +
-                      1}-${date.getDate()}`}
+                    dateTime={`${date.getFullYear()}-${
+                      date.getMonth() + 1
+                    }-${date.getDate()}`}
                   >
                     {date.toLocaleString()}
                   </time>

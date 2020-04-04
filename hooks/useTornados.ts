@@ -31,19 +31,19 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         ...action.payload,
-        status: "done"
+        status: "done",
       };
     }
     case "fitBounds": {
       return {
         ...state,
-        fitBounds: action.payload
+        fitBounds: action.payload,
       };
     }
     case "status": {
       return {
         ...state,
-        status: action.payload
+        status: action.payload,
       };
     }
     default: {
@@ -60,18 +60,18 @@ export const useTornados = ({ screenBounds }: Props) => {
   const { data, error, load, status: apiStatus } = useAPI("/api/tornados");
 
   const { results: searchResults, search, status: searchStatus } = useSearch({
-    tornados: data
+    tornados: data,
   });
 
   const [
     { boundedTornados, clusteredTornados, fitBounds, status, tornadoCount },
-    dispatch
+    dispatch,
   ] = useReducer(reducer, {
     boundedTornados: undefined,
     clusteredTornados: undefined,
     fitBounds: undefined,
     status: "idle",
-    tornadoCount: undefined
+    tornadoCount: undefined,
   });
 
   useEffect(() => {
@@ -98,8 +98,8 @@ export const useTornados = ({ screenBounds }: Props) => {
         type: "fitBounds",
         payload: [
           [(fitBounds[0][0] -= 0.1), (fitBounds[0][1] -= 0.1)],
-          [(fitBounds[1][0] += 0.1), (fitBounds[1][1] += 0.1)]
-        ]
+          [(fitBounds[1][0] += 0.1), (fitBounds[1][1] += 0.1)],
+        ],
       });
 
       return;
@@ -107,7 +107,7 @@ export const useTornados = ({ screenBounds }: Props) => {
 
     dispatch({
       type: "fitBounds",
-      payload: fitBounds
+      payload: fitBounds,
     });
   }, [apiStatus, searchStatus]);
 
@@ -148,10 +148,10 @@ export const useTornados = ({ screenBounds }: Props) => {
           payload: {
             boundedTornados,
             clusteredTornados: getClusteredTornados({
-              tornados: boundedTornados
+              tornados: boundedTornados,
             }),
-            tornadoCount: boundedTornados.length
-          }
+            tornadoCount: boundedTornados.length,
+          },
         });
 
         break;
@@ -170,6 +170,6 @@ export const useTornados = ({ screenBounds }: Props) => {
     fitBounds,
     search,
     searchStatus,
-    tornadoCount
+    tornadoCount,
   };
 };
