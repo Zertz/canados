@@ -104,6 +104,12 @@ export const useAPI = (url: string) => {
 
       const results = data.map(
         ([id, coordinates_start, coordinates_end, $date, fujita, location]) => {
+          const geohashString = geohash.encode(
+            coordinates_start[0],
+            coordinates_start[1],
+            GEOHASH_LENGTH
+          );
+
           const length_m =
             typeof coordinates_end[0] === "number" &&
             typeof coordinates_end[1] === "number"
@@ -119,11 +125,8 @@ export const useAPI = (url: string) => {
             coordinates_end,
             $date,
             fujita,
-            geohash: geohash.encode(
-              coordinates_start[0],
-              coordinates_start[1],
-              GEOHASH_LENGTH
-            ),
+            geohash: geohashString,
+            geohashNeighbors: geohash.neighbors(geohashString),
             length_m,
             location,
           };
