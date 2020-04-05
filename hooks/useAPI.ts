@@ -53,7 +53,7 @@ function parseObject(object) {
   return Object.fromEntries(entries as any);
 }
 
-export const useAPI = (url) => {
+export const useAPI = (url: string) => {
   const [{ data, error, status }, dispatch] = useReducer(reducer, {
     data: undefined,
     error: undefined,
@@ -64,19 +64,45 @@ export const useAPI = (url) => {
     dispatch({ type: "request" });
 
     try {
-      const [resultCanada, resultUnitedStates] = await Promise.all<
-        TupleTornado[],
-        TupleTornado[]
-      >([
-        ky(`${url}?country=ca`, {
-          timeout: 60000,
-        }).json(),
-        ky(`${url}?country=us`, {
-          timeout: 60000,
-        }).json(),
-      ]);
+      const countries = {
+        CA: {
+          nextPage: 1,
+        },
+        US: {
+          nextPage: 1,
+        },
+      };
 
-      const results = [...resultCanada, ...resultUnitedStates].map(
+      let data: TupleTornado[] = [];
+
+      do {
+        const response = await Promise.all(
+          Object.entries(countries).map(([country, meta]) =>
+            Number.isInteger(meta.nextPage)
+              ? ky(`${url}?country=${country}&page=${meta.nextPage}`).json()
+              : [meta]
+          )
+        );
+
+        const [
+          [canadaMeta, ...canadaData],
+          [unitedStatesMeta, ...unitedStatesData],
+        ] = response as [
+          { nextPage: number; total: number },
+          ...TupleTornado[]
+        ][];
+
+        countries.CA = canadaMeta;
+        countries.US = unitedStatesMeta;
+
+        data = data.concat(canadaData, unitedStatesData);
+      } while (
+        Object.values(countries).some(({ nextPage }) =>
+          Number.isInteger(nextPage)
+        )
+      );
+
+      const results = data.map(
         ([id, coordinates_start, coordinates_end, $date, fujita, location]) => {
           const length_m =
             typeof coordinates_end[0] === "number" &&

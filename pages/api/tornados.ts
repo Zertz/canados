@@ -1,5 +1,6 @@
 import got from "got";
 import QuickLRU from "quick-lru";
+import { PAGE_SIZE } from "../../constants";
 import { formatCanadaData } from "../../utils/canada/formatCanadaData";
 import { formatUnitedStatesData } from "../../utils/united-states/formatUnitedStatesData";
 
@@ -7,8 +8,8 @@ const lru = new QuickLRU({ maxSize: 8 });
 
 type Country = "CA" | "US";
 
-function arrayify(tornados: Object[]) {
-  return tornados.map((tornado) => Object.values(tornado));
+function arrayify(data: Object[]) {
+  return data.map((value) => Object.values(value));
 }
 
 async function fetchData(country: Country) {
@@ -52,6 +53,7 @@ export default async (req, res) => {
   }
 
   const country = (req.query.country || "").toUpperCase();
+  const page = Number(req.query.page) || 1;
 
   if (!["CA", "US"].includes(country)) {
     res.statusCode = 400;
@@ -72,8 +74,21 @@ export default async (req, res) => {
     }
 
     res.statusCode = 200;
+
     res.setHeader("Cache-Control", "public, max-age=31536000");
-    res.end(JSON.stringify(arrayify(data)));
+
+    const start = (page - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+
+    res.end(
+      JSON.stringify([
+        {
+          nextPage: data.length > end ? page + 1 : null,
+          total: data.length,
+        },
+        ...arrayify(data.slice(start, end)),
+      ])
+    );
   } catch (e) {
     console.error(e);
     res.statusCode = 500;
