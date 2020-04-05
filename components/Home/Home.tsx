@@ -47,13 +47,13 @@ export default function Home() {
         setScreenBounds={setScreenBounds}
         tornados={clusteredTornados}
       />
-      {apiStatus === "busy" && (
+      {apiStatus === "loading" && (
         <LoadingOverlay
           title="Loading..."
           subtitle="This may take a few moments."
         />
       )}
-      {searchStatus === "busy" && (
+      {searchStatus === "loading" && (
         <LoadingOverlay
           title="Searching..."
           subtitle="This may take a few moments."

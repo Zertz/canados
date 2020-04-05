@@ -20,7 +20,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         results: action.payload,
-        status: "done",
+        status: "ready",
       };
     }
     case "status": {
@@ -83,7 +83,7 @@ export const useSearch = ({ tornados }: Props) => {
       return;
     }
 
-    dispatch({ type: "status", payload: "busy" });
+    dispatch({ type: "status", payload: "loading" });
 
     setTimeout(() => {
       send({

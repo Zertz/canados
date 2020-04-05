@@ -21,21 +21,21 @@ function reducer(state: State, action: Action): State {
       return {
         data: undefined,
         error: action.error,
-        status: "idle",
+        status: "error",
       };
     }
     case "request": {
       return {
         data: undefined,
         error: undefined,
-        status: "busy",
+        status: "loading",
       };
     }
     case "success": {
       return {
         data: action.data,
         error: undefined,
-        status: "done",
+        status: "ready",
       };
     }
     default: {

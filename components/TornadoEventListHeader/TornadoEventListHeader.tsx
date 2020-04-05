@@ -17,7 +17,7 @@ export default function TornadoEventListHeader({
   sortProperty,
   status,
 }: Props) {
-  const searchMode = status === "done";
+  const searchMode = status === "ready";
 
   return (
     <div

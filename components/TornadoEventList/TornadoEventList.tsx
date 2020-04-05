@@ -85,10 +85,10 @@ export default function TornadoEventList({
 
         break;
       }
-      case "busy": {
+      case "loading": {
         break;
       }
-      case "done": {
+      case "ready": {
         setListState("expanded");
         setOrder("descending");
         setSortProperty("relevance");

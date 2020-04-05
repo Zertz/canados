@@ -31,7 +31,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         ...action.payload,
-        status: "done",
+        status: "ready",
       };
     }
     case "fitBounds": {
@@ -79,7 +79,7 @@ export const useTornados = ({ screenBounds }: Props) => {
   }, []);
 
   useEffect(() => {
-    const searchMode = searchStatus === "done";
+    const searchMode = searchStatus === "ready";
 
     const tornados = searchMode
       ? searchResults
@@ -120,13 +120,13 @@ export const useTornados = ({ screenBounds }: Props) => {
       return;
     }
 
-    dispatch({ type: "status", payload: "busy" });
+    dispatch({ type: "status", payload: "loading" });
   }, [fitBounds, screenBounds]);
 
   useEffect(() => {
     switch (status) {
-      case "busy": {
-        const searchMode = searchStatus === "done";
+      case "loading": {
+        const searchMode = searchStatus === "ready";
         const bounds = searchMode ? fitBounds : screenBounds || fitBounds;
 
         if (!bounds) {

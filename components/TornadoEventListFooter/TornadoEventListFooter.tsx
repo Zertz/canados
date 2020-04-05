@@ -15,7 +15,7 @@ export default function TornadoEventListFooter({
   status,
   tornadoCount,
 }: Props) {
-  const searchMode = status === "done";
+  const searchMode = status === "ready";
 
   return (
     <div

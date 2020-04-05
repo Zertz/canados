@@ -102,6 +102,6 @@ declare module Common {
   type Coordinates = [number, number];
   type ListState = "collapsed" | "expanded";
   type Order = "ascending" | "descending";
-  type Status = "idle" | "busy" | "done";
+  type Status = "idle" | "loading" | "ready" | "error";
   type SortProperty = "date" | "distance" | "fujita" | "location" | "relevance";
 }
