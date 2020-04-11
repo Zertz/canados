@@ -85,13 +85,13 @@ type TupleTornado = [
 ];
 
 type Tornado = RawTornado & {
-  geohash: string;
-  geohashNeighbors: string[];
+  geohashStart: string;
+  geohashEnd: string;
   length_m: number;
 };
 
 type ClusteredTornado = Tornado & {
-  cluster: Tornado[];
+  cluster: TornadoId[];
 };
 
 type SearchedTornado = Tornado & {

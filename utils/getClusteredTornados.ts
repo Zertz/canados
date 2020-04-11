@@ -1,5 +1,4 @@
 import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
-import { shuffle } from "./shuffle";
 
 export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
   if (tornados.length <= MAXIMUM_DISPLAYED_TORNADOS) {
@@ -9,44 +8,81 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
     }));
   }
 
-  const clusteredTornadoIds = new Set<TornadoId>();
-  const clusters: Tornado[][] = [];
+  let clusteredTornados: ClusteredTornado[] = [];
 
-  // Cluster tornados by their geohash, from closest to furthest
+  // 1. Compute geohash map starting at full geohash length
+  // 2. Cluster tornados and, if the threshold is reached, start over with shorter geohash
+  // 3. Split largest clusters in half until threshold is reached
+
   for (let i = GEOHASH_LENGTH; i > 0; i -= 1) {
-    const geohashClusters: { [key: string]: Tornado[] } = {};
+    const clusteredTornadoIds = new Set<TornadoId>();
+    const geohashMap = new Map<string, Set<string>>();
 
     for (let j = 0; j < tornados.length; j += 1) {
+      const tornado = tornados[j];
+
+      const geohashStart = tornado.geohashStart.substring(0, i);
+
+      let set: ReturnType<typeof geohashMap.get>;
+
+      if ((set = geohashMap.get(geohashStart))) {
+        set.add(tornado.id);
+      } else {
+        geohashMap.set(geohashStart, new Set([tornado.id]));
+      }
+    }
+
+    for (let j = 0; j < tornados.length; j += 1) {
+      if (clusteredTornados.length > MAXIMUM_DISPLAYED_TORNADOS) {
+        clusteredTornados = [];
+
+        break;
+      }
+
       if (clusteredTornadoIds.has(tornados[j].id)) {
         continue;
       }
 
-      const geohash = tornados[j].geohash.substring(0, i);
+      const clusteredTornadoIndex =
+        clusteredTornados.push({
+          ...tornados[j],
+          cluster: [],
+        }) - 1;
 
-      if (!Array.isArray(geohashClusters[geohash])) {
-        geohashClusters[geohash] = [];
+      const clusteredTornado = clusteredTornados[clusteredTornadoIndex];
+
+      clusteredTornadoIds.add(clusteredTornado.id);
+
+      const geohashStart = clusteredTornado.geohashStart.substring(0, i);
+
+      let geohashSet: ReturnType<typeof geohashMap.get>;
+
+      if ((geohashSet = geohashMap.get(geohashStart))) {
+        if (geohashSet.size > 1) {
+          clusteredTornado.cluster = [
+            ...new Set([...clusteredTornado.cluster, ...geohashSet]),
+          ].filter((id) => id !== clusteredTornado.id);
+        }
+
+        geohashMap.delete(geohashStart);
       }
 
-      geohashClusters[geohash].push(tornados[j]);
+      for (let k = 0; k < clusteredTornado.cluster.length; k += 1) {
+        clusteredTornadoIds.add(clusteredTornado.cluster[k]);
+      }
     }
 
-    const currentClusters = Object.values(geohashClusters).filter(
-      (cluster) => cluster.length > Math.ceil(tornados.length / 650)
-    );
-
-    for (let j = 0; j < currentClusters.length - 1; j += 1) {
-      currentClusters[j].forEach(({ id }) => clusteredTornadoIds.add(id));
-      clusters.push(currentClusters[j]);
+    if (clusteredTornados.length > 0) {
+      break;
     }
   }
 
-  // Split larger clusters in half until a target number is reached
-  while (MAXIMUM_DISPLAYED_TORNADOS - clusters.length > 0) {
-    const unwindCount = MAXIMUM_DISPLAYED_TORNADOS - clusters.length;
+  while (MAXIMUM_DISPLAYED_TORNADOS - clusteredTornados.length > 0) {
+    const unwindCount = MAXIMUM_DISPLAYED_TORNADOS - clusteredTornados.length;
     const largestClusters: [number, number][] = [];
 
-    for (let i = 0; i < clusters.length; i += 1) {
-      const clusterLength = clusters[i].length;
+    for (let i = 0; i < clusteredTornados.length; i += 1) {
+      const clusterLength = clusteredTornados[i].cluster.length;
 
       if (clusterLength <= 1) {
         continue;
@@ -70,14 +106,25 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
 
     for (let i = 0; i < largestClusters.length; i += 1) {
       const [clusterIndex] = largestClusters[i];
-      const cluster = clusters[clusterIndex];
+      const { cluster } = clusteredTornados[clusterIndex];
 
-      clusters.push(cluster.splice(0, Math.round(cluster.length / 2)));
+      const [unclusteredTornadoId, ...unclusteredTornadoIds] = cluster.splice(
+        0,
+        Math.round(cluster.length / 2)
+      );
+
+      const tornado = tornados.find(({ id }) => id === unclusteredTornadoId);
+
+      if (!tornado) {
+        throw Error();
+      }
+
+      clusteredTornados.push({
+        ...tornado,
+        cluster: unclusteredTornadoIds.slice(1),
+      });
     }
   }
 
-  return shuffle(clusters, MAXIMUM_DISPLAYED_TORNADOS).map((cluster) => ({
-    ...cluster[0],
-    cluster: cluster.slice(1),
-  }));
+  return clusteredTornados;
 }

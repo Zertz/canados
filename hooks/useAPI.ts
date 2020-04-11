@@ -104,20 +104,30 @@ export const useAPI = (url: string) => {
 
       const results = data.map(
         ([id, coordinates_start, coordinates_end, $date, fujita, location]) => {
-          const geohashString = geohash.encode(
+          const hasEnd =
+            typeof coordinates_end[0] === "number" &&
+            typeof coordinates_end[1] === "number";
+
+          const geohashStart = geohash.encode(
             coordinates_start[0],
             coordinates_start[1],
             GEOHASH_LENGTH
-          );
+          ) as string;
 
-          const length_m =
-            typeof coordinates_end[0] === "number" &&
-            typeof coordinates_end[1] === "number"
-              ? haversine(
-                  { lat: coordinates_start[0], lon: coordinates_start[1] },
-                  { lat: coordinates_end[0], lon: coordinates_end[1] }
-                )
-              : undefined;
+          const geohashEnd = hasEnd
+            ? (geohash.encode(
+                coordinates_start[0],
+                coordinates_start[1],
+                GEOHASH_LENGTH
+              ) as string)
+            : undefined;
+
+          const length_m = hasEnd
+            ? haversine(
+                { lat: coordinates_start[0], lon: coordinates_start[1] },
+                { lat: coordinates_end[0], lon: coordinates_end[1] }
+              )
+            : undefined;
 
           return {
             id,
@@ -125,8 +135,8 @@ export const useAPI = (url: string) => {
             coordinates_end,
             $date,
             fujita,
-            geohash: geohashString,
-            geohashNeighbors: geohash.neighbors(geohashString),
+            geohashStart,
+            geohashEnd,
             length_m,
             location,
           };
