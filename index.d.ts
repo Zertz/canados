@@ -86,7 +86,6 @@ type TupleTornado = [
 
 type Tornado = RawTornado & {
   geohashStart: string;
-  geohashEnd: string;
   length_m: number;
 };
 

@@ -114,14 +114,6 @@ export const useAPI = (url: string) => {
             GEOHASH_LENGTH
           ) as string;
 
-          const geohashEnd = hasEnd
-            ? (geohash.encode(
-                coordinates_start[0],
-                coordinates_start[1],
-                GEOHASH_LENGTH
-              ) as string)
-            : undefined;
-
           const length_m = hasEnd
             ? haversine(
                 { lat: coordinates_start[0], lon: coordinates_start[1] },
@@ -136,7 +128,6 @@ export const useAPI = (url: string) => {
             $date,
             fujita,
             geohashStart,
-            geohashEnd,
             length_m,
             location,
           };
