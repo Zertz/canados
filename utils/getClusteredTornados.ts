@@ -22,10 +22,10 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
 
       const geohashStart = tornado.geohashStart.substring(0, i);
 
-      let set: ReturnType<typeof geohashMap.get>;
+      let clusteredTornado: ReturnType<typeof geohashMap.get>;
 
-      if ((set = geohashMap.get(geohashStart))) {
-        set.cluster.push(tornado.id);
+      if ((clusteredTornado = geohashMap.get(geohashStart))) {
+        clusteredTornado.cluster.push(tornado.id);
       } else {
         geohashMap.set(geohashStart, {
           ...tornado,
@@ -33,8 +33,6 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
         });
 
         if (geohashMap.size > MAXIMUM_DISPLAYED_TORNADOS) {
-          console.info(`Giving up on ${i} after ${j} iterations...`);
-
           break;
         }
       }
@@ -46,7 +44,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
 
     if (clusteredTornados.length > 0) {
       console.info(
-        `Looks like ${i} is the way to go with ${clusteredTornados.length} clusters!`
+        `Looks like ${i} is the way to go with ${tornados.length} tornados and ${clusteredTornados.length} clusters!`
       );
 
       break;
@@ -82,21 +80,23 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
 
     for (let i = 0; i < largestClusters.length; i += 1) {
       const [clusterIndex] = largestClusters[i];
-      const { cluster } = clusteredTornados[clusterIndex];
+      const tornado = clusteredTornados[clusterIndex];
 
-      const [unclusteredTornadoId, ...unclusteredTornadoIds] = cluster.splice(
-        0,
-        Math.round(cluster.length / 2)
+      const [
+        unclusteredTornadoId,
+        ...unclusteredTornadoIds
+      ] = tornado.cluster.splice(0, Math.round(tornado.cluster.length / 2));
+
+      const unclusteredTornado = tornados.find(
+        ({ id }) => id === unclusteredTornadoId
       );
 
-      const tornado = tornados.find(({ id }) => id === unclusteredTornadoId);
-
-      if (!tornado) {
+      if (!unclusteredTornado) {
         throw Error();
       }
 
       clusteredTornados.push({
-        ...tornado,
+        ...unclusteredTornado,
         cluster: unclusteredTornadoIds,
       });
     }
