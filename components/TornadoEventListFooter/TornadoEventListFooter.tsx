@@ -24,7 +24,7 @@ export default function TornadoEventListFooter({
         styles.div
       )}
     >
-      <span>
+      <span className={styles.span}>
         {tornadoCount === 1
           ? `${tornadoCount} tornado ${
               searchMode ? "matches your search" : "in this area"

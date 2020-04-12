@@ -5,3 +5,8 @@
   align-items: center;
   white-space: nowrap;
 }
+
+.span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
