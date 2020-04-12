@@ -10,6 +10,7 @@ function check(value: string): number | undefined {
 export function formatUnitedStatesData(): Promise<RawTornado[]> {
   return new Promise((resolve, reject) => {
     const events: RawTornado[] = [];
+    const ids = new Set<string>();
 
     csvtojson({
       downstreamFormat: "array",
@@ -21,32 +22,34 @@ export function formatUnitedStatesData(): Promise<RawTornado[]> {
       )
       .subscribe(
         (json: UnitedStatesProperties) => {
-          const coordinates_start: [number, number] = [
-            Number(json.slat),
-            Number(json.slon),
-          ];
+          const id = generateTornadoId(json);
 
-          const coordinates_end: [number?, number?] = [
-            check(json.elat),
-            check(json.elon),
-          ];
+          if (!ids.has(id)) {
+            const coordinates_start: [number, number] = [
+              Number(json.slat),
+              Number(json.slon),
+            ];
 
-          const event = {
-            coordinates_start,
-            coordinates_end,
-            date: parse(
-              `${json.yr}-${json.mo}-${json.dy} ${json.time}`,
-              "yyyy-MM-dd HH:mm:ss",
-              new Date()
-            ),
-            fujita: Number(json.mag),
-            location: json.st,
-          };
+            const coordinates_end: [number?, number?] = [
+              check(json.elat),
+              check(json.elon),
+            ];
 
-          events.push({
-            id: generateTornadoId(event),
-            ...event,
-          });
+            ids.add(id);
+
+            events.push({
+              id,
+              coordinates_start,
+              coordinates_end,
+              date: parse(
+                `${json.yr}-${json.mo}-${json.dy} ${json.time}`,
+                "yyyy-MM-dd HH:mm:ss",
+                new Date()
+              ),
+              fujita: Number(json.mag),
+              location: json.st,
+            });
+          }
         },
         reject,
         function onComplete() {
