@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef } from "react";
+import format from "date-fns/format";
 
 type Props = {
   date: Date;
@@ -64,12 +65,8 @@ export default function TornadoEventListItem({
                   />
                 </svg>
                 <span className="truncate">
-                  <time
-                    dateTime={`${date.getFullYear()}-${
-                      date.getMonth() + 1
-                    }-${date.getDate()}`}
-                  >
-                    {date.toLocaleString()}
+                  <time dateTime={date.toISOString()}>
+                    {format(date, "MMMM do yyyy 'at' h:mm a")}
                   </time>
                 </span>
               </div>
