@@ -1,5 +1,0 @@
-.div {
-  display: grid;
-  grid: repeat(2, min-content) / 1fr;
-  grid-gap: 1rem;
-}
