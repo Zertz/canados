@@ -1,0 +1,18 @@
+.div {
+  display: grid;
+  grid: 1fr / min-content 1fr min-content;
+  grid-gap: 1rem;
+  align-items: center;
+}
+
+.inputs {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}

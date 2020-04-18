@@ -1,6 +1,5 @@
 .div {
   display: grid;
-  grid: 1fr / 1fr min-content;
+  grid: repeat(2, min-content) / 1fr;
   grid-gap: 1rem;
-  align-items: center;
 }

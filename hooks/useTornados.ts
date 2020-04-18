@@ -1,12 +1,14 @@
 import { useEffect, useReducer } from "react";
 import { getBoundedTornados } from "../utils/getBoundedTornados";
 import { getClusteredTornados } from "../utils/getClusteredTornados";
+import { getFilteredTornados } from "../utils/getFilteredTornados";
 import { getFitBounds } from "../utils/getFitBounds";
 import { useAPI } from "./useAPI";
 import { useSearch } from "./useSearch";
 
 type State = {
   boundedTornados?: Tornado[];
+  filteredTornados?: Tornado[];
   clusteredTornados?: ClusteredTornado[];
   fitBounds?: Common.Bounds;
   status: Common.Status;
@@ -18,6 +20,7 @@ type Action =
       type: "cluster";
       payload: {
         boundedTornados: Tornado[];
+        filteredTornados: Tornado[];
         clusteredTornados: ClusteredTornado[];
         tornadoCount: number;
       };
@@ -53,10 +56,11 @@ function reducer(state: State, action: Action): State {
 }
 
 type Props = {
+  fujitaFilter: [number, number];
   screenBounds?: Common.Bounds;
 };
 
-export const useTornados = ({ screenBounds }: Props) => {
+export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
   const { data, error, load, status: apiStatus } = useAPI("/api/tornados");
 
   const { results: searchResults, search, status: searchStatus } = useSearch({
@@ -64,11 +68,19 @@ export const useTornados = ({ screenBounds }: Props) => {
   });
 
   const [
-    { boundedTornados, clusteredTornados, fitBounds, status, tornadoCount },
+    {
+      boundedTornados,
+      clusteredTornados,
+      filteredTornados,
+      fitBounds,
+      status,
+      tornadoCount,
+    },
     dispatch,
   ] = useReducer(reducer, {
     boundedTornados: undefined,
     clusteredTornados: undefined,
+    filteredTornados: undefined,
     fitBounds: undefined,
     status: "idle",
     tornadoCount: undefined,
@@ -143,14 +155,20 @@ export const useTornados = ({ screenBounds }: Props) => {
           ? tornados
           : getBoundedTornados({ bounds, tornados });
 
+        const filteredTornados = getFilteredTornados({
+          filters: { fujita: fujitaFilter },
+          tornados: boundedTornados,
+        });
+
         dispatch({
           type: "cluster",
           payload: {
             boundedTornados,
             clusteredTornados: getClusteredTornados({
-              tornados: boundedTornados,
+              tornados: filteredTornados,
             }),
-            tornadoCount: boundedTornados.length,
+            filteredTornados,
+            tornadoCount: filteredTornados.length,
           },
         });
 
@@ -162,14 +180,37 @@ export const useTornados = ({ screenBounds }: Props) => {
     }
   }, [status]);
 
+  useEffect(() => {
+    if (!boundedTornados) {
+      return;
+    }
+
+    const filteredTornados = getFilteredTornados({
+      filters: { fujita: fujitaFilter },
+      tornados: boundedTornados,
+    });
+
+    dispatch({
+      type: "cluster",
+      payload: {
+        boundedTornados,
+        clusteredTornados: getClusteredTornados({
+          tornados: filteredTornados,
+        }),
+        filteredTornados,
+        tornadoCount: filteredTornados.length,
+      },
+    });
+  }, [fujitaFilter]);
+
   return {
     apiStatus,
-    boundedTornados,
     clusteredTornados,
     error,
     fitBounds,
     search,
     searchStatus,
     tornadoCount,
+    tornados: filteredTornados,
   };
 };
