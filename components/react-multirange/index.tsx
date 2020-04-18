@@ -96,6 +96,8 @@ function Multirange({ min = 0, max = 100, onChange, values }: MultirangeProps) {
         onChange={handleChange}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
         ref={inputRef}
         style={{ width: "100%" }}
         value={lowValue}
@@ -108,6 +110,8 @@ function Multirange({ min = 0, max = 100, onChange, values }: MultirangeProps) {
         onChange={handleChange}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
         ref={ghostRef}
         style={{ width: "100%" }}
         value={highValue}
