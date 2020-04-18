@@ -43,10 +43,6 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
     }
 
     if (clusteredTornados.length > 0) {
-      console.info(
-        `Looks like ${i} is the way to go with ${tornados.length} tornados and ${clusteredTornados.length} clusters!`
-      );
-
       break;
     }
   }
