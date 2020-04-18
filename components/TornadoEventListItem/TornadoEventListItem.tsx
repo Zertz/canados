@@ -43,15 +43,15 @@ export default function TornadoEventListItem({
     >
       <div className="p-4 flex items-center sm:px-6">
         <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
+          <div className="w-full">
             <div className="text-sm leading-5 font-medium text-indigo-600 truncate">
               {`F${fujita}`}
               <span className="ml-1 font-normal text-gray-500">
                 {`in ${location}`}
               </span>
             </div>
-            <div className="mt-2 flex">
-              <div className="flex items-center text-sm leading-5 mr-2 text-gray-500">
+            <div className="flex justify-between mt-2">
+              <div className="flex items-center text-sm leading-5 mr-2 text-gray-500 overflow-hidden">
                 <svg
                   className="flex-shrink-0 mr-1 h-5 w-5 text-gray-400"
                   fill="currentColor"
@@ -63,18 +63,18 @@ export default function TornadoEventListItem({
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>
-                  {`On `}
+                <span className="truncate">
                   <time
-                    dateTime={`${date.getFullYear()}-${date.getMonth() +
-                      1}-${date.getDate()}`}
+                    dateTime={`${date.getFullYear()}-${
+                      date.getMonth() + 1
+                    }-${date.getDate()}`}
                   >
                     {date.toLocaleString()}
                   </time>
                 </span>
               </div>
               {length_m && (
-                <div className="flex items-center text-sm leading-5 text-gray-500">
+                <div className="flex items-center text-sm leading-5 text-gray-500 whitespace-no-wrap">
                   <svg
                     className="flex-shrink-0 mr-1 h-5 w-5 text-gray-400"
                     fill="currentColor"
