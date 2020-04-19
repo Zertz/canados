@@ -7,7 +7,6 @@ type Props = {
   length_m?: number;
   location: string;
   onClick: () => void;
-  relevance?: number;
   selected: boolean;
   style: React.CSSProperties;
 };

@@ -16,8 +16,6 @@ export default function TornadoEventListSort({
   sortProperty,
   status,
 }: Props) {
-  const searchMode = status === "ready";
-
   return (
     <div className={styles.div}>
       <select
@@ -29,7 +27,6 @@ export default function TornadoEventListSort({
         <option value="distance">Distance</option>
         <option value="fujita">Fujita</option>
         <option value="location">Location</option>
-        {searchMode && <option value="relevance">Relevance</option>}
       </select>
       <span className="inline-flex rounded-md shadow-sm">
         <button

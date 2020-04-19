@@ -33,12 +33,5 @@ export function getSortFunction(
             b.date - a.date ||
             b.fujita - a.fujita;
     }
-    case "relevance": {
-      return (a, b) => {
-        return order === "ascending"
-          ? a.relevance - b.relevance
-          : b.relevance - a.relevance;
-      };
-    }
   }
 }
