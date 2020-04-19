@@ -1,6 +1,6 @@
 import got from "got";
-import QuickLRU from "quick-lru";
 import geohash from "ngeohash";
+import QuickLRU from "quick-lru";
 import { GEOHASH_LENGTH } from "../../constants";
 
 const lru = new QuickLRU({ maxSize: 256 });
