@@ -108,6 +108,18 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
       : undefined;
 
     if (!Array.isArray(tornados) || tornados.length === 0) {
+      if (searchMode) {
+        dispatch({
+          type: "cluster",
+          payload: {
+            boundedTornados: [],
+            clusteredTornados: [],
+            filteredTornados: [],
+            tornadoCount: 0,
+          },
+        });
+      }
+
       return;
     }
 
