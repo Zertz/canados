@@ -6,7 +6,19 @@ onmessage = function (e) {
 
   switch (action) {
     case "search": {
-      postMessage(JSON.stringify(dataCache));
+      const allGeohashes = payload.reduce((set, geohashes) => {
+        for (let i = 0; i < geohashes.length; i += 1) {
+          set.add(geohashes[i]);
+        }
+
+        return set;
+      }, new Set());
+
+      const filteredResults = dataCache.filter(({ geohashStart }) =>
+        allGeohashes.has(geohashStart)
+      );
+
+      postMessage(JSON.stringify(filteredResults));
 
       break;
     }
