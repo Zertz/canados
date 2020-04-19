@@ -1,17 +1,18 @@
-import { useEffect, useReducer, useCallback } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import { useWorker } from "./useWorker";
+import ky from "../ky";
 
 type Props = {
   tornados?: Tornado[];
 };
 
 type State = {
-  results: SearchedTornado[];
+  results: Tornado[];
   status: Common.Status;
 };
 
 type Action =
-  | { type: "results"; payload: SearchedTornado[] }
+  | { type: "results"; payload: Tornado[] }
   | { type: "status"; payload: Common.Status };
 
 function reducer(state: State, action: Action): State {
@@ -47,18 +48,15 @@ export const useSearch = ({ tornados }: Props) => {
         return;
       }
 
-      const matches = JSON.parse(data);
-      const matchKeys = Object.keys(matches);
+      const payload = JSON.parse(data);
 
-      const payload = tornados
-        .filter(({ id }) => matches[id])
-        .sort((a, b) => matchKeys.indexOf(a.id) - matchKeys.indexOf(b.id))
-        .map((result) => ({
-          ...result,
-          relevance: matches[result.id],
-        }));
-
-      dispatch({ type: "results", payload });
+      dispatch({
+        type: "results",
+        payload: payload.map(({ date, ...tornado }) => ({
+          date: new Date(date),
+          ...tornado,
+        })),
+      });
     },
     [tornados]
   );
@@ -85,12 +83,14 @@ export const useSearch = ({ tornados }: Props) => {
 
     dispatch({ type: "status", payload: "loading" });
 
-    setTimeout(() => {
+    (async () => {
+      const payload = await ky(`/api/search?q=${filter}`).json();
+
       send({
         action: "search",
-        payload: filter,
+        payload,
       });
-    });
+    })();
   };
 
   return {

@@ -93,15 +93,11 @@ type ClusteredTornado = Tornado & {
   cluster: TornadoId[];
 };
 
-type SearchedTornado = Tornado & {
-  relevance: number;
-};
-
 declare module Common {
   type Bounds = [Coordinates, Coordinates];
   type Coordinates = [number, number];
   type ListState = "collapsed" | "expanded";
   type Order = "ascending" | "descending";
   type Status = "idle" | "loading" | "ready" | "error";
-  type SortProperty = "date" | "distance" | "fujita" | "location" | "relevance";
+  type SortProperty = "date" | "distance" | "fujita" | "location";
 }

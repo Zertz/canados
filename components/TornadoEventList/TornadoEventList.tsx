@@ -18,11 +18,11 @@ type TornadoEventListProps = CommonProps & {
   search: (string) => void;
   status: Common.Status;
   tornadoCount?: number;
-  tornados?: Array<Tornado | SearchedTornado>;
+  tornados?: Tornado[];
 };
 
 type FixedSizeListRowProps = CommonProps & {
-  sortedTornados: Array<Tornado | SearchedTornado>;
+  sortedTornados: Tornado[];
 };
 
 const FixedSizeListRow = ({
@@ -81,10 +81,6 @@ export default function TornadoEventList({
       case "idle": {
         setListState("collapsed");
 
-        if (sortProperty === "relevance") {
-          setSortProperty("date");
-        }
-
         break;
       }
       case "loading": {
@@ -93,7 +89,6 @@ export default function TornadoEventList({
       case "ready": {
         setListState("expanded");
         setOrder("descending");
-        setSortProperty("relevance");
 
         break;
       }
