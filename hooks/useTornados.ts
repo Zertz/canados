@@ -91,6 +91,14 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
   }, []);
 
   useEffect(() => {
+    if (apiStatus === "loading") {
+      return;
+    }
+
+    if (searchStatus === "loading") {
+      return;
+    }
+
     const searchMode = searchStatus === "ready";
 
     const tornados = searchMode
