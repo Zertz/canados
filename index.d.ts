@@ -89,8 +89,14 @@ type Tornado = RawTornado & {
   length_m: number;
 };
 
+type ClusterStats = {
+  averageFujita: number;
+  coordinates: Common.Coordinates;
+};
+
 type ClusteredTornado = Tornado & {
-  cluster: TornadoId[];
+  cluster: Tornado[];
+  clusterStats: ClusterStats;
 };
 
 declare module Common {

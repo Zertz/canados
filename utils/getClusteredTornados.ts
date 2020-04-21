@@ -1,10 +1,35 @@
 import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 
+function getClusterStats(tornado: Tornado, cluster: Tornado[]) {
+  const divider = cluster.length + 1;
+
+  return {
+    averageFujita:
+      (tornado.fujita + cluster.reduce((acc, { fujita }) => acc + fujita, 0)) /
+      divider,
+    coordinates: [
+      (tornado.coordinates_start[0] +
+        cluster.reduce(
+          (acc, { coordinates_start }) => acc + coordinates_start[0],
+          0
+        )) /
+        divider,
+      (tornado.coordinates_start[1] +
+        cluster.reduce(
+          (acc, { coordinates_start }) => acc + coordinates_start[1],
+          0
+        )) /
+        divider,
+    ],
+  } as ClusterStats;
+}
+
 export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
   if (tornados.length <= MAXIMUM_DISPLAYED_TORNADOS) {
     return tornados.map((tornado) => ({
       ...tornado,
       cluster: [],
+      clusterStats: getClusterStats(tornado, []),
     }));
   }
 
@@ -25,11 +50,15 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
       let clusteredTornado: ReturnType<typeof geohashMap.get>;
 
       if ((clusteredTornado = geohashMap.get(geohashStart))) {
-        clusteredTornado.cluster.push(tornado.id);
+        clusteredTornado.cluster.push(tornado);
       } else {
         geohashMap.set(geohashStart, {
           ...tornado,
           cluster: [],
+          clusterStats: {
+            averageFujita: -1,
+            coordinates: [0, 0],
+          },
         });
 
         if (geohashMap.size > MAXIMUM_DISPLAYED_TORNADOS) {
@@ -79,23 +108,26 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
       const tornado = clusteredTornados[clusterIndex];
 
       const [
-        unclusteredTornadoId,
-        ...unclusteredTornadoIds
+        unclusteredTornado,
+        ...unclusteredTornados
       ] = tornado.cluster.splice(0, Math.round(tornado.cluster.length / 2));
-
-      const unclusteredTornado = tornados.find(
-        ({ id }) => id === unclusteredTornadoId
-      );
-
-      if (!unclusteredTornado) {
-        throw Error();
-      }
 
       clusteredTornados.push({
         ...unclusteredTornado,
-        cluster: unclusteredTornadoIds,
+        cluster: unclusteredTornados,
+        clusterStats: {
+          averageFujita: -1,
+          coordinates: [0, 0],
+        },
       });
     }
+  }
+
+  for (let i = 0; i < clusteredTornados.length; i += 1) {
+    clusteredTornados[i].clusterStats = getClusterStats(
+      clusteredTornados[i],
+      clusteredTornados[i].cluster
+    );
   }
 
   return clusteredTornados;

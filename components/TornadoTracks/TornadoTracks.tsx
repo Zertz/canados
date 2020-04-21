@@ -23,13 +23,15 @@ type Props = {
   tornados?: ClusteredTornado[];
 };
 
-function getStart(tornado: Tornado): Common.Coordinates {
-  const { coordinates_start } = tornado;
+function getStart(tornado: ClusteredTornado): Common.Coordinates {
+  const {
+    clusterStats: { coordinates },
+  } = tornado;
 
-  return coordinates_start;
+  return coordinates;
 }
 
-function getCenter(tornado: Tornado): Common.Coordinates {
+function getCenter(tornado: ClusteredTornado): Common.Coordinates {
   const { coordinates_start, coordinates_end } = tornado;
 
   if (
@@ -45,7 +47,11 @@ function getCenter(tornado: Tornado): Common.Coordinates {
   return coordinates_start;
 }
 
-function getEnd(tornado: Tornado): Common.Coordinates | void {
+function getEnd(tornado: ClusteredTornado): Common.Coordinates | void {
+  if (tornado.cluster.length > 0) {
+    return undefined;
+  }
+
   const { coordinates_end } = tornado;
 
   if (
@@ -153,14 +159,18 @@ export default function TornadoTracks({
                 <Marker onClick={onClick(tornado.id)} position={start}>
                   <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
                     {tornado.cluster.length > 0
-                      ? `${tornado.cluster.length +
-                          1} tornados around this location`
+                      ? `${
+                          tornado.cluster.length + 1
+                        } tornados around this location (average F${Math.round(
+                          tornado.clusterStats.averageFujita
+                        )})`
                       : `${end ? "Start: " : ""}${tornado.location} (F${
                           tornado.fujita
                         })`}
                   </Tooltip>
                 </Marker>
-                {typeof tornado.coordinates_end[0] === "number" &&
+                {tornado.cluster.length === 0 &&
+                  typeof tornado.coordinates_end[0] === "number" &&
                   typeof tornado.coordinates_end[1] === "number" && (
                     <Polyline
                       color={selected ? "tomato" : "lime"}
