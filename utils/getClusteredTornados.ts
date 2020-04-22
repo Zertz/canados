@@ -55,10 +55,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
         geohashMap.set(geohashStart, {
           ...tornado,
           cluster: [],
-          clusterStats: {
-            averageFujita: -1,
-            coordinates: [0, 0],
-          },
+          clusterStats: getClusterStats(tornado, []),
         });
 
         if (geohashMap.size > MAXIMUM_DISPLAYED_TORNADOS) {
@@ -115,10 +112,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
       clusteredTornados.push({
         ...unclusteredTornado,
         cluster: unclusteredTornados,
-        clusterStats: {
-          averageFujita: -1,
-          coordinates: [0, 0],
-        },
+        clusterStats: getClusterStats(unclusteredTornado, []),
       });
     }
   }
