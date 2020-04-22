@@ -112,7 +112,11 @@ export default function TornadoTracks({
       return;
     }
 
-    const tornado = tornados.find(({ id }) => id === selectedTornadoId);
+    const tornado = tornados.find(
+      ({ id, cluster }) =>
+        id === selectedTornadoId ||
+        cluster.find(({ id }) => id === selectedTornadoId)
+    );
 
     if (!tornado) {
       return;
