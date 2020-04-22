@@ -81,6 +81,9 @@ type ReactLeaflet = {
   leafletElement: Leaflet;
 };
 
+const minOpacity = 0.375;
+const maxOpacity = 1;
+
 export default function TornadoTracks({
   fitBounds,
   onClick,
@@ -131,6 +134,26 @@ export default function TornadoTracks({
     ]);
   }, []);
 
+  const { largestCluster, smallestCluster } = (() => {
+    if (!Array.isArray(tornados)) {
+      return {
+        largestCluster: 0,
+        smallestCluster: 0,
+      };
+    }
+
+    return {
+      largestCluster: tornados.reduce(
+        (acc, { cluster: { length } }) => Math.max(acc, length),
+        0
+      ),
+      smallestCluster: tornados.reduce(
+        (acc, { cluster: { length } }) => Math.min(acc, length),
+        0
+      ),
+    };
+  })();
+
   return (
     <div className={styles.div}>
       <Map
@@ -146,6 +169,11 @@ export default function TornadoTracks({
         />
         {Array.isArray(tornados) &&
           tornados.map((tornado) => {
+            const opacity =
+              ((maxOpacity - minOpacity) / (largestCluster - smallestCluster)) *
+                (tornado.cluster.length + 1 - smallestCluster) +
+              minOpacity;
+
             const start = getStart(tornado);
             const end = getEnd(tornado);
 
@@ -156,7 +184,11 @@ export default function TornadoTracks({
                 {selected && (
                   <CircleMarker center={start} color="tomato" radius={10} />
                 )}
-                <Marker onClick={onClick(tornado.id)} position={start}>
+                <Marker
+                  onClick={onClick(tornado.id)}
+                  opacity={opacity}
+                  position={start}
+                >
                   <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
                     {tornado.cluster.length > 0
                       ? `${
@@ -185,7 +217,11 @@ export default function TornadoTracks({
                     {selected && (
                       <CircleMarker center={end} color="tomato" radius={10} />
                     )}
-                    <Marker onClick={onClick(tornado.id)} position={end}>
+                    <Marker
+                      onClick={onClick(tornado.id)}
+                      opacity={opacity}
+                      position={end}
+                    >
                       <Tooltip
                         direction="right"
                         offset={[-10, 0]}
