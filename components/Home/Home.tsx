@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { FilterContext } from "../../contexts/filter";
+import { useSearchParams } from "../../hooks/useSearchParams";
 import { useTornados } from "../../hooks/useTornados";
 import LoadingOverlay from "../LoadingOverlay";
 import TornadoEventList from "../TornadoEventList";
@@ -11,7 +12,10 @@ const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 export default function Home() {
   const [fujitaFilter, setFujitaFilter] = useState<[number, number]>([0, 5]);
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
-  const [selectedTornadoId, setSelectedTornadoId] = useState<TornadoId>();
+
+  const [{ selectedTornadoId }, setSearchParams] = useSearchParams({
+    selectedTornadoId: null,
+  });
 
   const {
     apiStatus,
@@ -28,8 +32,10 @@ export default function Home() {
     return <div>Aw, snap.</div>;
   }
 
-  const handleSelectTornado = (tornadoId: TornadoId) => () => {
-    setSelectedTornadoId(tornadoId);
+  const handleSelectTornado = (selectedTornadoId: TornadoId) => () => {
+    setSearchParams({
+      selectedTornadoId,
+    });
   };
 
   return (
