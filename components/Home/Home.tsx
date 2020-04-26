@@ -13,7 +13,7 @@ export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
 
   const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
-    "fujitaFilter",
+    "f",
     (v) => {
       return v ? `${v[0]}.${v[1]}` : "";
     },
@@ -30,7 +30,7 @@ export default function Home() {
 
   const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
     TornadoId
-  >("selectedTornadoId", String, String);
+  >("t", String, String);
 
   const {
     apiStatus,
