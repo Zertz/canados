@@ -56,7 +56,7 @@ function reducer(state: State, action: Action): State {
 }
 
 type Props = {
-  fujitaFilter: [number, number];
+  fujitaFilter: readonly [number, number];
   screenBounds?: Common.Bounds;
 };
 

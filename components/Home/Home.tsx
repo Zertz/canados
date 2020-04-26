@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { FilterContext } from "../../contexts/filter";
-import { useSearchParams } from "../../hooks/useSearchParams";
+import { useSearchParamState } from "../../hooks/useSearchParamState";
 import { useTornados } from "../../hooks/useTornados";
 import LoadingOverlay from "../LoadingOverlay";
 import TornadoEventList from "../TornadoEventList";
@@ -10,12 +10,27 @@ import styles from "./Home.module.css";
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
 export default function Home() {
-  const [fujitaFilter, setFujitaFilter] = useState<[number, number]>([0, 5]);
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
 
-  const [{ selectedTornadoId }, setSearchParams] = useSearchParams({
-    selectedTornadoId: null,
-  });
+  const [fujitaFilter = [0, 5] as const, setFujitaFilter] = useSearchParamState<
+    readonly [number, number]
+  >(
+    "fujitaFilter",
+    (v) => (v ? `${v[0]}.${v[1]}` : ""),
+    (value) => {
+      if (!value) {
+        return;
+      }
+
+      const [min, max] = value.split(".");
+
+      return [Number(min), Number(max)];
+    }
+  );
+
+  const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
+    TornadoId
+  >("selectedTornadoId", String, String);
 
   const {
     apiStatus,
@@ -33,9 +48,7 @@ export default function Home() {
   }
 
   const handleSelectTornado = (selectedTornadoId: TornadoId) => () => {
-    setSearchParams({
-      selectedTornadoId,
-    });
+    setSelectedTornadoId(selectedTornadoId);
   };
 
   return (
@@ -56,7 +69,7 @@ export default function Home() {
         <TornadoEventList
           onClick={handleSelectTornado}
           search={search}
-          selectedTornadoId={selectedTornadoId}
+          selectedTornadoId={selectedTornadoId as string}
           status={searchStatus}
           tornadoCount={tornadoCount}
           tornados={tornados}
@@ -64,7 +77,7 @@ export default function Home() {
         <TornadoTracks
           fitBounds={fitBounds}
           onClick={handleSelectTornado}
-          selectedTornadoId={selectedTornadoId}
+          selectedTornadoId={selectedTornadoId as string}
           setScreenBounds={setScreenBounds}
           tornados={clusteredTornados}
         />

@@ -4,7 +4,7 @@ type MultirangeProps = {
   min: number;
   max: number;
   onChange: (values: [number, number]) => void;
-  values: [number, number];
+  values: readonly [number, number];
 };
 
 function Multirange({ min = 0, max = 100, onChange, values }: MultirangeProps) {
