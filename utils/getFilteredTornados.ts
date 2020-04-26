@@ -4,7 +4,7 @@ export function getFilteredTornados({
   },
   tornados,
 }: {
-  filters: { fujita: readonly [number, number] };
+  filters: { fujita: [number, number] };
   tornados: Tornado[];
 }) {
   const filteredTornados =

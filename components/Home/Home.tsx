@@ -12,14 +12,14 @@ const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
 
-  const [fujitaFilter = [0, 5] as const, setFujitaFilter] = useSearchParamState<
-    readonly [number, number]
-  >(
+  const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
     "fujitaFilter",
-    (v) => (v ? `${v[0]}.${v[1]}` : ""),
+    (v) => {
+      return v ? `${v[0]}.${v[1]}` : "";
+    },
     (value) => {
       if (!value) {
-        return;
+        return [0, 5];
       }
 
       const [min, max] = value.split(".");
@@ -41,6 +41,7 @@ export default function Home() {
     searchStatus,
     tornadoCount,
     tornados,
+    // @ts-ignore
   } = useTornados({ fujitaFilter, screenBounds });
 
   if (error) {
@@ -52,6 +53,7 @@ export default function Home() {
   };
 
   return (
+    // @ts-ignore
     <FilterContext.Provider value={{ fujitaFilter, setFujitaFilter }}>
       <div className={styles.div}>
         <a
@@ -69,7 +71,7 @@ export default function Home() {
         <TornadoEventList
           onClick={handleSelectTornado}
           search={search}
-          selectedTornadoId={selectedTornadoId as string}
+          selectedTornadoId={selectedTornadoId}
           status={searchStatus}
           tornadoCount={tornadoCount}
           tornados={tornados}
@@ -77,7 +79,7 @@ export default function Home() {
         <TornadoTracks
           fitBounds={fitBounds}
           onClick={handleSelectTornado}
-          selectedTornadoId={selectedTornadoId as string}
+          selectedTornadoId={selectedTornadoId}
           setScreenBounds={setScreenBounds}
           tornados={clusteredTornados}
         />

@@ -18,7 +18,7 @@ import styles from "./TornadoTracks.module.css";
 type Props = {
   fitBounds?: Common.Bounds;
   onClick: (tornadoId: TornadoId) => void;
-  selectedTornadoId: TornadoId | null;
+  selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
   tornados?: ClusteredTornado[];
 };

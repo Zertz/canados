@@ -11,7 +11,7 @@ import styles from "./TornadoEventList.module.css";
 
 type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
-  selectedTornadoId: TornadoId | null;
+  selectedTornadoId?: TornadoId;
 };
 
 type TornadoEventListProps = CommonProps & {
