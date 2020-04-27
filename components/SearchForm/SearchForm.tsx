@@ -1,13 +1,33 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { QueryContext } from "../../contexts/query";
 
 type Props = {
-  onChange: (e: any) => void;
-  onSubmit: (e: any) => void;
+  search: (value: string) => void;
 };
 
-export default function SearchForm({ onChange, onSubmit }: Props) {
+export default React.memo(function SearchForm({ search }: Props) {
+  const { query, setQuery } = useContext(QueryContext);
+
+  useEffect(() => {
+    if (query) {
+      return;
+    }
+
+    search("");
+  }, [query]);
+
+  const handleChange = (e) => {
+    setQuery(e.target.value.trim());
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    search(query);
+  };
+
   return (
-    <form className="mb-4" onSubmit={onSubmit}>
+    <form className="mb-4" onSubmit={handleSubmit}>
       <label htmlFor="search" className="sr-only">
         Search tornados
       </label>
@@ -29,9 +49,10 @@ export default function SearchForm({ onChange, onSubmit }: Props) {
           <input
             className="form-input block w-full rounded-none rounded-l-md pl-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5 w-full"
             id="search"
-            onChange={onChange}
+            onChange={handleChange}
             placeholder="Toronto"
             type="search"
+            value={query}
           />
         </div>
         <button
@@ -43,4 +64,4 @@ export default function SearchForm({ onChange, onSubmit }: Props) {
       </div>
     </form>
   );
-}
+});

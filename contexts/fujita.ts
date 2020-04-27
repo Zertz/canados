@@ -1,8 +1,8 @@
 import { createContext } from "react";
 
-export const FilterContext = createContext<{
+export const FujitaContext = createContext<{
   fujitaFilter: [number, number];
-  setFujitaFilter: (e: [number, number]) => void;
+  setFujitaFilter: (value: [number, number]) => void;
 }>({
   fujitaFilter: [0, 5],
   setFujitaFilter: () => {},

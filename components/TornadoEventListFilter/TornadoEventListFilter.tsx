@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import { FilterContext } from "../../contexts/filter";
+import { FujitaContext } from "../../contexts/fujita";
 import Multirange from "../react-multirange";
 import styles from "./TornadoEventListFilter.module.css";
 
 export default function TornadoEventListFilters() {
-  const { fujitaFilter, setFujitaFilter } = useContext(FilterContext);
+  const { fujitaFilter, setFujitaFilter } = useContext(FujitaContext);
 
   const handleChange = (e: [number, number]) => {
     setFujitaFilter(e);
