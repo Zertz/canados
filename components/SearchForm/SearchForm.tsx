@@ -1,12 +1,14 @@
-import React, { useContext, useEffect } from "react";
-import { QueryContext } from "../../contexts/query";
+import React, { useEffect } from "react";
+import { useSearchParamState } from "../../hooks/useSearchParamState";
 
 type Props = {
   search: (value: string) => void;
 };
 
+const string = (v?: string) => (v ? v : undefined);
+
 export default React.memo(function SearchForm({ search }: Props) {
-  const { query, setQuery } = useContext(QueryContext);
+  const [query, setQuery] = useSearchParamState<string>("q", string, string);
 
   useEffect(() => {
     if (query) {
@@ -22,6 +24,10 @@ export default React.memo(function SearchForm({ search }: Props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!query) {
+      return;
+    }
 
     search(query);
   };
