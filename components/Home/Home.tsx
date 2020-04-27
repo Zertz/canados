@@ -47,6 +47,8 @@ const decodeFujitaFilter = (value: string): FujitaFilter => {
   return [Number(min), Number(max)];
 };
 
+const string = (v?: string) => (v ? v : undefined);
+
 export default function Home() {
   const [screenBounds, setScreenBounds] = useSearchParamState<Common.Bounds>(
     "b",
@@ -60,11 +62,11 @@ export default function Home() {
     decodeFujitaFilter
   );
 
-  const [query, setQuery] = useSearchParamState<string>("q", String, String);
+  const [query, setQuery] = useSearchParamState<string>("q", string, string);
 
   const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
     TornadoId
-  >("t", String, String);
+  >("t", string, string);
 
   const {
     apiStatus,
