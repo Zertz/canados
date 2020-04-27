@@ -5,7 +5,7 @@ type Props = {
   search: (value: string) => void;
 };
 
-const string = (v?: string) => (v ? v : undefined);
+const string = (v?: string) => v || "";
 
 export default React.memo(function SearchForm({ search }: Props) {
   const [query, setQuery] = useSearchParamState<string>("q", string, string);
