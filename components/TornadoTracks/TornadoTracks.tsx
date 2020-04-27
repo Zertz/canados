@@ -13,6 +13,7 @@ import {
   TileLayer,
   Tooltip,
 } from "react-leaflet";
+import { useSearchParamState } from "../../hooks/useSearchParamState";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
@@ -31,20 +32,23 @@ function getStart(tornado: ClusteredTornado): Common.Coordinates {
   return coordinates;
 }
 
-function getCenter(tornado: ClusteredTornado): Common.Coordinates {
+function getCenter(tornado: ClusteredTornado): LatLng {
   const { coordinates_start, coordinates_end } = tornado;
 
   if (
     typeof coordinates_end[0] === "number" &&
     typeof coordinates_end[1] === "number"
   ) {
-    return [
-      (coordinates_start[0] + coordinates_end[0]) / 2,
-      (coordinates_start[1] + coordinates_end[1]) / 2,
-    ];
+    return {
+      lat: (coordinates_start[0] + coordinates_end[0]) / 2,
+      lng: (coordinates_start[1] + coordinates_end[1]) / 2,
+    };
   }
 
-  return coordinates_start;
+  return {
+    lat: coordinates_start[0],
+    lng: coordinates_start[1],
+  };
 }
 
 function getEnd(tornado: ClusteredTornado): Common.Coordinates | void {
@@ -75,6 +79,8 @@ type Leaflet = {
     { padding }: { padding: [number, number] }
   ) => void;
   getBounds: () => { _southWest: LatLng; _northEast: LatLng };
+  getCenter: () => LatLng;
+  getZoom: () => number;
 };
 
 type ReactLeaflet = {
@@ -83,6 +89,9 @@ type ReactLeaflet = {
 
 const minOpacity = 0.375;
 const maxOpacity = 1;
+
+const encodeNumber = (v: number) => `${v}`;
+const decodeNumber = (v?: string) => (v ? Number(v) || undefined : undefined);
 
 export default function TornadoTracks({
   fitBounds,
@@ -93,7 +102,30 @@ export default function TornadoTracks({
 }: Props) {
   const map = useRef<ReactLeaflet>();
 
-  const [center, setCenter] = useState<Common.Coordinates>();
+  const [center, setCenter] = useSearchParamState<LatLng>(
+    "c",
+    (v: LatLng) => {
+      return `${v.lat.toFixed(6)}_${v.lng.toFixed(6)}`;
+    },
+    (v: string) => {
+      if (!v) {
+        return;
+      }
+
+      const [lat, lng] = v.split("_");
+
+      return {
+        lat: Number(lat),
+        lng: Number(lng),
+      };
+    }
+  );
+
+  const [zoom, setZoom] = useSearchParamState<number>(
+    "z",
+    encodeNumber,
+    decodeNumber
+  );
 
   useEffect(() => {
     if (!map.current) {
@@ -104,7 +136,18 @@ export default function TornadoTracks({
       return;
     }
 
-    map.current.leafletElement.fitBounds(fitBounds, { padding: [0, 0] });
+    if (center) {
+      const bounds = map.current.leafletElement.getBounds();
+
+      setScreenBounds([
+        [bounds._southWest.lat, bounds._southWest.lng],
+        [bounds._northEast.lat, bounds._northEast.lng],
+      ]);
+
+      return;
+    }
+
+    map.current.leafletElement.fitBounds(fitBounds, { padding: [25, 25] });
   }, [fitBounds]);
 
   useEffect(() => {
@@ -130,25 +173,23 @@ export default function TornadoTracks({
       return;
     }
 
+    setCenter(map.current.leafletElement.getCenter());
+
     const bounds = map.current.leafletElement.getBounds();
 
-    const newBounds = [
-      [
-        Number(bounds._southWest.lat.toFixed(6)),
-        Number(bounds._southWest.lng.toFixed(6)),
-      ],
-      [
-        Number(bounds._northEast.lat.toFixed(6)),
-        Number(bounds._northEast.lng.toFixed(6)),
-      ],
-    ] as Common.Bounds;
+    setScreenBounds([
+      [bounds._southWest.lat, bounds._southWest.lng],
+      [bounds._northEast.lat, bounds._northEast.lng],
+    ]);
+  }, [fitBounds]);
 
-    if (JSON.stringify(newBounds) === JSON.stringify(fitBounds)) {
+  const handleZoomEnd = () => {
+    if (!map.current) {
       return;
     }
 
-    setScreenBounds(newBounds);
-  }, [fitBounds]);
+    setZoom(map.current.leafletElement.getZoom());
+  };
 
   const { largestCluster, smallestCluster } = (() => {
     if (!Array.isArray(tornados)) {
@@ -176,7 +217,9 @@ export default function TornadoTracks({
         className={styles.map}
         center={center}
         onMoveEnd={handleMoveEnd}
+        onZoomEnd={handleZoomEnd}
         ref={map}
+        zoom={zoom}
         zoomControl={false}
       >
         <TileLayer

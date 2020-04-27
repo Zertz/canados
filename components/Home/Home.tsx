@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import { FujitaContext } from "../../contexts/fujita";
 import { useSearchParamState } from "../../hooks/useSearchParamState";
 import { useTornados } from "../../hooks/useTornados";
@@ -7,29 +8,6 @@ import TornadoEventList from "../TornadoEventList";
 import styles from "./Home.module.css";
 
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
-
-const encodeScreenBounds = (v?: Common.Bounds) =>
-  v
-    ? `${v[0][0].toFixed(6)}*${v[0][1].toFixed(6)}_${v[1][0].toFixed(
-        6
-      )}*${v[1][1].toFixed(6)}`
-    : undefined;
-
-const decodeScreenBounds = (value?: string): Common.Bounds | undefined => {
-  if (!value) {
-    return;
-  }
-
-  const [sw, ne] = value.split("_");
-
-  const [sw1, sw2] = sw.split("*");
-  const [ne1, ne2] = ne.split("*");
-
-  return [
-    [Number(sw1), Number(sw2)],
-    [Number(ne1), Number(ne2)],
-  ];
-};
 
 type FujitaFilter = [number, number];
 
@@ -49,11 +27,7 @@ const decodeFujitaFilter = (value: string): FujitaFilter => {
 const string = (v?: string) => (v ? v : undefined);
 
 export default function Home() {
-  const [screenBounds, setScreenBounds] = useSearchParamState<Common.Bounds>(
-    "b",
-    encodeScreenBounds,
-    decodeScreenBounds
-  );
+  const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
 
   const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
     "f",
@@ -67,15 +41,14 @@ export default function Home() {
 
   const {
     apiStatus,
-    bounds,
     clusteredTornados,
     error,
+    fitBounds,
     search,
     searchStatus,
     tornadoCount,
     tornados,
-    // @ts-ignore
-  } = useTornados({ fujitaFilter, screenBounds });
+  } = useTornados({ fujitaFilter: fujitaFilter || [0, 5], screenBounds });
 
   if (error) {
     return <div>Aw, snap.</div>;
@@ -86,8 +59,9 @@ export default function Home() {
   };
 
   return (
-    // @ts-ignore
-    <FujitaContext.Provider value={{ fujitaFilter, setFujitaFilter }}>
+    <FujitaContext.Provider
+      value={{ fujitaFilter: fujitaFilter || [0, 5], setFujitaFilter }}
+    >
       <div className={styles.div}>
         <a
           href="https://github.com/Zertz/canados"
@@ -110,7 +84,7 @@ export default function Home() {
           tornados={tornados}
         />
         <TornadoTracks
-          fitBounds={bounds}
+          fitBounds={fitBounds}
           onClick={handleSelectTornado}
           selectedTornadoId={selectedTornadoId}
           setScreenBounds={setScreenBounds}
