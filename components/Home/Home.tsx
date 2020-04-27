@@ -9,23 +9,55 @@ import styles from "./Home.module.css";
 
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
+const encodeScreenBounds = (v?: Common.Bounds) =>
+  v
+    ? `${v[0][0].toFixed(6)}*${v[0][1].toFixed(6)}_${v[1][0].toFixed(
+        6
+      )}*${v[1][1].toFixed(6)}`
+    : undefined;
+
+const decodeScreenBounds = (value?: string): Common.Bounds | undefined => {
+  if (!value) {
+    return;
+  }
+
+  const [sw, ne] = value.split("_");
+
+  const [sw1, sw2] = sw.split("*");
+  const [ne1, ne2] = ne.split("*");
+
+  return [
+    [Number(sw1), Number(sw2)],
+    [Number(ne1), Number(ne2)],
+  ];
+};
+
+type FujitaFilter = [number, number];
+
+const encodeFujitaFilter = (v: FujitaFilter | undefined) =>
+  v ? `${v[0]}_${v[1]}` : "";
+
+const decodeFujitaFilter = (value: string): FujitaFilter => {
+  if (!value) {
+    return [0, 5];
+  }
+
+  const [min, max] = value.split("_");
+
+  return [Number(min), Number(max)];
+};
+
 export default function Home() {
-  const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
+  const [screenBounds, setScreenBounds] = useSearchParamState<Common.Bounds>(
+    "b",
+    encodeScreenBounds,
+    decodeScreenBounds
+  );
 
   const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
     "f",
-    (v) => {
-      return v ? `${v[0]}.${v[1]}` : "";
-    },
-    (value) => {
-      if (!value) {
-        return [0, 5];
-      }
-
-      const [min, max] = value.split(".");
-
-      return [Number(min), Number(max)];
-    }
+    encodeFujitaFilter,
+    decodeFujitaFilter
   );
 
   const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
@@ -34,9 +66,9 @@ export default function Home() {
 
   const {
     apiStatus,
+    bounds,
     clusteredTornados,
     error,
-    fitBounds,
     search,
     searchStatus,
     tornadoCount,
@@ -77,7 +109,7 @@ export default function Home() {
           tornados={tornados}
         />
         <TornadoTracks
-          fitBounds={fitBounds}
+          fitBounds={bounds}
           onClick={handleSelectTornado}
           selectedTornadoId={selectedTornadoId}
           setScreenBounds={setScreenBounds}

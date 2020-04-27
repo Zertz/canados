@@ -96,15 +96,15 @@ export default function TornadoTracks({
   const [center, setCenter] = useState<Common.Coordinates>();
 
   useEffect(() => {
-    if (!fitBounds) {
-      return;
-    }
-
     if (!map.current) {
       return;
     }
 
-    map.current.leafletElement.fitBounds(fitBounds, { padding: [25, 25] });
+    if (!fitBounds) {
+      return;
+    }
+
+    map.current.leafletElement.fitBounds(fitBounds, { padding: [0, 0] });
   }, [fitBounds]);
 
   useEffect(() => {
@@ -132,11 +132,23 @@ export default function TornadoTracks({
 
     const bounds = map.current.leafletElement.getBounds();
 
-    setScreenBounds([
-      [bounds._southWest.lat, bounds._southWest.lng],
-      [bounds._northEast.lat, bounds._northEast.lng],
-    ]);
-  }, []);
+    const newBounds = [
+      [
+        Number(bounds._southWest.lat.toFixed(6)),
+        Number(bounds._southWest.lng.toFixed(6)),
+      ],
+      [
+        Number(bounds._northEast.lat.toFixed(6)),
+        Number(bounds._northEast.lng.toFixed(6)),
+      ],
+    ] as Common.Bounds;
+
+    if (JSON.stringify(newBounds) === JSON.stringify(fitBounds)) {
+      return;
+    }
+
+    setScreenBounds(newBounds);
+  }, [fitBounds]);
 
   const { largestCluster, smallestCluster } = (() => {
     if (!Array.isArray(tornados)) {
