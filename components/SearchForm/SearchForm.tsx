@@ -1,13 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParamState } from "../../hooks/useSearchParamState";
 
 type Props = {
-  onChange: (e: any) => void;
-  onSubmit: (e: any) => void;
+  search: (value: string) => void;
 };
 
-export default function SearchForm({ onChange, onSubmit }: Props) {
+const string = (v?: string) => v || "";
+
+export default function SearchForm({ search }: Props) {
+  const [query, setQuery] = useSearchParamState<string>("q", string, string);
+  const [value, setValue] = useState(query || "");
+
+  useEffect(() => {
+    search(query || "");
+  }, [query]);
+
+  const handleChange = ({ target: { value } }) => {
+    const cleanValue = value.trim().replace(/\s\s+/g, " ");
+
+    if (!cleanValue) {
+      setQuery("");
+    }
+
+    setValue(cleanValue);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setQuery(value);
+  };
+
   return (
-    <form className="mb-4" onSubmit={onSubmit}>
+    <form className="mb-4" onSubmit={handleSubmit}>
       <label htmlFor="search" className="sr-only">
         Search tornados
       </label>
@@ -29,9 +54,10 @@ export default function SearchForm({ onChange, onSubmit }: Props) {
           <input
             className="form-input block w-full rounded-none rounded-l-md pl-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5 w-full"
             id="search"
-            onChange={onChange}
+            onChange={handleChange}
             placeholder="Toronto"
             type="search"
+            value={value}
           />
         </div>
         <button

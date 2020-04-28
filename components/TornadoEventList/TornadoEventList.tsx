@@ -11,11 +11,11 @@ import styles from "./TornadoEventList.module.css";
 
 type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
-  selectedTornadoId: TornadoId | null;
+  selectedTornadoId?: TornadoId;
 };
 
 type TornadoEventListProps = CommonProps & {
-  search: (string) => void;
+  search: (value: string) => void;
   status: Common.Status;
   tornadoCount?: number;
   tornados?: Tornado[];
@@ -61,8 +61,6 @@ export default function TornadoEventList({
   tornadoCount,
   tornados,
 }: TornadoEventListProps) {
-  const [filter, setFilter] = useState("");
-
   const [listState, setListState] = useState<"collapsed" | "expanded">(
     "collapsed"
   );
@@ -95,18 +93,6 @@ export default function TornadoEventList({
     }
   }, [status]);
 
-  useEffect(() => {
-    if (filter) {
-      return;
-    }
-
-    search("");
-  }, [filter]);
-
-  const handleChangeFilter = (e) => {
-    setFilter(e.target.value.trim());
-  };
-
   const handleChangeListState = () => {
     setListState(listState === "collapsed" ? "expanded" : "collapsed");
   };
@@ -119,15 +105,9 @@ export default function TornadoEventList({
     setSortProperty(e.target.value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    search(filter);
-  };
-
   return (
     <div className={styles.div}>
-      <SearchForm onChange={handleChangeFilter} onSubmit={handleSubmit} />
+      <SearchForm search={search} />
       <div className="flex flex-col bg-white overflow-hidden rounded-md shadow-md">
         <div
           className={classnames("border-b border-gray-200 p-4 text-gray-800")}

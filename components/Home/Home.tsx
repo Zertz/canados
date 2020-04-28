@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
-import { FilterContext } from "../../contexts/filter";
-import { useSearchParams } from "../../hooks/useSearchParams";
+import { useState } from "react";
+import { FujitaContext } from "../../contexts/fujita";
+import { useSearchParamState } from "../../hooks/useSearchParamState";
 import { useTornados } from "../../hooks/useTornados";
 import LoadingOverlay from "../LoadingOverlay";
 import TornadoEventList from "../TornadoEventList";
@@ -9,13 +9,35 @@ import styles from "./Home.module.css";
 
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
+type FujitaFilter = [number, number];
+
+const encodeFujitaFilter = (v: FujitaFilter | undefined) =>
+  v ? `${v[0]}_${v[1]}` : "";
+
+const decodeFujitaFilter = (value: string): FujitaFilter => {
+  if (!value) {
+    return [0, 5];
+  }
+
+  const [min, max] = value.split("_");
+
+  return [Number(min) || 0, Number(max) || 5];
+};
+
+const string = (v?: string) => v || undefined;
+
 export default function Home() {
-  const [fujitaFilter, setFujitaFilter] = useState<[number, number]>([0, 5]);
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
 
-  const [{ selectedTornadoId }, setSearchParams] = useSearchParams({
-    selectedTornadoId: null,
-  });
+  const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
+    "f",
+    encodeFujitaFilter,
+    decodeFujitaFilter
+  );
+
+  const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
+    TornadoId
+  >("t", string, string);
 
   const {
     apiStatus,
@@ -26,20 +48,20 @@ export default function Home() {
     searchStatus,
     tornadoCount,
     tornados,
-  } = useTornados({ fujitaFilter, screenBounds });
+  } = useTornados({ fujitaFilter: fujitaFilter || [0, 5], screenBounds });
 
   if (error) {
     return <div>Aw, snap.</div>;
   }
 
   const handleSelectTornado = (selectedTornadoId: TornadoId) => () => {
-    setSearchParams({
-      selectedTornadoId,
-    });
+    setSelectedTornadoId(selectedTornadoId);
   };
 
   return (
-    <FilterContext.Provider value={{ fujitaFilter, setFujitaFilter }}>
+    <FujitaContext.Provider
+      value={{ fujitaFilter: fujitaFilter || [0, 5], setFujitaFilter }}
+    >
       <div className={styles.div}>
         <a
           href="https://github.com/Zertz/canados"
@@ -64,6 +86,7 @@ export default function Home() {
         <TornadoTracks
           fitBounds={fitBounds}
           onClick={handleSelectTornado}
+          searchStatus={searchStatus}
           selectedTornadoId={selectedTornadoId}
           setScreenBounds={setScreenBounds}
           tornados={clusteredTornados}
@@ -81,6 +104,6 @@ export default function Home() {
           />
         )}
       </div>
-    </FilterContext.Provider>
+    </FujitaContext.Provider>
   );
 }
