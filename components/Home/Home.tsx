@@ -19,12 +19,15 @@ const decodeFujitaFilter = (value: string): FujitaFilter => {
     return [0, 5];
   }
 
-  const [min, max] = value.split("_");
+  const [rawMin, rawMax] = value.split("_");
 
-  return [Number(min), Number(max)];
+  const min = Number(rawMin);
+  const max = Number(rawMax);
+
+  return [Number.isNaN(min) ? 0 : min, Number.isNaN(max) ? 5 : max];
 };
 
-const string = (v?: string) => (v ? v : undefined);
+const string = (v?: string) => v || undefined;
 
 export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();

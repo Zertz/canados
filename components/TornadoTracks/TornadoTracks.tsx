@@ -108,7 +108,14 @@ export default function TornadoTracks({
         return;
       }
 
-      const [lat, lng] = v.split("_");
+      const [rawLat, rawLng] = v.split("_");
+
+      const lat = Number(rawLat);
+      const lng = Number(rawLng);
+
+      if (Number.isNaN(lat) || Number.isNaN(lng)) {
+        return;
+      }
 
       return {
         lat: Number(lat),
@@ -132,7 +139,7 @@ export default function TornadoTracks({
       return;
     }
 
-    if (center && searchStatus !== "ready") {
+    if (center && typeof zoom === "number" && searchStatus !== "ready") {
       const bounds = map.current.leafletElement.getBounds();
 
       setScreenBounds([
