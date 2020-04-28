@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import {
   CircleMarker,
   Map,
@@ -19,6 +13,7 @@ import styles from "./TornadoTracks.module.css";
 type Props = {
   fitBounds?: Common.Bounds;
   onClick: (tornadoId: TornadoId) => void;
+  searchStatus: Common.Status;
   selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
   tornados?: ClusteredTornado[];
@@ -96,6 +91,7 @@ const decodeNumber = (v?: string) => (v ? Number(v) || undefined : undefined);
 export default function TornadoTracks({
   fitBounds,
   onClick,
+  searchStatus,
   selectedTornadoId,
   setScreenBounds,
   tornados,
@@ -136,7 +132,7 @@ export default function TornadoTracks({
       return;
     }
 
-    if (center) {
+    if (center && searchStatus !== "ready") {
       const bounds = map.current.leafletElement.getBounds();
 
       setScreenBounds([
@@ -148,7 +144,7 @@ export default function TornadoTracks({
     }
 
     map.current.leafletElement.fitBounds(fitBounds, { padding: [25, 25] });
-  }, [fitBounds]);
+  }, [fitBounds, searchStatus]);
 
   useEffect(() => {
     if (!selectedTornadoId || !Array.isArray(tornados)) {

@@ -86,6 +86,7 @@ export default function Home() {
         <TornadoTracks
           fitBounds={fitBounds}
           onClick={handleSelectTornado}
+          searchStatus={searchStatus}
           selectedTornadoId={selectedTornadoId}
           setScreenBounds={setScreenBounds}
           tornados={clusteredTornados}
