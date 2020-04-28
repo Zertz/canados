@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { useWorker } from "./useWorker";
 import ky from "../ky";
 
@@ -7,16 +7,24 @@ type Props = {
 };
 
 type State = {
+  queuedQuery?: string;
   results: Tornado[];
   status: Common.Status;
 };
 
 type Action =
+  | { type: "queue"; payload: string }
   | { type: "results"; payload: Tornado[] }
   | { type: "status"; payload: Common.Status };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    case "queue": {
+      return {
+        ...state,
+        queuedQuery: action.payload,
+      };
+    }
     case "results": {
       return {
         ...state,
@@ -26,7 +34,9 @@ function reducer(state: State, action: Action): State {
     }
     case "status": {
       return {
-        ...state,
+        queuedQuery:
+          action.payload === "loading" ? undefined : state.queuedQuery,
+        results: action.payload === "idle" ? [] : state.results,
         status: action.payload,
       };
     }
@@ -37,7 +47,8 @@ function reducer(state: State, action: Action): State {
 }
 
 export const useSearch = ({ tornados }: Props) => {
-  const [{ results, status }, dispatch] = useReducer(reducer, {
+  const [{ queuedQuery, results, status }, dispatch] = useReducer(reducer, {
+    queuedQuery: undefined,
     results: [],
     status: "idle",
   });
@@ -72,11 +83,21 @@ export const useSearch = ({ tornados }: Props) => {
       action: "store",
       payload: tornados,
     });
+
+    if (queuedQuery) {
+      search(queuedQuery);
+    }
   }, [tornados]);
 
-  const search = (filter) => {
-    if (!Array.isArray(tornados) || !filter) {
+  const search = (query: string) => {
+    if (!query) {
       dispatch({ type: "status", payload: "idle" });
+
+      return;
+    }
+
+    if (!Array.isArray(tornados)) {
+      dispatch({ type: "queue", payload: query });
 
       return;
     }
@@ -84,7 +105,7 @@ export const useSearch = ({ tornados }: Props) => {
     dispatch({ type: "status", payload: "loading" });
 
     (async () => {
-      const payload = await ky(`/api/search?q=${filter}`).json();
+      const payload = await ky(`/api/search?q=${query}`).json();
 
       send({
         action: "search",

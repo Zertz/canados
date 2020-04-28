@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParamState } from "../../hooks/useSearchParamState";
 
 type Props = {
@@ -7,29 +7,28 @@ type Props = {
 
 const string = (v?: string) => v || "";
 
-export default React.memo(function SearchForm({ search }: Props) {
+export default function SearchForm({ search }: Props) {
   const [query, setQuery] = useSearchParamState<string>("q", string, string);
+  const [value, setValue] = useState(query || "");
 
   useEffect(() => {
-    if (query) {
-      return;
-    }
-
-    search("");
+    search(query || "");
   }, [query]);
 
-  const handleChange = (e) => {
-    setQuery(e.target.value.trim());
+  const handleChange = ({ target: { value } }) => {
+    const cleanValue = value.trim().replace(/\s\s+/g, " ");
+
+    if (!cleanValue) {
+      setQuery("");
+    }
+
+    setValue(cleanValue);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!query) {
-      return;
-    }
-
-    search(query);
+    setQuery(value);
   };
 
   return (
@@ -58,7 +57,7 @@ export default React.memo(function SearchForm({ search }: Props) {
             onChange={handleChange}
             placeholder="Toronto"
             type="search"
-            value={query}
+            value={value}
           />
         </div>
         <button
@@ -70,4 +69,4 @@ export default React.memo(function SearchForm({ search }: Props) {
       </div>
     </form>
   );
-});
+}
