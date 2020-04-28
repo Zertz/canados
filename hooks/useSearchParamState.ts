@@ -13,17 +13,18 @@ const getValue = (key: Key) => {
 function pushValue<T>(key: Key, value?: string) {
   const searchParams = new URLSearchParams(location.search);
 
-  if (!value) {
+  if (value) {
+    searchParams.set(key, value);
+  } else {
     searchParams.delete(key);
 
     if ([...searchParams.keys()].length === 0) {
       history.pushState({}, "", location.pathname);
-    }
 
-    return;
+      return;
+    }
   }
 
-  searchParams.set(key, value);
   searchParams.sort();
 
   history.pushState({}, "", location.pathname + `?${searchParams.toString()}`);
