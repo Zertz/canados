@@ -19,12 +19,9 @@ const decodeFujitaFilter = (value: string): FujitaFilter => {
     return [0, 5];
   }
 
-  const [rawMin, rawMax] = value.split("_");
+  const [min, max] = value.split("_");
 
-  const min = Number(rawMin);
-  const max = Number(rawMax);
-
-  return [Number.isNaN(min) ? 0 : min, Number.isNaN(max) ? 5 : max];
+  return [Number(min) || 0, Number(max) || 5];
 };
 
 const string = (v?: string) => v || undefined;
