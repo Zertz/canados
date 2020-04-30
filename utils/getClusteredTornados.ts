@@ -45,7 +45,9 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
     for (let j = 0; j < tornados.length; j += 1) {
       const tornado = tornados[j];
 
-      const geohashStart = tornado.geohashStart.substring(0, i);
+      const geohashStart = `${
+        tornado.location
+      }-${tornado.geohashStart.substring(0, i)}`;
 
       let clusteredTornado: ReturnType<typeof geohashMap.get>;
 
