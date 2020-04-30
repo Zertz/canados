@@ -15,14 +15,7 @@ export function formatCanadaData(
     .map(
       ({
         geometry,
-        properties: {
-          YYYY_LOCAL,
-          MM_LOCAL,
-          DD_LOCAL,
-          HHMM_LOCAL,
-          NEAR_CMMTY,
-          PROVINCE,
-        },
+        properties: { YYYY_LOCAL, MM_LOCAL, DD_LOCAL, HHMM_LOCAL, PROVINCE },
       }) => {
         const coordinates = geometry.coordinates.map((pair) => pair.reverse());
         const coordinates_start = coordinates[0];
@@ -40,7 +33,7 @@ export function formatCanadaData(
             coordinates_start,
             coordinates_end,
             date,
-            location: `${NEAR_CMMTY}, ${PROVINCE}`,
+            location: PROVINCE,
           }),
           coordinates,
         };
@@ -62,7 +55,6 @@ export function formatCanadaData(
           MM_LOCAL,
           DD_LOCAL,
           HHMM_LOCAL,
-          NEAR_CMMTY,
           PROVINCE,
           FUJITA,
           START_LAT_,
@@ -87,7 +79,7 @@ export function formatCanadaData(
           DD_LOCAL,
         });
 
-        const location = `${NEAR_CMMTY}, ${PROVINCE}`;
+        const location = PROVINCE;
 
         return {
           id: generateTornadoId({
