@@ -1,26 +1,22 @@
 import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 
-function getClusterStats(tornado: Tornado, cluster: Tornado[]) {
-  const divider = cluster.length + 1;
-
+function getClusterStats(tornados: Tornado[]) {
   return {
     averageFujita:
-      (tornado.fujita + cluster.reduce((acc, { fujita }) => acc + fujita, 0)) /
-      divider,
+      tornados.reduce((acc, { fujita }) => acc + fujita, 0) / tornados.length,
     coordinates: [
-      (tornado.coordinates_start[0] +
-        cluster.reduce(
-          (acc, { coordinates_start }) => acc + coordinates_start[0],
-          0
-        )) /
-        divider,
-      (tornado.coordinates_start[1] +
-        cluster.reduce(
-          (acc, { coordinates_start }) => acc + coordinates_start[1],
-          0
-        )) /
-        divider,
+      tornados.reduce(
+        (acc, { coordinates_start }) => acc + coordinates_start[0],
+        0
+      ) / tornados.length,
+      tornados.reduce(
+        (acc, { coordinates_start }) => acc + coordinates_start[1],
+        0
+      ) / tornados.length,
     ],
+    weight:
+      tornados.reduce((acc, { fujita }) => acc + (fujita + 1) ** 2, 0) /
+      tornados.length,
   } as ClusterStats;
 }
 
@@ -29,7 +25,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
     return tornados.map((tornado) => ({
       ...tornado,
       cluster: [],
-      clusterStats: getClusterStats(tornado, []),
+      clusterStats: getClusterStats([tornado]),
     }));
   }
 
@@ -57,7 +53,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
         geohashMap.set(geohashStart, {
           ...tornado,
           cluster: [],
-          clusterStats: getClusterStats(tornado, []),
+          clusterStats: getClusterStats([tornado]),
         });
 
         if (geohashMap.size > MAXIMUM_DISPLAYED_TORNADOS) {
@@ -114,16 +110,16 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
       clusteredTornados.push({
         ...unclusteredTornado,
         cluster: unclusteredTornados,
-        clusterStats: getClusterStats(unclusteredTornado, []),
+        clusterStats: getClusterStats([unclusteredTornado]),
       });
     }
   }
 
   for (let i = 0; i < clusteredTornados.length; i += 1) {
-    clusteredTornados[i].clusterStats = getClusterStats(
+    clusteredTornados[i].clusterStats = getClusterStats([
       clusteredTornados[i],
-      clusteredTornados[i].cluster
-    );
+      ...clusteredTornados[i].cluster,
+    ]);
   }
 
   return clusteredTornados;

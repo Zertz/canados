@@ -92,6 +92,7 @@ type Tornado = RawTornado & {
 type ClusterStats = {
   averageFujita: number;
   coordinates: Common.Coordinates;
+  weight: number;
 };
 
 type ClusteredTornado = Tornado & {
