@@ -2,8 +2,6 @@ import { GEOHASH_LENGTH, MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 
 function getClusterStats(tornados: Tornado[]) {
   return {
-    averageFujita:
-      tornados.reduce((acc, { fujita }) => acc + fujita, 0) / tornados.length,
     coordinates: [
       tornados.reduce(
         (acc, { coordinates_start }) => acc + coordinates_start[0],
@@ -14,9 +12,9 @@ function getClusterStats(tornados: Tornado[]) {
         0
       ) / tornados.length,
     ],
-    weight:
-      tornados.reduce((acc, { fujita }) => acc + (fujita + 1) ** 2, 0) /
-      tornados.length,
+    maxFujita: tornados
+      .filter(({ fujita }) => fujita >= 0)
+      .reduce((acc, { fujita }) => Math.max(acc, fujita), 0),
   } as ClusterStats;
 }
 

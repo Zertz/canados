@@ -4,3 +4,29 @@ body {
     “Ubuntu”, “Cantarell”, “Fira Sans”, “Droid Sans”, “Helvetica Neue”,
     sans-serif;
 }
+
+.leaflet-div-icon {
+  background: unset;
+  border: none;
+}
+
+.canados-div-icon {
+  border: 8px solid currentColor;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: -26px;
+  left: -6px;
+}
+
+.canados-div-icon:after {
+  border: 10px solid transparent;
+  border-top: 16px solid currentColor;
+  content: "";
+  width: 0;
+  height: 0;
+  position: absolute;
+  bottom: -28px;
+  left: -6px;
+}

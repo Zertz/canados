@@ -1,7 +1,8 @@
+import * as L from "leaflet";
 import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import {
   CircleMarker,
-  Map,
+  Map as LeafletMap,
   Marker,
   Polyline,
   TileLayer,
@@ -82,11 +83,30 @@ type ReactLeaflet = {
   leafletElement: Leaflet;
 };
 
+const minColor = 0;
+const maxColor = 50;
+
 const minOpacity = 0.375;
 const maxOpacity = 1;
 
 const encodeNumber = (v: number) => `${v}`;
 const decodeNumber = (v?: string) => (v ? Number(v) || undefined : undefined);
+
+const iconCache = new Map();
+
+function getIcon(color: string) {
+  if (iconCache.has(color)) {
+    return iconCache.get(color);
+  }
+
+  const icon = L.divIcon({
+    html: `<div class="canados-div-icon" style="color: ${color}"></div>`,
+  });
+
+  iconCache.set(color, icon);
+
+  return icon;
+}
 
 export default function TornadoTracks({
   fitBounds,
@@ -205,18 +225,18 @@ export default function TornadoTracks({
     return {
       largestCluster: tornados.reduce(
         (acc, { cluster: { length } }) => Math.max(acc, length),
-        0
+        -Infinity
       ),
       smallestCluster: tornados.reduce(
         (acc, { cluster: { length } }) => Math.min(acc, length),
-        0
+        Infinity
       ),
     };
   })();
 
   return (
     <div className={styles.div}>
-      <Map
+      <LeafletMap
         className={styles.map}
         center={center}
         onMoveEnd={handleMoveEnd}
@@ -231,33 +251,41 @@ export default function TornadoTracks({
         />
         {Array.isArray(tornados) &&
           tornados.map((tornado) => {
-            const opacity =
-              ((maxOpacity - minOpacity) / (largestCluster - smallestCluster)) *
-                (tornado.cluster.length + 1 - smallestCluster) +
-              minOpacity;
-
             const start = getStart(tornado);
             const end = getEnd(tornado);
 
             const selected = selectedTornadoId === tornado.id;
 
+            const opacity = selected
+              ? 1
+              : ((maxOpacity - minOpacity) /
+                  (largestCluster - smallestCluster)) *
+                  (tornado.cluster.length + 1 - smallestCluster) +
+                minOpacity;
+
+            const color = `hsla(${Math.round(
+              maxColor -
+                ((maxColor - minColor) / 5) * tornado.clusterStats.maxFujita
+            )}, 100%, 50%, 1)`;
+
+            const icon = getIcon(color);
+
             return (
               <Fragment key={tornado.id}>
                 {selected && (
-                  <CircleMarker center={start} color="tomato" radius={10} />
+                  <CircleMarker center={start} color={color} radius={10} />
                 )}
                 <Marker
+                  icon={icon}
                   onClick={onClick(tornado.id)}
                   opacity={opacity}
                   position={start}
                 >
-                  <Tooltip direction="right" offset={[-10, 0]} opacity={0.9}>
+                  <Tooltip direction="right" offset={[5, -20]} opacity={0.9}>
                     {tornado.cluster.length > 0
                       ? `${
                           tornado.cluster.length + 1
-                        } tornados around this location (average F${Math.round(
-                          tornado.clusterStats.averageFujita
-                        )})`
+                        } tornados around this location`
                       : `${end ? "Start: " : ""}${tornado.location} (F${
                           tornado.fujita
                         })`}
@@ -267,7 +295,7 @@ export default function TornadoTracks({
                   typeof tornado.coordinates_end[0] === "number" &&
                   typeof tornado.coordinates_end[1] === "number" && (
                     <Polyline
-                      color={selected ? "tomato" : "lime"}
+                      color={color}
                       positions={[
                         tornado.coordinates_start,
                         tornado.coordinates_end,
@@ -277,16 +305,17 @@ export default function TornadoTracks({
                 {end && (
                   <>
                     {selected && (
-                      <CircleMarker center={end} color="tomato" radius={10} />
+                      <CircleMarker center={end} color={color} radius={10} />
                     )}
                     <Marker
+                      icon={icon}
                       onClick={onClick(tornado.id)}
                       opacity={opacity}
                       position={end}
                     >
                       <Tooltip
                         direction="right"
-                        offset={[-10, 0]}
+                        offset={[5, -20]}
                         opacity={0.9}
                       >{`Finish: ${tornado.location} (F${tornado.fujita})`}</Tooltip>
                     </Marker>
@@ -295,7 +324,7 @@ export default function TornadoTracks({
               </Fragment>
             );
           })}
-      </Map>
+      </LeafletMap>
     </div>
   );
 }
