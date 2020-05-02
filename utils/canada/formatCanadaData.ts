@@ -33,7 +33,7 @@ export function formatCanadaData(
             coordinates_start,
             coordinates_end,
             date,
-            location: PROVINCE,
+            region_code: PROVINCE,
           }),
           coordinates,
         };
@@ -79,20 +79,20 @@ export function formatCanadaData(
           DD_LOCAL,
         });
 
-        const location = PROVINCE;
+        const region_code = PROVINCE;
 
         return {
           id: generateTornadoId({
             coordinates_start,
             coordinates_end,
             date,
-            location,
+            region_code,
           }),
           coordinates_start,
           coordinates_end,
           date,
           fujita: Number(FUJITA),
-          location,
+          region_code,
         };
       }
     )

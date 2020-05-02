@@ -72,7 +72,7 @@ type RawTornado = {
   coordinates_end: [number?, number?];
   date: Date;
   fujita: number;
-  location: string;
+  region_code: string;
 };
 
 type TupleTornado = [
@@ -105,5 +105,5 @@ declare module Common {
   type ListState = "collapsed" | "expanded";
   type Order = "ascending" | "descending";
   type Status = "idle" | "loading" | "ready" | "error";
-  type SortProperty = "date" | "distance" | "fujita" | "location";
+  type SortProperty = "date" | "distance" | "fujita" | "region_code";
 }

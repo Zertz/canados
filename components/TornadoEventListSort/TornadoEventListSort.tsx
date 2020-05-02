@@ -26,7 +26,7 @@ export default function TornadoEventListSort({
         <option value="date">Date</option>
         <option value="distance">Distance</option>
         <option value="fujita">Fujita</option>
-        <option value="location">Location</option>
+        <option value="region_code">Region</option>
       </select>
       <span className="inline-flex rounded-md shadow-sm">
         <button

@@ -47,7 +47,7 @@ export function formatUnitedStatesData(): Promise<RawTornado[]> {
                 new Date()
               ),
               fujita: Number(json.mag),
-              location: json.st,
+              region_code: json.st,
             });
           }
         },

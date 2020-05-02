@@ -42,7 +42,7 @@ const FixedSizeListRow = ({
       date={tornado.date as Date}
       fujita={tornado.fujita}
       length_m={tornado.length_m}
-      location={tornado.location}
+      location={tornado.region_code}
       onClick={onClick(tornado.id)}
       selected={selectedTornadoId === tornado.id}
       style={style}

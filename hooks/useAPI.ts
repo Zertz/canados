@@ -103,7 +103,14 @@ export const useAPI = (url: string) => {
       );
 
       const results = data.map(
-        ([id, coordinates_start, coordinates_end, $date, fujita, location]) => {
+        ([
+          id,
+          coordinates_start,
+          coordinates_end,
+          $date,
+          fujita,
+          region_code,
+        ]) => {
           const hasEnd =
             typeof coordinates_end[0] === "number" &&
             typeof coordinates_end[1] === "number";
@@ -129,7 +136,7 @@ export const useAPI = (url: string) => {
             fujita,
             geohashStart,
             length_m,
-            location,
+            region_code,
           };
         }
       );

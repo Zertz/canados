@@ -286,7 +286,7 @@ export default function TornadoTracks({
                       ? `${
                           tornado.cluster.length + 1
                         } tornados around this location`
-                      : `${end ? "Start: " : ""}${tornado.location} (F${
+                      : `${end ? "Start: " : ""}${tornado.region_code} (F${
                           tornado.fujita
                         })`}
                   </Tooltip>
@@ -317,7 +317,7 @@ export default function TornadoTracks({
                         direction="right"
                         offset={[5, -20]}
                         opacity={0.9}
-                      >{`Finish: ${tornado.location} (F${tornado.fujita})`}</Tooltip>
+                      >{`Finish: ${tornado.region_code} (F${tornado.fujita})`}</Tooltip>
                     </Marker>
                   </>
                 )}

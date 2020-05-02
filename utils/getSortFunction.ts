@@ -8,28 +8,28 @@ export function getSortFunction(
         order === "ascending"
           ? a.date - b.date ||
             a.fujita - b.fujita ||
-            a.location.localeCompare(b.location)
+            a.region_code.localeCompare(b.region_code)
           : b.date - a.date ||
             b.fujita - a.fujita ||
-            b.location.localeCompare(a.location);
+            b.region_code.localeCompare(a.region_code);
     }
     case "fujita": {
       return (a, b) =>
         order === "ascending"
           ? a.fujita - b.fujita ||
             a.date - b.date ||
-            a.location.localeCompare(b.location)
+            a.region_code.localeCompare(b.region_code)
           : b.fujita - a.fujita ||
             b.date - a.date ||
-            b.location.localeCompare(a.location);
+            b.region_code.localeCompare(a.region_code);
     }
-    case "location": {
+    case "region_code": {
       return (a, b) =>
         order === "ascending"
-          ? a.location.localeCompare(b.location) ||
+          ? a.region_code.localeCompare(b.region_code) ||
             a.date - b.date ||
             a.fujita - b.fujita
-          : b.location.localeCompare(a.location) ||
+          : b.region_code.localeCompare(a.region_code) ||
             b.date - a.date ||
             b.fujita - a.fujita;
     }
