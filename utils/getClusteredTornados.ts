@@ -54,7 +54,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
           clusterStats: getClusterStats([tornado]),
         });
 
-        if (geohashMap.size > MAXIMUM_DISPLAYED_TORNADOS) {
+        if (geohashMap.size > MAXIMUM_DISPLAYED_TORNADOS && i > 1) {
           break;
         }
       }
