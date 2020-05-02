@@ -96,11 +96,29 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
     }
   }
 
+  const clusterSizes = {
+    smallest: Infinity,
+    largest: -Infinity,
+  };
+
+  // TODO: There's probably a way to avoid having to loop again
   for (let i = 0; i < clusteredTornados.length; i += 1) {
-    clusteredTornados[i].clusterStats = getClusterStats([
-      clusteredTornados[i],
-      ...clusteredTornados[i].cluster,
-    ]);
+    const clusterSize = clusteredTornados[i].cluster.length + 1;
+
+    if (clusterSize < clusterSizes.smallest) {
+      clusterSizes.smallest = clusterSize;
+    }
+
+    if (clusterSize > clusterSizes.largest) {
+      clusterSizes.largest = clusterSize;
+    }
+  }
+
+  for (let i = 0; i < clusteredTornados.length; i += 1) {
+    clusteredTornados[i].clusterStats = getClusterStats(
+      [clusteredTornados[i], ...clusteredTornados[i].cluster],
+      clusterSizes
+    );
   }
 
   return clusteredTornados;
