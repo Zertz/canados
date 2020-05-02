@@ -214,26 +214,6 @@ export default function TornadoTracks({
     setZoom(map.current.leafletElement.getZoom());
   };
 
-  const { largestCluster, smallestCluster } = (() => {
-    if (!Array.isArray(tornados)) {
-      return {
-        largestCluster: 0,
-        smallestCluster: 0,
-      };
-    }
-
-    return {
-      largestCluster: tornados.reduce(
-        (acc, { cluster: { length } }) => Math.max(acc, length),
-        -Infinity
-      ),
-      smallestCluster: tornados.reduce(
-        (acc, { cluster: { length } }) => Math.min(acc, length),
-        Infinity
-      ),
-    };
-  })();
-
   return (
     <div className={styles.div}>
       <LeafletMap
@@ -258,9 +238,8 @@ export default function TornadoTracks({
 
             const opacity = selected
               ? 1
-              : ((maxOpacity - minOpacity) /
-                  (largestCluster - smallestCluster)) *
-                  (tornado.cluster.length + 1 - smallestCluster) +
+              : (maxOpacity - minOpacity) /
+                  (1 / tornado.clusterStats.relativeSize) +
                 minOpacity;
 
             const color = `hsla(${Math.round(
