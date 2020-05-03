@@ -92,6 +92,7 @@ export function formatCanadaData(
           coordinates_end,
           date,
           fujita: Number(FUJITA),
+          country_code: "CAN",
           region_code,
         };
       }

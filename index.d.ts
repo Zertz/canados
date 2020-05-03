@@ -72,6 +72,7 @@ type RawTornado = {
   coordinates_end: [number?, number?];
   date: Date;
   fujita: number;
+  country_code: string;
   region_code: string;
 };
 
@@ -81,6 +82,7 @@ type TupleTornado = [
   [number?, number?],
   Date,
   number,
+  string,
   string
 ];
 

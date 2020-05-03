@@ -109,6 +109,7 @@ export const useAPI = (url: string) => {
           coordinates_end,
           $date,
           fujita,
+          country_code,
           region_code,
         ]) => {
           const hasEnd =
@@ -136,6 +137,7 @@ export const useAPI = (url: string) => {
             fujita,
             geohashStart,
             length_m,
+            country_code,
             region_code,
           };
         }

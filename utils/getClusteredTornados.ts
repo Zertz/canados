@@ -22,7 +22,7 @@ export function getClusteredTornados({ tornados }: { tornados: Tornado[] }) {
     for (let j = 0; j < tornados.length; j += 1) {
       const tornado = tornados[j];
 
-      const geohashStart = `${
+      const geohashStart = `${tornado.country_code}-${
         tornado.region_code
       }-${tornado.geohashStart.substring(0, i)}`;
 
