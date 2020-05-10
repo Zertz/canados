@@ -1,7 +1,10 @@
 import haversine from "fast-haversine";
 import { latLngBounds } from "leaflet";
 import { useEffect, useState } from "react";
-import { GRID_SIZE } from "../constants";
+
+const getGridSize = (tornados: number) => {
+  return Math.max(16, Math.min(48, Math.floor(tornados / 100)));
+};
 
 export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
   const [stats, setStats] = useState<MatrixStats>();
@@ -22,8 +25,10 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
     const width = Number((ne.lng - sw.lng).toFixed(2));
     const height = Number((ne.lat - sw.lat).toFixed(2));
 
-    const cellWidth = width / GRID_SIZE;
-    const cellHeight = height / GRID_SIZE;
+    const gridSize = getGridSize(tornados.length);
+
+    const cellWidth = width / gridSize;
+    const cellHeight = height / gridSize;
 
     const cellWidthKilometers =
       haversine(
@@ -39,9 +44,11 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
 
     const cellAreaKilometers = cellWidthKilometers * cellHeightKilometers;
 
+    console.info(gridSize, cellAreaKilometers);
+
     const matrix: TornadoMatrix = {
-      columns: [...Array(GRID_SIZE)].map(() => ({
-        rows: [...Array(GRID_SIZE)].map(() => ({
+      columns: [...Array(gridSize)].map(() => ({
+        rows: [...Array(gridSize)].map(() => ({
           tornados: new Map(),
         })),
       })),
@@ -58,11 +65,11 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
       const cell = {
         x:
           distanceToOrigin.x === width
-            ? GRID_SIZE - 1
+            ? gridSize - 1
             : Math.floor(distanceToOrigin.x / cellWidth),
         y:
           distanceToOrigin.y === height
-            ? GRID_SIZE - 1
+            ? gridSize - 1
             : Math.floor(distanceToOrigin.y / cellHeight),
       };
 
