@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { GRID_SIZE } from "../constants";
 
 export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
-  const [density, setDensity] = useState<{ min: number; max: number }>();
+  const [stats, setStats] = useState<MatrixStats>();
   const [tornadoMatrix, setTornadoMatrix] = useState<TornadoMatrix>();
 
   useEffect(() => {
@@ -72,8 +72,12 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
       );
     }
 
-    let minDensity = Infinity;
-    let maxDensity = -Infinity;
+    const stats: MatrixStats = {
+      density: {
+        min: Infinity,
+        max: -Infinity,
+      },
+    };
 
     for (let i = 0; i < matrix.columns.length; i += 1) {
       const column = matrix.columns[i];
@@ -93,18 +97,14 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
 
         cell.density = cell.tornados.size / cellAreaKilometers;
 
-        minDensity = Math.min(minDensity, cell.density);
-        maxDensity = Math.max(maxDensity, cell.density);
+        stats.density.min = Math.min(stats.density.min, cell.density);
+        stats.density.max = Math.max(stats.density.max, cell.density);
       }
     }
 
-    setDensity({
-      min: minDensity,
-      max: maxDensity,
-    });
-
+    setStats(stats);
     setTornadoMatrix(matrix);
   }, [tornados]);
 
-  return { density, tornadoMatrix };
+  return { stats, tornadoMatrix };
 }

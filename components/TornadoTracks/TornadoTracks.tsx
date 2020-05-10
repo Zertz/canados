@@ -76,7 +76,7 @@ export default function TornadoTracks({
     decodeNumber
   );
 
-  const { density, tornadoMatrix } = useTornadoMatrix({
+  const { stats, tornadoMatrix } = useTornadoMatrix({
     tornados,
   });
 
@@ -147,7 +147,7 @@ export default function TornadoTracks({
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {density &&
+        {stats &&
           tornadoMatrix &&
           tornadoMatrix.columns.map((column) =>
             column.rows.map((row) => {
@@ -160,7 +160,8 @@ export default function TornadoTracks({
                 : false;
 
               const relativeDensity =
-                (1 / (density.max - density.min)) * (row.density - density.min);
+                (1 / (stats.density.max - stats.density.min)) *
+                (row.density - stats.density.min);
 
               const hue = Math.round(
                 maxColor - (maxColor - minColor) / (1 / relativeDensity)
