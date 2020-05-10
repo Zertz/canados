@@ -155,13 +155,17 @@ export default function TornadoTracks({
                 return null;
               }
 
-              const selected = selectedTornadoId
-                ? row.tornados.has(selectedTornadoId)
-                : false;
-
               const relativeDensity =
                 (1 / (stats.density.max - stats.density.min)) *
                 (row.density - stats.density.min);
+
+              if (relativeDensity < 5 / 100) {
+                return null;
+              }
+
+              const selected = selectedTornadoId
+                ? row.tornados.has(selectedTornadoId)
+                : false;
 
               const hue = Math.round(
                 maxColor - (maxColor - minColor) / (1 / relativeDensity)
