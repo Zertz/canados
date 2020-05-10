@@ -12,6 +12,7 @@
     "transpile": "symlink-dir node_modules/ky ky"
   },
   "dependencies": {
+    "@zeit/next-workers": "^1.0.0",
     "classnames": "^2.2.6",
     "csvtojson": "^2.0.10",
     "date-fns": "^2.12.0",
@@ -26,7 +27,8 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-leaflet": "^2.6.1",
-    "react-window": "^1.8.5"
+    "react-window": "^1.8.5",
+    "worker-loader": "^2.0.0"
   },
   "devDependencies": {
     "@types/leaflet": "^1.5.12",
