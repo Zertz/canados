@@ -1,18 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-let worker: Worker;
+export function useWorker(Worker, receive: (data: any) => void) {
+  const workerRef = useRef<Worker>();
 
-export function useWorker(url: string, receive: (data: any) => void) {
+  const getWorkerInstance = () => {
+    if (workerRef.current) {
+      return workerRef.current;
+    }
+
+    workerRef.current = new Worker();
+
+    return workerRef.current as Worker;
+  };
+
   useEffect(() => {
-    worker = new Worker(url);
-
     return () => {
-      worker.terminate();
+      if (workerRef.current) {
+        workerRef.current.terminate();
+      }
     };
   }, []);
 
   useEffect(() => {
-    worker.onmessage = (e) => {
+    getWorkerInstance().onmessage = (e) => {
       if (!e.isTrusted) {
         return;
       }
@@ -22,7 +32,7 @@ export function useWorker(url: string, receive: (data: any) => void) {
   }, [receive]);
 
   const send = (data: { action: "search" | "store"; payload: any }) => {
-    worker.postMessage(JSON.stringify(data));
+    getWorkerInstance().postMessage(JSON.stringify(data));
   };
 
   return send;

@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
-import { useWorker } from "./useWorker";
+import { useCallback, useEffect, useReducer } from "react";
+import SearchWorker from "worker-loader?name=static/[hash].worker.js!../workers/search.worker";
 import ky from "../ky";
+import { useWorker } from "./useWorker";
 
 type Props = {
   tornados?: Tornado[];
@@ -72,7 +73,7 @@ export const useSearch = ({ tornados }: Props) => {
     [tornados]
   );
 
-  const send = useWorker("search.worker.js", receive);
+  const send = useWorker(SearchWorker, receive);
 
   useEffect(() => {
     if (!Array.isArray(tornados)) {
