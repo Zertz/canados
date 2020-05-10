@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type MultirangeProps = {
   min: number;
@@ -33,7 +33,7 @@ function Multirange({ min = 0, max = 100, onChange, values }: MultirangeProps) {
     );
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     updateStyles(lowValue, highValue);
   }, []);
 

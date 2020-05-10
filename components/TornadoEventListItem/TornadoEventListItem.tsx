@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useRef } from "react";
 import format from "date-fns/format";
+import React, { useEffect, useRef } from "react";
 
 type Props = {
   date: Date;
@@ -22,7 +22,7 @@ export default function TornadoEventListItem({
 }: Props) {
   const listItem = useRef<HTMLLIElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!selected) {
       return;
     }
