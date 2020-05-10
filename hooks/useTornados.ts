@@ -1,6 +1,5 @@
 import { useEffect, useReducer } from "react";
 import { getBoundedTornados } from "../utils/getBoundedTornados";
-import { getClusteredTornados } from "../utils/getClusteredTornados";
 import { getFilteredTornados } from "../utils/getFilteredTornados";
 import { getFitBounds } from "../utils/getFitBounds";
 import { useAPI } from "./useAPI";
@@ -9,7 +8,6 @@ import { useSearch } from "./useSearch";
 type State = {
   boundedTornados?: Tornado[];
   filteredTornados?: Tornado[];
-  clusteredTornados?: ClusteredTornado[];
   fitBounds?: Common.Bounds;
   status: Common.Status;
   tornadoCount?: number;
@@ -21,7 +19,6 @@ type Action =
       payload: {
         boundedTornados: Tornado[];
         filteredTornados: Tornado[];
-        clusteredTornados: ClusteredTornado[];
         tornadoCount: number;
       };
     }
@@ -68,18 +65,10 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
   });
 
   const [
-    {
-      boundedTornados,
-      clusteredTornados,
-      filteredTornados,
-      fitBounds,
-      status,
-      tornadoCount,
-    },
+    { boundedTornados, filteredTornados, fitBounds, status, tornadoCount },
     dispatch,
   ] = useReducer(reducer, {
     boundedTornados: undefined,
-    clusteredTornados: undefined,
     filteredTornados: undefined,
     fitBounds: undefined,
     status: "idle",
@@ -113,7 +102,6 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
           type: "cluster",
           payload: {
             boundedTornados: [],
-            clusteredTornados: [],
             filteredTornados: [],
             tornadoCount: 0,
           },
@@ -184,9 +172,6 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
           type: "cluster",
           payload: {
             boundedTornados,
-            clusteredTornados: getClusteredTornados({
-              tornados: filteredTornados,
-            }),
             filteredTornados,
             tornadoCount: filteredTornados.length,
           },
@@ -214,9 +199,6 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
       type: "cluster",
       payload: {
         boundedTornados,
-        clusteredTornados: getClusteredTornados({
-          tornados: filteredTornados,
-        }),
         filteredTornados,
         tornadoCount: filteredTornados.length,
       },
@@ -225,7 +207,6 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
 
   return {
     apiStatus,
-    clusteredTornados,
     error,
     fitBounds,
     search,

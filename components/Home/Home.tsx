@@ -41,7 +41,6 @@ export default function Home() {
 
   const {
     apiStatus,
-    clusteredTornados,
     error,
     fitBounds,
     search,
@@ -89,7 +88,7 @@ export default function Home() {
           searchStatus={searchStatus}
           selectedTornadoId={selectedTornadoId}
           setScreenBounds={setScreenBounds}
-          tornados={clusteredTornados}
+          tornados={tornados}
         />
         {apiStatus === "loading" && (
           <LoadingOverlay
