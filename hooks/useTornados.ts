@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { getBoundedTornados } from "../utils/getBoundedTornados";
+import { getBounds } from "../utils/getBounds";
 import { getFilteredTornados } from "../utils/getFilteredTornados";
-import { getFitBounds } from "../utils/getFitBounds";
 import { useAPI } from "./useAPI";
 import { useSearch } from "./useSearch";
 
@@ -111,7 +111,7 @@ export const useTornados = ({ fujitaFilter, screenBounds }: Props) => {
       return;
     }
 
-    const fitBounds = getFitBounds(tornados);
+    const fitBounds = getBounds(tornados);
 
     if (JSON.stringify(fitBounds[0]) === JSON.stringify(fitBounds[1])) {
       dispatch({
