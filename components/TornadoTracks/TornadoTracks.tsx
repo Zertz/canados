@@ -181,14 +181,10 @@ export default function TornadoTracks({
                 return null;
               }
 
-              const selected = selectedTornadoId
-                ? row.tornados.has(selectedTornadoId)
-                : false;
-
               if (stats.density.min === stats.density.max) {
                 return [...row.tornados.values()].map((tornado) => (
                   <Fragment key={tornado.id}>
-                    {selected && (
+                    {tornado.id === selectedTornadoId && (
                       <CircleMarker
                         center={tornado.coordinates_start}
                         radius={50}
@@ -201,6 +197,10 @@ export default function TornadoTracks({
                   </Fragment>
                 ));
               }
+
+              const selected = selectedTornadoId
+                ? row.tornados.has(selectedTornadoId)
+                : false;
 
               const relativeDensity =
                 (1 / (stats.density.max - stats.density.min)) *
