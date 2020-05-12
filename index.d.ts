@@ -99,14 +99,16 @@ type TornadoMatrix = {
       tornados: Map<TornadoId, Tornado>;
     }>;
   }>;
+  count: number;
+  nonEmptyCells: number;
 };
 
 type MatrixStats = {
   density: {
-    min: number,
-    max: number,
-  }
-}
+    min: number;
+    max: number;
+  };
+};
 
 declare module Common {
   type Bounds = [Coordinates, Coordinates];

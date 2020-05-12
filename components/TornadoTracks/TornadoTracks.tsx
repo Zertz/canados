@@ -3,17 +3,19 @@ import React, { Fragment, useCallback, useEffect, useRef } from "react";
 import {
   CircleMarker,
   Map,
+  Marker,
   Rectangle,
   TileLayer,
   Tooltip,
 } from "react-leaflet";
+import { MAXIMUM_DISPLAYED_TORNADOS } from "../../constants";
 import { useSearchParamState } from "../../hooks/useSearchParamState";
 import { useTornadoMatrix } from "../../hooks/useTornadoMatrix";
 import styles from "./TornadoTracks.module.css";
 
 type Props = {
   fitBounds?: Common.Bounds;
-  onClick: (tornadoId: TornadoId) => void;
+  onClick: (tornadoId: TornadoId) => () => void;
   searchStatus: Common.Status;
   selectedTornadoId?: TornadoId;
   setScreenBounds: (bounds: Common.Bounds) => void;
@@ -33,6 +35,30 @@ const maxOpacity = 0.75;
 
 const encodeNumber = (v: number) => `${v}`;
 const decodeNumber = (v?: string) => (v ? Number(v) || undefined : undefined);
+
+function TornadoMarker({
+  onClick,
+  tornado,
+}: {
+  onClick: () => void;
+  tornado: Tornado;
+}) {
+  const color = `hsla(${Math.round(
+    maxColor - ((maxColor - minColor) / 5) * tornado.fujita
+  )}, 100%, 50%, 1)`;
+
+  const icon = L.divIcon({
+    html: `<div class="canados-div-icon" style="color: ${color}"></div>`,
+  });
+
+  return (
+    <Marker icon={icon} onClick={onClick} position={tornado.coordinates_start}>
+      <Tooltip direction="right" offset={[5, -20]} opacity={0.9}>
+        {`${tornado.region_code} (F${tornado.fujita})`}
+      </Tooltip>
+    </Marker>
+  );
+}
 
 export default function TornadoTracks({
   fitBounds,
@@ -155,17 +181,37 @@ export default function TornadoTracks({
                 return null;
               }
 
+              const selected = selectedTornadoId
+                ? row.tornados.has(selectedTornadoId)
+                : false;
+
+              if (stats.density.min === stats.density.max) {
+                return [...row.tornados.values()].map((tornado) => (
+                  <Fragment key={tornado.id}>
+                    {selected && (
+                      <CircleMarker
+                        center={tornado.coordinates_start}
+                        radius={50}
+                      />
+                    )}
+                    <TornadoMarker
+                      onClick={onClick(tornado.id)}
+                      tornado={tornado}
+                    />
+                  </Fragment>
+                ));
+              }
+
               const relativeDensity =
                 (1 / (stats.density.max - stats.density.min)) *
                 (row.density - stats.density.min);
 
-              if (relativeDensity < 5 / 100) {
+              if (
+                tornadoMatrix.nonEmptyCells > MAXIMUM_DISPLAYED_TORNADOS &&
+                relativeDensity < 5 / 100
+              ) {
                 return null;
               }
-
-              const selected = selectedTornadoId
-                ? row.tornados.has(selectedTornadoId)
-                : false;
 
               const hue = Math.round(
                 maxColor - (maxColor - minColor) / (1 / relativeDensity)

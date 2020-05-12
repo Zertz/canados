@@ -1,9 +1,14 @@
 import haversine from "fast-haversine";
 import { latLngBounds } from "leaflet";
 import { useEffect, useState } from "react";
+import { MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 
 const getGridSize = (tornados: number) => {
-  return Math.max(16, Math.min(48, Math.floor(tornados / 100)));
+  if (tornados <= MAXIMUM_DISPLAYED_TORNADOS) {
+    return 1;
+  }
+
+  return Math.max(16, Math.min(32, Math.floor(tornados / 100)));
 };
 
 export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
@@ -44,14 +49,14 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
 
     const cellAreaKilometers = cellWidthKilometers * cellHeightKilometers;
 
-    console.info(gridSize, cellAreaKilometers);
-
     const matrix: TornadoMatrix = {
       columns: [...Array(gridSize)].map(() => ({
         rows: [...Array(gridSize)].map(() => ({
           tornados: new Map(),
         })),
       })),
+      count: tornados.length,
+      nonEmptyCells: 0,
     };
 
     for (let i = 0; i < tornados.length; i += 1) {
@@ -95,6 +100,8 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
         if (cell.tornados.size === 0) {
           continue;
         }
+
+        matrix.nonEmptyCells += 1;
 
         cell.bounds = latLngBounds(
           [...cell.tornados.values()].map(
