@@ -1,5 +1,5 @@
 import * as L from "leaflet";
-import React, { Fragment, useCallback, useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 import {
   CircleMarker,
   Map,
@@ -132,7 +132,15 @@ export default function TornadoTracks({
     map.current.leafletElement.fitBounds(fitBounds, { padding: [25, 25] });
   }, [fitBounds, searchStatus]);
 
-  const handleMoveEnd = useCallback(() => {
+  const handleClickCell = (bounds: L.LatLngBounds) => () => {
+    if (!map.current) {
+      return;
+    }
+
+    map.current.leafletElement.fitBounds(bounds, { padding: [25, 25] });
+  };
+
+  const handleMoveEnd = () => {
     if (!map.current) {
       return;
     }
@@ -148,7 +156,7 @@ export default function TornadoTracks({
       [sw.lat, sw.lng],
       [ne.lat, ne.lng],
     ]);
-  }, [fitBounds]);
+  };
 
   const handleZoomEnd = () => {
     if (!map.current) {
@@ -237,7 +245,7 @@ export default function TornadoTracks({
                     bounds={row.bounds}
                     color={color}
                     fillOpacity={opacity}
-                    onClick={onClick(row.tornados.keys().next().value)}
+                    onClick={handleClickCell(row.bounds)}
                     stroke={false}
                   >
                     <Tooltip direction="right" opacity={0.9}>
