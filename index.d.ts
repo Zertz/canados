@@ -91,15 +91,23 @@ type Tornado = RawTornado & {
   length_m: number;
 };
 
-type ClusterStats = {
-  coordinates: Common.Coordinates;
-  maxFujita: number;
-  relativeSize: number;
+type TornadoMatrix = {
+  columns: Array<{
+    rows: Array<{
+      bounds?: L.LatLngBounds;
+      density?: number;
+      tornados: Map<TornadoId, Tornado>;
+    }>;
+  }>;
+  count: number;
+  nonEmptyCells: number;
 };
 
-type ClusteredTornado = Tornado & {
-  cluster: Tornado[];
-  clusterStats: ClusterStats;
+type MatrixStats = {
+  density: {
+    min: number;
+    max: number;
+  };
 };
 
 declare module Common {

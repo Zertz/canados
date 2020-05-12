@@ -1,7 +1,10 @@
-// @ts-check
+import "./hello";
+
+const ctx: Worker = self as any;
+
 let dataCache;
 
-onmessage = function (e) {
+ctx.addEventListener("message", (e) => {
   const { action, payload } = JSON.parse(e.data);
 
   switch (action) {
@@ -18,7 +21,7 @@ onmessage = function (e) {
         allGeohashes.has(geohashStart)
       );
 
-      postMessage(JSON.stringify(filteredResults));
+      ctx.postMessage(JSON.stringify(filteredResults));
 
       break;
     }
@@ -31,4 +34,4 @@ onmessage = function (e) {
       throw new Error("Unsupported action");
     }
   }
-};
+});
