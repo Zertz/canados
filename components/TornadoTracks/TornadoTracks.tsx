@@ -237,6 +237,7 @@ export default function TornadoTracks({
                     bounds={row.bounds}
                     color={color}
                     fillOpacity={opacity}
+                    onClick={onClick(row.tornados.keys().next().value)}
                     stroke={false}
                   >
                     <Tooltip direction="right" opacity={0.9}>
