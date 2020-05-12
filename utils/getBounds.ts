@@ -10,7 +10,10 @@ export function getBounds(tornados: Tornado[]): Common.Bounds {
         Math.max(northEastBounds[1], coordinates_start[1]),
       ],
     ],
-    [[], []]
+    [
+      [Infinity, Infinity],
+      [-Infinity, -Infinity],
+    ]
   );
 
   return bounds as Common.Bounds;
