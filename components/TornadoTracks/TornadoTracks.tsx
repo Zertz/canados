@@ -187,7 +187,7 @@ export default function TornadoTracks({
                     {tornado.id === selectedTornadoId && (
                       <CircleMarker
                         center={tornado.coordinates_start}
-                        radius={50}
+                        radius={15}
                       />
                     )}
                     <TornadoMarker
@@ -230,7 +230,7 @@ export default function TornadoTracks({
                     <CircleMarker
                       center={row.bounds.getCenter()}
                       color={color}
-                      radius={50}
+                      radius={35}
                     />
                   )}
                   <Rectangle
