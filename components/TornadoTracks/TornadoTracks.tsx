@@ -187,7 +187,10 @@ export default function TornadoTracks({
                 return null;
               }
 
-              if (tornadoMatrix.density.min === tornadoMatrix.density.max) {
+              if (
+                row.tornados.size === 1 ||
+                tornadoMatrix.density.min === tornadoMatrix.density.max
+              ) {
                 return [...row.tornados.values()].map((tornado) => (
                   <Fragment key={tornado.id}>
                     {tornado.id === selectedTornadoId && (
