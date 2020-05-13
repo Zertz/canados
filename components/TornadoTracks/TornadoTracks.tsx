@@ -8,7 +8,6 @@ import {
   TileLayer,
   Tooltip,
 } from "react-leaflet";
-import { MAXIMUM_DISPLAYED_TORNADOS } from "../../constants";
 import { useSearchParamState } from "../../hooks/useSearchParamState";
 import { useTornadoMatrix } from "../../hooks/useTornadoMatrix";
 import styles from "./TornadoTracks.module.css";
@@ -102,7 +101,7 @@ export default function TornadoTracks({
     decodeNumber
   );
 
-  const { stats, tornadoMatrix } = useTornadoMatrix({
+  const tornadoMatrix = useTornadoMatrix({
     tornados,
   });
 
@@ -181,15 +180,14 @@ export default function TornadoTracks({
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {stats &&
-          tornadoMatrix &&
+        {tornadoMatrix &&
           tornadoMatrix.columns.map((column) =>
             column.rows.map((row) => {
               if (!row.bounds || !row.density || row.tornados.size === 0) {
                 return null;
               }
 
-              if (stats.density.min === stats.density.max) {
+              if (tornadoMatrix.density.min === tornadoMatrix.density.max) {
                 return [...row.tornados.values()].map((tornado) => (
                   <Fragment key={tornado.id}>
                     {tornado.id === selectedTornadoId && (
@@ -211,15 +209,8 @@ export default function TornadoTracks({
                 : false;
 
               const relativeDensity =
-                (1 / (stats.density.max - stats.density.min)) *
-                (row.density - stats.density.min);
-
-              if (
-                tornadoMatrix.nonEmptyCells > MAXIMUM_DISPLAYED_TORNADOS &&
-                relativeDensity < 5 / 100
-              ) {
-                return null;
-              }
+                (1 / (tornadoMatrix.density.max - tornadoMatrix.density.min)) *
+                (row.density - tornadoMatrix.density.min);
 
               const hue = Math.round(
                 maxColor - (maxColor - minColor) / (1 / relativeDensity)

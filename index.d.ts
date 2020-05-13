@@ -100,10 +100,6 @@ type TornadoMatrix = {
     }>;
   }>;
   count: number;
-  nonEmptyCells: number;
-};
-
-type MatrixStats = {
   density: {
     min: number;
     max: number;

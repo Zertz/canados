@@ -8,11 +8,10 @@ const getGridSize = (tornados: number) => {
     return 1;
   }
 
-  return Math.max(16, Math.min(32, Math.floor(tornados / 100)));
+  return 24;
 };
 
 export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
-  const [stats, setStats] = useState<MatrixStats>();
   const [tornadoMatrix, setTornadoMatrix] = useState<TornadoMatrix>();
 
   useEffect(() => {
@@ -56,7 +55,10 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
         })),
       })),
       count: tornados.length,
-      nonEmptyCells: 0,
+      density: {
+        min: Infinity,
+        max: -Infinity,
+      },
     };
 
     for (let i = 0; i < tornados.length; i += 1) {
@@ -84,13 +86,6 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
       );
     }
 
-    const stats: MatrixStats = {
-      density: {
-        min: Infinity,
-        max: -Infinity,
-      },
-    };
-
     for (let i = 0; i < matrix.columns.length; i += 1) {
       const column = matrix.columns[i];
 
@@ -101,8 +96,6 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
           continue;
         }
 
-        matrix.nonEmptyCells += 1;
-
         cell.bounds = latLngBounds(
           [...cell.tornados.values()].map(
             ({ coordinates_start }) => coordinates_start
@@ -111,14 +104,13 @@ export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
 
         cell.density = cell.tornados.size / cellAreaKilometers;
 
-        stats.density.min = Math.min(stats.density.min, cell.density);
-        stats.density.max = Math.max(stats.density.max, cell.density);
+        matrix.density.min = Math.min(matrix.density.min, cell.density);
+        matrix.density.max = Math.max(matrix.density.max, cell.density);
       }
     }
 
-    setStats(stats);
     setTornadoMatrix(matrix);
   }, [tornados]);
 
-  return { stats, tornadoMatrix };
+  return tornadoMatrix;
 }
