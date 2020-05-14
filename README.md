@@ -14,8 +14,8 @@
 
 ### Canada
 
-[Canadian National Tornado Database: Verified Events (1980-2009) - Public GIS EN](https://open.canada.ca/data/en/dataset/fd3355a7-ae34-4df7-b477-07306182db69)
+- [Canadian National Tornado Database: Verified Events (1980-2009) - Public GIS EN](https://open.canada.ca/data/en/dataset/fd3355a7-ae34-4df7-b477-07306182db69)
 
 ### United States
 
-[National Oceanic and Atmospheric Administration's National Weather Service Storm Prediction Center](https://www.spc.noaa.gov/wcm/#data)
+- [National Oceanic and Atmospheric Administration's National Weather Service Storm Prediction Center](https://www.spc.noaa.gov/wcm/#data)
