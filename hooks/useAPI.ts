@@ -1,7 +1,5 @@
 import haversine from "fast-haversine";
-import geohash from "ngeohash";
 import { useEffect, useReducer } from "react";
-import { GEOHASH_LENGTH } from "../constants";
 import ky from "../ky";
 
 type State = {
@@ -116,12 +114,6 @@ export const useAPI = (url: string) => {
             typeof coordinates_end[0] === "number" &&
             typeof coordinates_end[1] === "number";
 
-          const geohashStart = geohash.encode(
-            coordinates_start[0],
-            coordinates_start[1],
-            GEOHASH_LENGTH
-          ) as string;
-
           const length_m = hasEnd
             ? haversine(
                 { lat: coordinates_start[0], lon: coordinates_start[1] },
@@ -135,7 +127,6 @@ export const useAPI = (url: string) => {
             coordinates_end,
             $date,
             fujita,
-            geohashStart,
             length_m,
             country_code,
             region_code,

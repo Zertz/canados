@@ -1,7 +1,5 @@
 import got from "got";
-import geohash from "ngeohash";
 import QuickLRU from "quick-lru";
-import { GEOHASH_LENGTH } from "../../constants";
 
 const lru = new QuickLRU({ maxSize: 256 });
 
@@ -56,17 +54,11 @@ export default async (req, res) => {
       `http://api.positionstack.com/v1/forward?access_key=${process.env.POSITIONSTACK_ACCESS_KEY}&country=CA,US&query=${q}`
     ).json();
 
-    const boundingBoxes = json.data.map(({ latitude, longitude }) =>
-      geohash.bboxes(
-        (latitude -= 0.25),
-        (longitude -= 0.25),
-        (latitude += 0.25),
-        (longitude += 0.25),
-        GEOHASH_LENGTH
-      )
-    );
+    const coordinates = json.data
+      .filter(({ type }) => type === "locality")
+      .map(({ latitude, longitude }) => [latitude, longitude]);
 
-    const data = JSON.stringify(boundingBoxes);
+    const data = JSON.stringify(coordinates);
 
     lru.set(q, data);
 

@@ -1,24 +1,23 @@
-import "./hello";
+import haversine from "fast-haversine";
+import { SEARCH_DISTANCE } from "../constants";
 
 const ctx: Worker = self as any;
 
-let dataCache;
+let dataCache: Tornado[];
 
 ctx.addEventListener("message", (e) => {
   const { action, payload } = JSON.parse(e.data);
 
   switch (action) {
     case "search": {
-      const allGeohashes = payload.reduce((set, geohashes) => {
-        for (let i = 0; i < geohashes.length; i += 1) {
-          set.add(geohashes[i]);
-        }
-
-        return set;
-      }, new Set());
-
-      const filteredResults = dataCache.filter(({ geohashStart }) =>
-        allGeohashes.has(geohashStart)
+      const filteredResults = dataCache.filter(({ coordinates_start }) =>
+        payload.some(
+          ([lat, lon]) =>
+            haversine(
+              { lat: coordinates_start[0], lon: coordinates_start[1] },
+              { lat, lon }
+            ) <= SEARCH_DISTANCE
+        )
       );
 
       ctx.postMessage(JSON.stringify(filteredResults));
