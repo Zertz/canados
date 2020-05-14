@@ -1,6 +1,6 @@
 # canados
 
-[![Deploy to Vercel](/button)](/import/project?template=https://github.com/Zertz/canados/tree/master)
+[![Deploy to Vercel](/button)](https://vercel.com/import/project?template=https://github.com/Zertz/canados/tree/master)
 
 ## Getting started
 
