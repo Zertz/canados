@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { FujitaContext } from "../../contexts/fujita";
+import { FiltersContext } from "../../contexts/filters";
 import { useSearchParamState } from "../../hooks/useSearchParamState";
 import { useTornados } from "../../hooks/useTornados";
 import LoadingOverlay from "../LoadingOverlay";
@@ -9,19 +9,21 @@ import styles from "./Home.module.css";
 
 const TornadoTracks = dynamic(() => import("../TornadoTracks"), { ssr: false });
 
-type FujitaFilter = [number, number];
+type RangeFilter = [number, number];
 
-const encodeFujitaFilter = (v: FujitaFilter | undefined) =>
+const encodeRangeFilter = (v: RangeFilter | undefined) =>
   v ? `${v[0]}_${v[1]}` : "";
 
-const decodeFujitaFilter = (value: string): FujitaFilter => {
+const decodeRangeFilter = (defaultMin: number, defaultMax: number) => (
+  value: string
+): RangeFilter => {
   if (!value) {
-    return [0, 5];
+    return [defaultMin, defaultMax];
   }
 
   const [min, max] = value.split("_");
 
-  return [Number(min) || 0, Number(max) || 5];
+  return [Number(min) || defaultMin, Number(max) || defaultMax];
 };
 
 const string = (v?: string) => v || undefined;
@@ -31,8 +33,14 @@ export default function Home() {
 
   const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
     "f",
-    encodeFujitaFilter,
-    decodeFujitaFilter
+    encodeRangeFilter,
+    decodeRangeFilter(0, 5)
+  );
+
+  const [monthFilter, setMonthFilter] = useSearchParamState<[number, number]>(
+    "m",
+    encodeRangeFilter,
+    decodeRangeFilter(0, 11)
   );
 
   const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
@@ -47,7 +55,11 @@ export default function Home() {
     searchStatus,
     tornadoCount,
     tornados,
-  } = useTornados({ fujitaFilter: fujitaFilter || [0, 5], screenBounds });
+  } = useTornados({
+    fujitaFilter: fujitaFilter || [0, 5],
+    monthFilter: monthFilter || [0, 11],
+    screenBounds,
+  });
 
   if (error) {
     return <div>Aw, snap.</div>;
@@ -58,8 +70,13 @@ export default function Home() {
   };
 
   return (
-    <FujitaContext.Provider
-      value={{ fujitaFilter: fujitaFilter || [0, 5], setFujitaFilter }}
+    <FiltersContext.Provider
+      value={{
+        fujitaFilter: fujitaFilter || [0, 5],
+        setFujitaFilter,
+        monthFilter: monthFilter || [0, 11],
+        setMonthFilter,
+      }}
     >
       <div className={styles.div}>
         <a
@@ -103,6 +120,6 @@ export default function Home() {
           />
         )}
       </div>
-    </FujitaContext.Provider>
+    </FiltersContext.Provider>
   );
 }
