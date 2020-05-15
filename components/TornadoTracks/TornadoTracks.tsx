@@ -101,9 +101,7 @@ export default function TornadoTracks({
     decodeNumber
   );
 
-  const tornadoMatrix = useTornadoMatrix({
-    tornados,
-  });
+  const tornadoMatrix = useTornadoMatrix(tornados);
 
   useEffect(() => {
     if (!map.current) {
@@ -188,8 +186,10 @@ export default function TornadoTracks({
               }
 
               if (
-                row.tornados.size === 1 ||
-                tornadoMatrix.density.min === tornadoMatrix.density.max
+                (typeof zoom === "number" &&
+                  zoom >= 6 &&
+                  row.tornados.size === 1) ||
+                (tornadoMatrix.columns.length === 1 && column.rows.length === 1)
               ) {
                 return [...row.tornados.values()].map((tornado) => (
                   <Fragment key={tornado.id}>

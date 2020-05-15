@@ -11,7 +11,7 @@ const getGridSize = (tornados: number) => {
   return 24;
 };
 
-export function useTornadoMatrix({ tornados }: { tornados?: Tornado[] }) {
+export function useTornadoMatrix(tornados?: Tornado[]) {
   const [tornadoMatrix, setTornadoMatrix] = useState<TornadoMatrix>();
 
   useEffect(() => {
