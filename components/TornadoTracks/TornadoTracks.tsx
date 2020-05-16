@@ -1,5 +1,5 @@
 import * as L from "leaflet";
-import React, { Fragment, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   CircleMarker,
   Map,
@@ -35,11 +35,38 @@ const maxOpacity = 0.75;
 const encodeNumber = (v: number) => `${v}`;
 const decodeNumber = (v?: string) => (v ? Number(v) || undefined : undefined);
 
+function TornadoCell({ color, onClick, opacity, row, selected }) {
+  return (
+    <>
+      {selected && (
+        <CircleMarker
+          center={row.bounds.getCenter()}
+          color={color}
+          radius={35}
+        />
+      )}
+      <Rectangle
+        bounds={row.bounds}
+        color={color}
+        fillOpacity={opacity}
+        onClick={onClick}
+        stroke={false}
+      >
+        <Tooltip direction="right" opacity={0.9}>
+          {`${row.tornados.size} tornados in this area`}
+        </Tooltip>
+      </Rectangle>
+    </>
+  );
+}
+
 function TornadoMarker({
   onClick,
+  selected,
   tornado,
 }: {
   onClick: () => void;
+  selected: boolean;
   tornado: Tornado;
 }) {
   const color = `hsla(${Math.round(
@@ -51,11 +78,20 @@ function TornadoMarker({
   });
 
   return (
-    <Marker icon={icon} onClick={onClick} position={tornado.coordinates_start}>
-      <Tooltip direction="right" offset={[5, -20]} opacity={0.9}>
-        {`${tornado.region_code} (F${tornado.fujita})`}
-      </Tooltip>
-    </Marker>
+    <>
+      {selected && (
+        <CircleMarker center={tornado.coordinates_start} radius={15} />
+      )}
+      <Marker
+        icon={icon}
+        onClick={onClick}
+        position={tornado.coordinates_start}
+      >
+        <Tooltip direction="right" offset={[5, -20]} opacity={0.9}>
+          {`${tornado.region_code} (F${tornado.fujita})`}
+        </Tooltip>
+      </Marker>
+    </>
   );
 }
 
@@ -192,18 +228,12 @@ export default function TornadoTracks({
                 (tornadoMatrix.columns.length === 1 && column.rows.length === 1)
               ) {
                 return [...row.tornados.values()].map((tornado) => (
-                  <Fragment key={tornado.id}>
-                    {tornado.id === selectedTornadoId && (
-                      <CircleMarker
-                        center={tornado.coordinates_start}
-                        radius={15}
-                      />
-                    )}
-                    <TornadoMarker
-                      onClick={onClick(tornado.id)}
-                      tornado={tornado}
-                    />
-                  </Fragment>
+                  <TornadoMarker
+                    key={tornado.id}
+                    onClick={onClick(tornado.id)}
+                    selected={tornado.id === selectedTornadoId}
+                    tornado={tornado}
+                  />
                 ));
               }
 
@@ -227,26 +257,14 @@ export default function TornadoTracks({
                   minOpacity;
 
               return (
-                <Fragment key={row.bounds.toBBoxString()}>
-                  {selected && (
-                    <CircleMarker
-                      center={row.bounds.getCenter()}
-                      color={color}
-                      radius={35}
-                    />
-                  )}
-                  <Rectangle
-                    bounds={row.bounds}
-                    color={color}
-                    fillOpacity={opacity}
-                    onClick={handleClickCell(row.bounds)}
-                    stroke={false}
-                  >
-                    <Tooltip direction="right" opacity={0.9}>
-                      {`${row.tornados.size} tornados in this area`}
-                    </Tooltip>
-                  </Rectangle>
-                </Fragment>
+                <TornadoCell
+                  key={row.bounds.toBBoxString()}
+                  color={color}
+                  onClick={handleClickCell(row.bounds)}
+                  opacity={opacity}
+                  row={row}
+                  selected={selected}
+                />
               );
             })
           )}
