@@ -7,8 +7,10 @@ export default function TornadoEventListFilters() {
   const {
     fujitaFilter,
     monthFilter,
+    yearFilter,
     setFujitaFilter,
     setMonthFilter,
+    setYearFilter,
   } = useContext(FiltersContext);
 
   const handleChangeFujita = (e: [number, number]) => {
@@ -17,6 +19,10 @@ export default function TornadoEventListFilters() {
 
   const handleChangeMonth = (e: [number, number]) => {
     setMonthFilter(e);
+  };
+
+  const handleChangeYear = (e: [number, number]) => {
+    setYearFilter(e);
   };
 
   return (
@@ -40,6 +46,16 @@ export default function TornadoEventListFilters() {
           values={monthFilter}
         />
         <span>Dec</span>
+      </div>
+      <div className={styles.div}>
+        <span>1950</span>
+        <Multirange
+          min={1950}
+          max={2018}
+          onChange={handleChangeYear}
+          values={yearFilter}
+        />
+        <span>2018</span>
       </div>
     </>
   );

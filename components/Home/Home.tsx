@@ -43,6 +43,12 @@ export default function Home() {
     decodeRangeFilter(0, 11)
   );
 
+  const [yearFilter, setYearFilter] = useSearchParamState<[number, number]>(
+    "y",
+    encodeRangeFilter,
+    decodeRangeFilter(1950, 2018)
+  );
+
   const [selectedTornadoId, setSelectedTornadoId] = useSearchParamState<
     TornadoId
   >("t", string, string);
@@ -58,6 +64,7 @@ export default function Home() {
   } = useTornados({
     fujitaFilter: fujitaFilter || [0, 5],
     monthFilter: monthFilter || [0, 11],
+    yearFilter: yearFilter || [1950, 2018],
     screenBounds,
   });
 
@@ -73,9 +80,11 @@ export default function Home() {
     <FiltersContext.Provider
       value={{
         fujitaFilter: fujitaFilter || [0, 5],
-        setFujitaFilter,
         monthFilter: monthFilter || [0, 11],
+        yearFilter: yearFilter || [1950, 2018],
+        setFujitaFilter,
         setMonthFilter,
+        setYearFilter,
       }}
     >
       <div className={styles.div}>

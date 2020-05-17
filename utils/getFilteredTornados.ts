@@ -2,10 +2,15 @@ export function getFilteredTornados({
   filters: {
     fujita: [minFujita, maxFujita],
     month: [minMonth, maxMonth],
+    year: [minYear, maxYear],
   },
   tornados,
 }: {
-  filters: { fujita: [number, number]; month: [number, number] };
+  filters: {
+    fujita: [number, number];
+    month: [number, number];
+    year: [number, number];
+  };
   tornados: Tornado[];
 }) {
   if (minFujita === 0 && maxFujita === 5 && minMonth === 0 && maxMonth === 11) {
@@ -18,6 +23,14 @@ export function getFilteredTornados({
     }
 
     if (fujita > maxFujita) {
+      return false;
+    }
+
+    if (date.getFullYear() < minYear) {
+      return false;
+    }
+
+    if (date.getFullYear() > maxYear) {
       return false;
     }
 

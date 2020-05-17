@@ -55,12 +55,14 @@ function reducer(state: State, action: Action): State {
 type Props = {
   fujitaFilter: [number, number];
   monthFilter: [number, number];
+  yearFilter: [number, number];
   screenBounds?: Common.Bounds;
 };
 
 export const useTornados = ({
   fujitaFilter,
   monthFilter,
+  yearFilter,
   screenBounds,
 }: Props) => {
   const { data, error, load, status: apiStatus } = useAPI("/api/tornados");
@@ -169,7 +171,11 @@ export const useTornados = ({
           : getBoundedTornados({ bounds, tornados });
 
         const filteredTornados = getFilteredTornados({
-          filters: { fujita: fujitaFilter, month: monthFilter },
+          filters: {
+            fujita: fujitaFilter,
+            month: monthFilter,
+            year: yearFilter,
+          },
           tornados: boundedTornados,
         });
 
@@ -196,7 +202,7 @@ export const useTornados = ({
     }
 
     const filteredTornados = getFilteredTornados({
-      filters: { fujita: fujitaFilter, month: monthFilter },
+      filters: { fujita: fujitaFilter, month: monthFilter, year: yearFilter },
       tornados: boundedTornados,
     });
 
@@ -208,7 +214,7 @@ export const useTornados = ({
         tornadoCount: filteredTornados.length,
       },
     });
-  }, [fujitaFilter, monthFilter]);
+  }, [fujitaFilter, monthFilter, yearFilter]);
 
   return {
     apiStatus,
