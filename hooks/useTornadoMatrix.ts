@@ -5,10 +5,10 @@ import { MAXIMUM_DISPLAYED_TORNADOS } from "../constants";
 
 const getGridSize = (tornados: number) => {
   if (tornados <= MAXIMUM_DISPLAYED_TORNADOS) {
-    return 1;
+    return { x: 1, y: 1 };
   }
 
-  return 24;
+  return { x: 24, y: 24 };
 };
 
 export function useTornadoMatrix(tornados?: Tornado[]) {
@@ -31,8 +31,8 @@ export function useTornadoMatrix(tornados?: Tornado[]) {
 
     const gridSize = getGridSize(tornados.length);
 
-    const cellWidth = width / gridSize;
-    const cellHeight = height / gridSize;
+    const cellWidth = width / gridSize.x;
+    const cellHeight = height / gridSize.y;
 
     const cellWidthKilometers =
       haversine(
@@ -49,8 +49,8 @@ export function useTornadoMatrix(tornados?: Tornado[]) {
     const cellAreaKilometers = cellWidthKilometers * cellHeightKilometers;
 
     const matrix: TornadoMatrix = {
-      columns: [...Array(gridSize)].map(() => ({
-        rows: [...Array(gridSize)].map(() => ({
+      columns: [...Array(gridSize.x)].map(() => ({
+        rows: [...Array(gridSize.y)].map(() => ({
           tornados: new Map(),
         })),
       })),
@@ -72,11 +72,11 @@ export function useTornadoMatrix(tornados?: Tornado[]) {
       const cell = {
         x:
           distanceToOrigin.x === width
-            ? gridSize - 1
+            ? gridSize.x - 1
             : Math.floor(distanceToOrigin.x / cellWidth),
         y:
           distanceToOrigin.y === height
-            ? gridSize - 1
+            ? gridSize.y - 1
             : Math.floor(distanceToOrigin.y / cellHeight),
       };
 
