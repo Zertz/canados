@@ -19,6 +19,27 @@ export function useTornadoMatrix(tornados?: Tornado[]) {
       return;
     }
 
+    const gridSize = getGridSize(tornados.length);
+
+    const matrix: TornadoMatrix = {
+      columns: [...Array(gridSize.x)].map(() => ({
+        rows: [...Array(gridSize.y)].map(() => ({
+          tornados: new Map(),
+        })),
+      })),
+      count: tornados.length,
+      density: {
+        min: Infinity,
+        max: -Infinity,
+      },
+    };
+
+    if (tornados.length === 0) {
+      setTornadoMatrix(matrix);
+
+      return;
+    }
+
     const bounds = latLngBounds(
       tornados.map(({ coordinates_start }) => coordinates_start)
     );
@@ -28,8 +49,6 @@ export function useTornadoMatrix(tornados?: Tornado[]) {
 
     const width = Number((ne.lng - sw.lng).toFixed(2));
     const height = Number((ne.lat - sw.lat).toFixed(2));
-
-    const gridSize = getGridSize(tornados.length);
 
     const cellWidth = width / gridSize.x;
     const cellHeight = height / gridSize.y;
@@ -47,19 +66,6 @@ export function useTornadoMatrix(tornados?: Tornado[]) {
       ) / 1000;
 
     const cellAreaKilometers = cellWidthKilometers * cellHeightKilometers;
-
-    const matrix: TornadoMatrix = {
-      columns: [...Array(gridSize.x)].map(() => ({
-        rows: [...Array(gridSize.y)].map(() => ({
-          tornados: new Map(),
-        })),
-      })),
-      count: tornados.length,
-      density: {
-        min: Infinity,
-        max: -Infinity,
-      },
-    };
 
     for (let i = 0; i < tornados.length; i += 1) {
       const { coordinates_start } = tornados[i];
