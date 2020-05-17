@@ -13,7 +13,14 @@ export function getFilteredTornados({
   };
   tornados: Tornado[];
 }) {
-  if (minFujita === 0 && maxFujita === 5 && minMonth === 0 && maxMonth === 11) {
+  if (
+    minFujita === 0 &&
+    maxFujita === 5 &&
+    minMonth === 0 &&
+    maxMonth === 11 &&
+    minYear === 1950 &&
+    maxYear === 2018
+  ) {
     return tornados;
   }
 
