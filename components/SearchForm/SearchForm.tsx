@@ -7,28 +7,24 @@ type Props = {
 
 const string = (v?: string) => v || "";
 
+const getCleanQuery = (query = "") => query.trim().replace(/\s\s+/g, " ");
+
 export default function SearchForm({ search }: Props) {
   const [query, setQuery] = useSearchParamState<string>("q", string, string);
   const [value, setValue] = useState(query || "");
 
   useEffect(() => {
-    search(query || "");
+    search(getCleanQuery(query));
   }, [query]);
 
   const handleChange = ({ target: { value } }) => {
-    const cleanValue = value.trim().replace(/\s\s+/g, " ");
-
-    if (!cleanValue) {
-      setQuery("");
-    }
-
-    setValue(cleanValue);
+    setValue(value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setQuery(value);
+    setQuery(getCleanQuery(value));
   };
 
   return (
