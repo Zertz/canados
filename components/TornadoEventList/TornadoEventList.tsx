@@ -2,12 +2,9 @@ import classnames from "classnames";
 import React, { useEffect, useState } from "react";
 import { FixedSizeList } from "react-window";
 import { useSortedTornados } from "../../hooks/useSortedTornados";
-import SearchForm from "../SearchForm";
-import TornadoEventListFilter from "../TornadoEventListFilter";
 import TornadoEventListFooter from "../TornadoEventListFooter/TornadoEventListFooter";
 import TornadoEventListItem from "../TornadoEventListItem";
 import TornadoEventListSort from "../TornadoEventListSort";
-import styles from "./TornadoEventList.module.css";
 
 type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
@@ -106,55 +103,45 @@ export default function TornadoEventList({
   };
 
   return (
-    <div className={styles.div}>
-      <SearchForm search={search} />
-      <div className="flex flex-col bg-white overflow-hidden rounded-md shadow-md">
-        <div
-          className={classnames("border-b border-gray-200 p-4 text-gray-800")}
-        >
-          <TornadoEventListFilter />
-        </div>
-        {listState === "expanded" && Array.isArray(sortedTornados) && (
-          <>
-            <div
-              className={classnames(
-                "border-b border-gray-200 p-4 text-gray-800"
-              )}
-            >
-              <TornadoEventListSort
-                onChangeOrder={handleChangeOrder}
-                onChangeSort={handleChangeSort}
-                order={order}
-                sortProperty={sortProperty}
-                status={status}
-              />
-            </div>
-            <FixedSizeList
-              height={window.innerHeight}
-              innerElementType="ul"
-              itemCount={sortedTornados.length}
-              itemData={{
-                onClick,
-                selectedTornadoId,
-                sortedTornados,
-              }}
-              itemKey={itemKey}
-              itemSize={81}
-              width={"100%"}
-            >
-              {FixedSizeListRow}
-            </FixedSizeList>
-          </>
-        )}
-        {typeof tornadoCount === "number" && (
-          <TornadoEventListFooter
-            listState={listState}
-            onChangeListState={handleChangeListState}
-            status={status}
-            tornadoCount={tornadoCount}
-          />
-        )}
-      </div>
-    </div>
+    <>
+      {listState === "expanded" && Array.isArray(sortedTornados) && (
+        <>
+          <div
+            className={classnames("border-b border-gray-200 p-4 text-gray-800")}
+          >
+            <TornadoEventListSort
+              onChangeOrder={handleChangeOrder}
+              onChangeSort={handleChangeSort}
+              order={order}
+              sortProperty={sortProperty}
+              status={status}
+            />
+          </div>
+          <FixedSizeList
+            height={window.innerHeight}
+            innerElementType="ul"
+            itemCount={sortedTornados.length}
+            itemData={{
+              onClick,
+              selectedTornadoId,
+              sortedTornados,
+            }}
+            itemKey={itemKey}
+            itemSize={81}
+            width={"100%"}
+          >
+            {FixedSizeListRow}
+          </FixedSizeList>
+        </>
+      )}
+      {typeof tornadoCount === "number" && (
+        <TornadoEventListFooter
+          listState={listState}
+          onChangeListState={handleChangeListState}
+          status={status}
+          tornadoCount={tornadoCount}
+        />
+      )}
+    </>
   );
 }

@@ -34,7 +34,7 @@ export function useSearchParamState<T>(
   key: string,
   encode: Encode<T>,
   decode: Decode<T>
-): [ReturnType<Decode<T>>, (value?: T) => void] {
+) {
   const [value, setValue] = useState(() => {
     if (typeof window === "undefined") {
       return decode();
@@ -51,5 +51,5 @@ export function useSearchParamState<T>(
     setValue(value);
   };
 
-  return [value, setSearchParam];
+  return [value, setSearchParam] as [T, (value?: T) => void];
 }
