@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import format from "date-fns/format";
-import React, { useEffect, useRef } from "react";
+import * as React from "react";
 
 type Props = {
   date: Date;
@@ -21,20 +21,6 @@ export default function TornadoEventListItem({
   selected,
   style,
 }: Props) {
-  const listItem = useRef<HTMLLIElement>(null);
-
-  useEffect(() => {
-    if (!selected) {
-      return;
-    }
-
-    listItem.current?.scrollIntoView({
-      behavior: "auto",
-      block: "center",
-      inline: "start",
-    });
-  }, [selected]);
-
   return (
     <li
       className={classnames(
@@ -44,7 +30,6 @@ export default function TornadoEventListItem({
         }
       )}
       onClick={onClick}
-      ref={listItem}
       style={style}
     >
       <div className="p-4 flex items-center sm:px-6">

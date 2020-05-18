@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FixedSizeList } from "react-window";
 import { useSortedTornados } from "../../hooks/useSortedTornados";
 import TornadoEventListFooter from "../TornadoEventListFooter/TornadoEventListFooter";
@@ -56,6 +56,8 @@ export default function TornadoEventList({
   tornadoCount,
   tornados,
 }: TornadoEventListProps) {
+  const listRef = useRef<FixedSizeList>(null);
+
   const [listState, setListState] = useState<"collapsed" | "expanded">(
     "collapsed"
   );
@@ -68,6 +70,22 @@ export default function TornadoEventList({
     sortProperty,
     tornados,
   });
+
+  useEffect(() => {
+    if (!selectedTornadoId) {
+      return;
+    }
+
+    const tornadoIndex = tornados?.findIndex(
+      ({ id }) => id === selectedTornadoId
+    );
+
+    if (!tornadoIndex || tornadoIndex < 0) {
+      return;
+    }
+
+    listRef.current?.scrollToItem(tornadoIndex);
+  }, [selectedTornadoId]);
 
   useEffect(() => {
     switch (status) {
@@ -126,6 +144,7 @@ export default function TornadoEventList({
             }}
             itemKey={itemKey}
             itemSize={81}
+            ref={listRef}
             width={"100%"}
           >
             {FixedSizeListRow}
