@@ -58,7 +58,6 @@ export default function Home() {
 
   const {
     apiStatus,
-    error,
     fitBounds,
     search,
     searchStatus,
@@ -70,10 +69,6 @@ export default function Home() {
     yearFilter,
     screenBounds,
   });
-
-  if (error) {
-    return <div>Aw, snap.</div>;
-  }
 
   const handleSelectTornado = (selectedTornadoId: TornadoId) => () => {
     setSelectedTornadoId(selectedTornadoId);
@@ -126,6 +121,12 @@ export default function Home() {
         setScreenBounds={setScreenBounds}
         tornados={tornados}
       />
+      {[apiStatus, searchStatus].includes("error") && (
+        <LoadingOverlay
+          title="Aw, snap."
+          subtitle="Something twisted happened, try refreshing the page."
+        />
+      )}
       {apiStatus === "loading" && (
         <LoadingOverlay
           title="Loading..."
