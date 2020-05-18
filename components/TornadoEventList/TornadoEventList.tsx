@@ -12,7 +12,6 @@ type CommonProps = {
 };
 
 type TornadoEventListProps = CommonProps & {
-  search: (value: string) => void;
   status: Common.Status;
   tornadoCount?: number;
   tornados?: Tornado[];
@@ -52,7 +51,6 @@ const itemKey = (index, data: FixedSizeListRowProps) =>
 
 export default function TornadoEventList({
   onClick,
-  search,
   selectedTornadoId,
   status,
   tornadoCount,

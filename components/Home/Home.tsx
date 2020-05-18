@@ -105,7 +105,6 @@ export default function Home() {
           </div>
           <TornadoEventList
             onClick={handleSelectTornado}
-            search={search}
             selectedTornadoId={selectedTornadoId}
             status={searchStatus}
             tornadoCount={tornadoCount}
