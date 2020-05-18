@@ -1,3 +1,4 @@
+import classnames from "classnames";
 import format from "date-fns/format";
 import React, { useEffect, useRef } from "react";
 
@@ -36,7 +37,12 @@ export default function TornadoEventListItem({
 
   return (
     <li
-      className="border-b border-gray-200 block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out"
+      className={classnames(
+        "border-b border-gray-200 block hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition duration-150 ease-in-out",
+        {
+          "bg-gray-100": selected,
+        }
+      )}
       onClick={onClick}
       ref={listItem}
       style={style}
