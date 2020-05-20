@@ -1,5 +1,7 @@
 # canados
 
+![](https://github.com/Zertz/canados/workflows/Test/badge.svg)
+
 [![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/Zertz/canados/tree/master)
 
 ## Getting started
