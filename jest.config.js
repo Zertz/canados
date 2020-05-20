@@ -1,6 +1,6 @@
 module.exports = {
   collectCoverageFrom: ["**/*.{ts,tsx}", "!**/*.d.ts", "!**/node_modules/**"],
-  setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
+  setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
   transform: {
     "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/babel-jest",
