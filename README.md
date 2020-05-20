@@ -11,6 +11,7 @@
 - Optionally sign up for [positionstack](https://positionstack.com/) to enable search
   - Add the API key to `.env`
 - Run the app: `yarn start`
+- Run tests locally with `yarn test` or open a pull request to run automated tests
 
 ## Sources
 
