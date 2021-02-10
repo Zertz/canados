@@ -6440,6 +6440,11 @@ quick-lru@^5.0.0:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-5.1.0.tgz#1602f339bde554c4dace47880227ec9c2869f2e8"
   integrity sha512-WjAKQ9ORzvqjLijJXiXWqc3Gcs1ivoxCj6KJmEjoWBE6OtHwuaDLSAUqGHALUiid7A1KqGqsSHZs8prxF5xxAQ==
 
+quick-lru@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-6.0.0.tgz#c5a245a773c702694870828e5f09b28f7af087db"
+  integrity sha512-kQ3ACYYIALMi7x8xvMU+qSF6N6baMZms8/q3dn2XFiORhFrLbpR6vTRNGR80HwlakWSoY4RnGoCJWUgnyH6zZQ==
+
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
