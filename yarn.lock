@@ -7559,10 +7559,10 @@ symbol-tree@^3.2.4:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
-symlink-dir@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/symlink-dir/-/symlink-dir-5.0.0.tgz#253e306906f94a66a55db6270a3126a079eacb81"
-  integrity sha512-X5GIIenWzyvmvqkRCaySmJVf9ldLwBppvl8qy0JYBaWwLgwPsUSiAjdQ2t0UMijb0QGFuBVZAR43kNt2I0+tmA==
+symlink-dir@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/symlink-dir/-/symlink-dir-5.0.1.tgz#11c65f5baa06974ec7828eda831a3754c0ea2410"
+  integrity sha512-MeXygPBopo8AmyObuCJIpXKT+mw54d2Kp6SBuxq0uXZGDkHwHDQExpSg5+TK8BA5kCGyktawu5DJG0QWYO6acw==
   dependencies:
     better-path-resolve "^1.0.0"
     rename-overwrite "^4.0.0"
