@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
+    "@testing-library/react": "^12.0.0",
     "@types/jest": "^26.0.24",
     "@types/leaflet": "^1.7.4",
     "@types/node": "^15.12.4",
