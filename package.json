@@ -24,7 +24,7 @@
     "leaflet": "^1.7.1",
     "multirange": "^2.0.0",
     "next": "^10.0.4",
-    "quick-lru": "5.1.1",
+    "quick-lru": "6.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-leaflet": "^2.8.0",
