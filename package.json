@@ -19,7 +19,7 @@
     "csvtojson": "^2.0.10",
     "date-fns": "^2.25.0",
     "fast-haversine": "^1.0.0",
-    "got": "^11.8.2",
+    "got": "^11.8.3",
     "ky": "0.28.7",
     "leaflet": "^1.7.1",
     "multirange": "^2.0.0",
