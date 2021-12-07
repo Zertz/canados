@@ -1,6 +1,6 @@
+import ky from "ky";
 import { useCallback, useEffect, useReducer } from "react";
 import SearchWorker from "worker-loader?name=static/[hash].worker.js!../workers/search.worker";
-import ky from "../ky";
 import { useWorker } from "./useWorker";
 
 type Props = {

@@ -1,6 +1,6 @@
 import haversine from "fast-haversine";
+import ky from "ky";
 import { useEffect, useReducer } from "react";
-import ky from "../ky";
 
 type State = {
   data?: Tornado[];

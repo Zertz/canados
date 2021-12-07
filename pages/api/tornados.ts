@@ -18,20 +18,17 @@ async function fetchData(country: Country) {
       const [
         { features: rawEvents },
         { features: rawTracks },
-      ] = await Promise.all<
-        {
-          features: Array<CanadaEvents>;
-        },
-        {
-          features: Array<CanadaTracks>;
-        }
-      >([
+      ] = await Promise.all([
         got(
           "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"
-        ).json(),
+        ).json<{
+          features: Array<CanadaEvents>;
+        }>(),
         got(
           "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-tracks-1980-2009-public-gis-en/GIS_CAN_VerifiedTracks_1980-2009.json"
-        ).json(),
+        ).json<{
+          features: Array<CanadaTracks>;
+        }>(),
       ]);
 
       return formatCanadaData(rawEvents, rawTracks);
