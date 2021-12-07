@@ -4,7 +4,7 @@ module.exports = {
   setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
   transform: {
-    "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+    "^.+\\.(ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
   },
   transformIgnorePatterns: ["/node_modules/", "^.+\\.module\\.css$"],
   moduleNameMapper: {
