@@ -1,5 +1,6 @@
 module.exports = {
   collectCoverageFrom: ["**/*.{ts,tsx}", "!**/*.d.ts", "!**/node_modules/**"],
+  testEnvironment: "jsdom",
   setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
   transform: {
