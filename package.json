@@ -37,7 +37,7 @@
     "@types/leaflet": "^1.7.6",
     "@types/node": "^16.11.12",
     "@types/react": "^17.0.37",
-    "babel-jest": "^27.4.2",
+    "babel-jest": "^27.4.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.3",
     "prettier": "^2.5.1",
