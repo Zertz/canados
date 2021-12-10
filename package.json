@@ -39,7 +39,7 @@
     "@types/react": "^17.0.37",
     "babel-jest": "^27.4.4",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.4.3",
+    "jest": "^27.4.4",
     "prettier": "^2.5.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.1.0",
