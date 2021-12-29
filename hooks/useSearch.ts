@@ -1,7 +1,5 @@
 import ky from "ky";
-import { useCallback, useEffect, useReducer } from "react";
-import SearchWorker from "worker-loader?name=static/[hash].worker.js!../workers/search.worker";
-import { useWorker } from "./useWorker";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 
 type Props = {
   tornados?: Tornado[];
@@ -54,13 +52,21 @@ export const useSearch = ({ tornados }: Props) => {
     status: "idle",
   });
 
-  const receive = useCallback(
-    (data) => {
+  const workerRef = useRef<Worker>();
+
+  useEffect(() => {
+    workerRef.current = new Worker(new URL("../workers/search.worker.ts", import.meta.url))
+
+    workerRef.current.onmessage = (e) => {
+      if (!e.isTrusted) {
+        return;
+      }
+
       if (!Array.isArray(tornados)) {
         return;
       }
 
-      const payload = JSON.parse(data);
+      const payload = JSON.parse(e.data);
 
       dispatch({
         type: "results",
@@ -69,11 +75,24 @@ export const useSearch = ({ tornados }: Props) => {
           ...tornado,
         })),
       });
-    },
-    [tornados]
-  );
+    };
 
-  const send = useWorker(SearchWorker, receive);
+    return () => {
+      if (!workerRef.current) {
+        return
+      }
+
+      workerRef.current.terminate()
+    }
+  }, [])
+
+  const send = useCallback((data: { action: "search" | "store"; payload: any }) => {
+    if(!workerRef.current) {
+      return
+    }
+
+    workerRef.current.postMessage(JSON.stringify(data));
+  }, []);
 
   useEffect(() => {
     if (!Array.isArray(tornados)) {
