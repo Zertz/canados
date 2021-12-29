@@ -1,7 +1,3 @@
-import classnames from "classnames";
-import React from "react";
-import styles from "./TornadoEventListFooter.module.css";
-
 type Props = {
   listState: Common.ListState;
   onChangeListState: (e: any) => void;
@@ -18,13 +14,8 @@ export default function TornadoEventListFooter({
   const searchMode = status === "ready";
 
   return (
-    <div
-      className={classnames(
-        "bg-white border-t border-gray-200 p-4 text-gray-800",
-        styles.div
-      )}
-    >
-      <span className={styles.span}>
+    <div className="grid grid-rows-[1fr] grid-cols-[1fr,min-content] gap-4 items-center bg-white border-t border-gray-200 p-4 text-gray-800 whitespace-nowrap">
+      <span className="truncate">
         {tornadoCount === 1
           ? `${tornadoCount} tornado ${
               searchMode ? "matches your search" : "in this area"

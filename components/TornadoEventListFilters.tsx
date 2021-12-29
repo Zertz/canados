@@ -1,6 +1,4 @@
-import * as React from "react";
-import Multirange from "../react-multirange";
-import styles from "./TornadoEventListFilters.module.css";
+import Multirange from "./react-multirange";
 
 export default function TornadoEventListFilters({
   fujitaFilter,
@@ -12,7 +10,7 @@ export default function TornadoEventListFilters({
 }) {
   return (
     <>
-      <div className={styles.div}>
+      <div className="grid grid-rows-[1fr] grid-cols-[min-content,1fr,min-content] gap-4 items-center">
         <span>F0</span>
         <Multirange
           min={0}
@@ -22,7 +20,7 @@ export default function TornadoEventListFilters({
         />
         <span>F5</span>
       </div>
-      <div className={styles.div}>
+      <div className="grid grid-rows-[1fr] grid-cols-[min-content,1fr,min-content] gap-4 items-center">
         <span>Jan</span>
         <Multirange
           min={0}
@@ -32,7 +30,7 @@ export default function TornadoEventListFilters({
         />
         <span>Dec</span>
       </div>
-      <div className={styles.div}>
+      <div className="grid grid-rows-[1fr] grid-cols-[min-content,1fr,min-content] gap-4 items-center">
         <span>1950</span>
         <Multirange
           min={1950}

@@ -9,9 +9,8 @@ import {
   Tooltip,
   useMapEvents,
 } from "react-leaflet";
-import { useSearchParamState } from "../../hooks/useSearchParamState";
-import { useTornadoMatrix } from "../../hooks/useTornadoMatrix";
-import styles from "./TornadoTracks.module.css";
+import { useSearchParamState } from "../hooks/useSearchParamState";
+import { useTornadoMatrix } from "../hooks/useTornadoMatrix";
 
 interface TornadoTracksContainerProps {
   fitBounds?: Common.Bounds;
@@ -277,30 +276,28 @@ export default function TornadoTracksContainer({
   );
 
   return (
-    <div className={styles.div}>
-      <MapContainer
-        className={styles.map}
+    <MapContainer
+      className="flex flex-col fixed inset-0"
+      center={center}
+      zoom={zoom}
+      zoomControl={false}
+    >
+      <TileLayer
+        attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <TornadoTracks
         center={center}
+        fitBounds={fitBounds}
+        onClick={onClick}
+        searchStatus={searchStatus}
+        selectedTornadoId={selectedTornadoId}
+        setCenter={setCenter}
+        setScreenBounds={setScreenBounds}
+        setZoom={setZoom}
+        tornados={tornados}
         zoom={zoom}
-        zoomControl={false}
-      >
-        <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <TornadoTracks
-          center={center}
-          fitBounds={fitBounds}
-          onClick={onClick}
-          searchStatus={searchStatus}
-          selectedTornadoId={selectedTornadoId}
-          setCenter={setCenter}
-          setScreenBounds={setScreenBounds}
-          setZoom={setZoom}
-          tornados={tornados}
-          zoom={zoom}
-        />
-      </MapContainer>
-    </div>
+      />
+    </MapContainer>
   );
 }

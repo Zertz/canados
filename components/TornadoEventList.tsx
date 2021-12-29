@@ -1,10 +1,9 @@
-import classnames from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import { FixedSizeList } from "react-window";
-import { useSortedTornados } from "../../hooks/useSortedTornados";
-import TornadoEventListFooter from "../TornadoEventListFooter/TornadoEventListFooter";
-import TornadoEventListItem from "../TornadoEventListItem";
-import TornadoEventListSort from "../TornadoEventListSort";
+import { useSortedTornados } from "../hooks/useSortedTornados";
+import TornadoEventListFooter from "./TornadoEventListFooter";
+import TornadoEventListItem from "./TornadoEventListItem";
+import TornadoEventListSort from "./TornadoEventListSort";
 
 type CommonProps = {
   onClick: (tornadoId: TornadoId) => () => void;
@@ -122,9 +121,7 @@ export default function TornadoEventList({
     <>
       {listState === "expanded" && Array.isArray(sortedTornados) && (
         <>
-          <div
-            className={classnames("border-b border-gray-200 p-4 text-gray-800")}
-          >
+          <div className="border-b border-gray-200 p-4 text-gray-800">
             <TornadoEventListSort
               onChangeOrder={handleChangeOrder}
               onChangeSort={handleChangeSort}

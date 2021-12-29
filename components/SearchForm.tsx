@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParamState } from "../../hooks/useSearchParamState";
+import { useEffect, useState } from "react";
+import { useSearchParamState } from "../hooks/useSearchParamState";
 
 type Props = {
   search: (value: string) => void;
@@ -48,7 +48,7 @@ export default function SearchForm({ search }: Props) {
             </svg>
           </div>
           <input
-            className="form-input block w-full rounded-none rounded-l-md pl-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5 w-full"
+            className="form-input block rounded-none rounded-l-md pl-10 transition ease-in-out duration-150 sm:text-sm sm:leading-5 w-full h-full"
             id="search"
             onChange={handleChange}
             placeholder="Toronto"

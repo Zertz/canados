@@ -1,6 +1,3 @@
-import React from "react";
-import styles from "./TornadoEventListSort.module.css";
-
 type Props = {
   onChangeOrder: (e: any) => void;
   onChangeSort: (e: any) => void;
@@ -17,7 +14,7 @@ export default function TornadoEventListSort({
   status,
 }: Props) {
   return (
-    <div className={styles.div}>
+    <div className="grid grid-rows-[min-content] grid-cols-[1fr,min-content] gap-4 items-center">
       <select
         className="block form-select transition duration-150 ease-in-out sm:text-sm sm:leading-5"
         onChange={onChangeSort}
