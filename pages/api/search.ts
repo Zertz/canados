@@ -35,6 +35,12 @@ export default async function search(req: NextApiRequest, res: NextApiResponse) 
     return;
   }
 
+  if (!process.env.POSITIONSTACK_ACCESS_KEY) {
+    res.status(402).end()
+    
+    return
+  }
+
   const q = (typeof req.query.q === "string" ? req.query.q : "").toLowerCase().trim().replace(/\s\s+/g, " ");
 
   if (!q) {
