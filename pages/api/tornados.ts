@@ -1,4 +1,5 @@
 import got from "got";
+import { NextApiRequest, NextApiResponse } from "next";
 import QuickLRU from "quick-lru";
 import { PAGE_SIZE } from "../../constants";
 import { formatCanadaData } from "../../utils/canada/formatCanadaData";
@@ -39,7 +40,7 @@ async function fetchData(country: Country) {
   }
 }
 
-export default async (req, res) => {
+export default async function tornados(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Content-Type", "application/json");
 
   if (req.method !== "GET") {
@@ -49,7 +50,7 @@ export default async (req, res) => {
     return;
   }
 
-  const country = (req.query.country || "").toUpperCase();
+  const country = (typeof req.query.country==="string" ? req.query.country : "").toUpperCase() as Country;
   const page = Number(req.query.page) || 1;
 
   if (!["CA", "US"].includes(country)) {

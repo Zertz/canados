@@ -1,4 +1,5 @@
 import got from "got";
+import { NextApiRequest, NextApiResponse } from "next";
 import QuickLRU from "quick-lru";
 
 const lru = new QuickLRU({ maxSize: 256 });
@@ -24,7 +25,7 @@ type SearchResult = {
   label: string;
 };
 
-export default async (req, res) => {
+export default async function search(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Content-Type", "application/json");
 
   if (req.method !== "GET") {
@@ -34,7 +35,7 @@ export default async (req, res) => {
     return;
   }
 
-  const q = (req.query.q || "").toLowerCase().trim().replace(/\s\s+/g, " ");
+  const q = (typeof req.query.q === "string" ? req.query.q : "").toLowerCase().trim().replace(/\s\s+/g, " ");
 
   if (!q) {
     res.statusCode = 400;
