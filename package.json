@@ -16,7 +16,7 @@
     "@zeit/next-workers": "^1.0.0",
     "classnames": "^2.3.1",
     "csvtojson": "^2.0.10",
-    "date-fns": "^2.27.0",
+    "date-fns": "^2.28.0",
     "fast-haversine": "^1.0.0",
     "got": "^11.8.3",
     "ky": "0.28.7",
