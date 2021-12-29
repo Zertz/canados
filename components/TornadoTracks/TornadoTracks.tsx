@@ -149,10 +149,6 @@ function TornadoTracks({
   const tornadoMatrix = useTornadoMatrix(tornados);
 
   useEffect(() => {
-    if (!map) {
-      return;
-    }
-
     if (!fitBounds) {
       return;
     }
@@ -175,10 +171,6 @@ function TornadoTracks({
   }, [fitBounds, searchStatus]);
 
   const handleClickCell = (bounds: L.LatLngBounds) => () => {
-    if (!map) {
-      return;
-    }
-
     map.fitBounds(bounds, { padding: [25, 25] });
   };
 
