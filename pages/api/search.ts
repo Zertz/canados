@@ -29,8 +29,7 @@ export default async function search(req: NextApiRequest, res: NextApiResponse) 
   res.setHeader("Content-Type", "application/json");
 
   if (req.method !== "GET") {
-    res.statusCode = 405;
-    res.end();
+    res.status(405).end();
 
     return;
   }
@@ -44,8 +43,7 @@ export default async function search(req: NextApiRequest, res: NextApiResponse) 
   const q = (typeof req.query.q === "string" ? req.query.q : "").toLowerCase().trim().replace(/\s\s+/g, " ");
 
   if (!q) {
-    res.statusCode = 400;
-    res.end();
+    res.status(400).end();
 
     return;
   }
@@ -72,7 +70,6 @@ export default async function search(req: NextApiRequest, res: NextApiResponse) 
     res.end(data);
   } catch (e) {
     console.error(e);
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: e.message }));
+    res.status(500).end(JSON.stringify({ error: e.message }));
   }
 };

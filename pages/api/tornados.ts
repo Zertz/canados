@@ -44,8 +44,7 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
   res.setHeader("Content-Type", "application/json");
 
   if (req.method !== "GET") {
-    res.statusCode = 405;
-    res.end();
+    res.status(405).end();
 
     return;
   }
@@ -54,8 +53,7 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
   const page = Number(req.query.page) || 1;
 
   if (!["CA", "US"].includes(country)) {
-    res.statusCode = 400;
-    res.end();
+    res.status(400).end();
 
     return;
   }
@@ -71,14 +69,12 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
       lru.set(country, data);
     }
 
-    res.statusCode = 200;
-
     res.setHeader("Cache-Control", "public, max-age=31536000");
 
     const start = (page - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
 
-    res.end(
+    res.status(200).end(
       JSON.stringify([
         {
           nextPage: data.length > end ? page + 1 : null,
@@ -89,7 +85,6 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
     );
   } catch (e) {
     console.error(e);
-    res.statusCode = 500;
-    res.end(JSON.stringify({ error: e.message }));
+    res.status(500).end(JSON.stringify({ error: e.message }));
   }
 };
