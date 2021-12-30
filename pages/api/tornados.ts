@@ -3,11 +3,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 import QuickLRU from "quick-lru";
 import { PAGE_SIZE } from "../../constants";
 import { formatCanadaData } from "../../utils/canada/formatCanadaData";
+import { formatNorthernTornadoesProjectData } from "../../utils/canada/formatNorthernTornadoesProjectData";
 import { formatUnitedStatesData } from "../../utils/united-states/formatUnitedStatesData";
 
 const lru = new QuickLRU({ maxSize: 8 });
 
-type Country = "CA" | "US";
+const countries = ["CA", "CA-NTP", "US"] as const
+
+type Country = typeof countries[number]
 
 function arrayify(data: Object[]) {
   return data.map((value) => Object.values(value));
@@ -34,6 +37,9 @@ async function fetchData(country: Country) {
 
       return formatCanadaData(rawEvents, rawTracks);
     }
+    case "CA-NTP": {
+      return formatNorthernTornadoesProjectData();
+    }
     case "US": {
       return formatUnitedStatesData();
     }
@@ -52,7 +58,7 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
   const country = (typeof req.query.country==="string" ? req.query.country : "").toUpperCase() as Country;
   const page = Number(req.query.page) || 1;
 
-  if (!["CA", "US"].includes(country)) {
+  if (!countries.includes(country)) {
     res.status(400).end();
 
     return;

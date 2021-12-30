@@ -34,11 +34,11 @@ export default function TornadoEventListFilters({
         <span>1950</span>
         <Multirange
           min={1950}
-          max={2018}
+          max={2021}
           onChange={setYearFilter}
           values={yearFilter}
         />
-        <span>2018</span>
+        <span>2021</span>
       </div>
     </>
   );

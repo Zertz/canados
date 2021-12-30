@@ -19,7 +19,7 @@ export function getFilteredTornados({
     minMonth === 0 &&
     maxMonth === 11 &&
     minYear === 1950 &&
-    maxYear === 2018
+    maxYear === 2021
   ) {
     return tornados;
   }

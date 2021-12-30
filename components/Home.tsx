@@ -47,7 +47,7 @@ export default function Home() {
   const [yearFilter, setYearFilter] = useSearchParamState<[number, number]>(
     "y",
     encodeRangeFilter,
-    decodeRangeFilter(1950, 2018)
+    decodeRangeFilter(1950, 2021)
   );
 
   const [selectedTornadoId, setSelectedTornadoId] =

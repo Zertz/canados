@@ -66,6 +66,9 @@ export const useAPI = (url: string) => {
         CA: {
           nextPage: 1,
         },
+        "CA-NTP": {
+          nextPage: 1,
+        },
         US: {
           nextPage: 1,
         },
@@ -84,6 +87,7 @@ export const useAPI = (url: string) => {
 
         const [
           [canadaMeta, ...canadaData],
+          [canadaNTPMeta, ...canadaNTPData],
           [unitedStatesMeta, ...unitedStatesData],
         ] = response as [
           { nextPage: number; total: number },
@@ -91,9 +95,10 @@ export const useAPI = (url: string) => {
         ][];
 
         countries.CA = canadaMeta;
+        countries["CA-NTP"] = canadaNTPMeta;
         countries.US = unitedStatesMeta;
 
-        data = data.concat(canadaData, unitedStatesData);
+        data = data.concat(canadaData, canadaNTPData, unitedStatesData);
       } while (
         Object.values(countries).some(({ nextPage }) =>
           Number.isInteger(nextPage)
