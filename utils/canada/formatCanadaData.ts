@@ -11,13 +11,16 @@ export function formatCanadaData(
 ) {
   const tracks: {
     [key: string]: Common.Coordinates[];
-  } = rawTracks
-    .map(
+  } = Object.fromEntries(
+    rawTracks.map(
       ({
         geometry,
         properties: { YYYY_LOCAL, MM_LOCAL, DD_LOCAL, HHMM_LOCAL, PROVINCE },
       }) => {
-        const coordinates = geometry.coordinates.map((pair) => pair.reverse());
+        const coordinates = geometry.coordinates.map((pair) =>
+          pair.reverse()
+        ) as Common.Coordinates[];
+
         const coordinates_start = coordinates[0];
         const coordinates_end = coordinates[coordinates.length - 1];
 
@@ -28,24 +31,18 @@ export function formatCanadaData(
           DD_LOCAL,
         });
 
-        return {
-          id: generateTornadoId({
+        return [
+          generateTornadoId({
             coordinates_start,
             coordinates_end,
             date,
             region_code: PROVINCE,
           }),
           coordinates,
-        };
+        ];
       }
     )
-    .reduce(
-      (acc, { id, coordinates }) => ({
-        ...acc,
-        [id]: coordinates,
-      }),
-      {}
-    );
+  );
 
   const events: RawTornado[] = rawEvents
     .map(
