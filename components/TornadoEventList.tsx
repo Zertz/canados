@@ -1,52 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { FixedSizeList } from "react-window";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useVirtual } from "react-virtual";
 import { useSortedTornados } from "../hooks/useSortedTornados";
 import TornadoEventListFooter from "./TornadoEventListFooter";
 import TornadoEventListItem from "./TornadoEventListItem";
 import TornadoEventListSort from "./TornadoEventListSort";
 
-type CommonProps = {
+type TornadoEventListProps = {
   onClick: (tornadoId: TornadoId) => void;
-  selectedTornadoId?: TornadoId;
-};
-
-type TornadoEventListProps = CommonProps & {
+  selectedTornadoId: TornadoId | undefined;
   status: Common.Status;
-  tornadoCount?: number;
-  tornados?: Tornado[];
+  tornadoCount: number | undefined;
+  tornados: Tornado[] | undefined;
 };
-
-type FixedSizeListRowProps = CommonProps & {
-  sortedTornados: Tornado[];
-};
-
-const FixedSizeListRow = ({
-  data: { onClick, selectedTornadoId, sortedTornados },
-  index,
-  style,
-}: {
-  data: FixedSizeListRowProps;
-  index: number;
-  style: React.CSSProperties;
-}) => {
-  const tornado = sortedTornados[index];
-
-  return (
-    <TornadoEventListItem
-      key={tornado.id}
-      date={tornado.date as Date}
-      fujita={tornado.fujita}
-      length_m={tornado.length_m}
-      location={tornado.region_code}
-      onClick={() => onClick(tornado.id)}
-      selected={selectedTornadoId === tornado.id}
-      style={style}
-    />
-  );
-};
-
-const itemKey = (index, data: FixedSizeListRowProps) =>
-  data.sortedTornados[index].id;
 
 export default function TornadoEventList({
   onClick,
@@ -55,7 +20,7 @@ export default function TornadoEventList({
   tornadoCount,
   tornados,
 }: TornadoEventListProps) {
-  const listRef = useRef<FixedSizeList>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const [listState, setListState] = useState<"collapsed" | "expanded">(
     "collapsed"
@@ -68,6 +33,13 @@ export default function TornadoEventList({
     order,
     sortProperty,
     tornados,
+  });
+
+  const { scrollToIndex, totalSize, virtualItems } = useVirtual({
+    size: tornadoCount || 0,
+    parentRef,
+    estimateSize: useCallback(() => 81, []),
+    overscan: 10,
   });
 
   useEffect(() => {
@@ -83,8 +55,8 @@ export default function TornadoEventList({
       return;
     }
 
-    listRef.current?.scrollToItem(tornadoIndex);
-  }, [selectedTornadoId, tornados]);
+    scrollToIndex(tornadoIndex);
+  }, [scrollToIndex, selectedTornadoId, tornados]);
 
   useEffect(() => {
     switch (status) {
@@ -130,22 +102,43 @@ export default function TornadoEventList({
               status={status}
             />
           </div>
-          <FixedSizeList
-            height={window.innerHeight}
-            innerElementType="ul"
-            itemCount={sortedTornados.length}
-            itemData={{
-              onClick,
-              selectedTornadoId,
-              sortedTornados,
-            }}
-            itemKey={itemKey}
-            itemSize={81}
-            ref={listRef}
-            width={"100%"}
-          >
-            {FixedSizeListRow}
-          </FixedSizeList>
+          <div className="overflow-auto" ref={parentRef}>
+            <div
+              className="relative w-full"
+              style={{ height: `${totalSize}px` }}
+            >
+              {virtualItems.map((virtualRow) => {
+                const tornado = sortedTornados[virtualRow.index];
+
+                return (
+                  <div
+                    key={virtualRow.index}
+                    className={
+                      virtualRow.index % 2 ? "ListItemOdd" : "ListItemEven"
+                    }
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    <TornadoEventListItem
+                      key={tornado.id}
+                      date={tornado.date as Date}
+                      fujita={tornado.fujita}
+                      length_m={tornado.length_m}
+                      location={tornado.region_code}
+                      onClick={() => onClick(tornado.id)}
+                      selected={selectedTornadoId === tornado.id}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </>
       )}
       {typeof tornadoCount === "number" && (

@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import format from "date-fns/format";
-import * as React from "react";
 
 type Props = {
   date: Date;
@@ -9,7 +8,6 @@ type Props = {
   location: string;
   onClick: () => void;
   selected: boolean;
-  style: React.CSSProperties;
 };
 
 export default function TornadoEventListItem({
@@ -19,7 +17,6 @@ export default function TornadoEventListItem({
   location,
   onClick,
   selected,
-  style,
 }: Props) {
   return (
     <li
@@ -30,7 +27,6 @@ export default function TornadoEventListItem({
         }
       )}
       onClick={onClick}
-      style={style}
     >
       <div className="p-4 flex items-center sm:px-6">
         <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
