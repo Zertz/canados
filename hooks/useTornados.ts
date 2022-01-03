@@ -53,7 +53,7 @@ function reducer(state: State, action: Action): State {
 }
 
 type Props = {
-  fujitaFilter: [number, number];
+  fujitaFilter: number[];
   monthFilter: number[];
   yearFilter: [number, number];
   screenBounds?: Common.Bounds;

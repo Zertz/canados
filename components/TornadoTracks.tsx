@@ -17,9 +17,8 @@ interface TornadoTracksContainerProps {
   onClick: (tornadoId: TornadoId) => void;
   searchStatus: Common.Status;
   selectedTornadoId?: TornadoId;
-  setCenter: (value: LatLng) => void;
+  setCenter: (c: LatLng, z: number) => void;
   setScreenBounds: (bounds: Common.Bounds) => void;
-  setZoom: (zoom: number) => void;
   tornados?: Tornado[];
   zoom: number | undefined;
 }
@@ -115,13 +114,12 @@ function TornadoTracks({
   selectedTornadoId,
   setCenter,
   setScreenBounds,
-  setZoom,
   tornados,
   zoom,
 }: TornadoTracksContainerProps) {
   const map = useMapEvents({
     moveend() {
-      setCenter(map.getCenter());
+      setCenter(map.getCenter(), map.getZoom());
 
       const bounds = map.getBounds();
 
@@ -133,9 +131,6 @@ function TornadoTracks({
         [ne.lat, ne.lng],
       ]);
     },
-    zoomend() {
-      setZoom(map.getZoom());
-    },
   });
 
   const tornadoMatrix = useTornadoMatrix(tornados);
@@ -144,8 +139,8 @@ function TornadoTracks({
     if (!fitBounds) {
       return;
     }
-    console.info("useEffect");
-    if (center && searchStatus !== "ready") {
+
+    if (center && typeof zoom === "number" && searchStatus !== "ready") {
       const bounds = map.getBounds();
 
       const sw = bounds.getSouthWest();
@@ -160,7 +155,7 @@ function TornadoTracks({
     }
 
     map.fitBounds(fitBounds, { padding: [25, 25] });
-  }, [center, fitBounds, map, searchStatus, setScreenBounds]);
+  }, [center, fitBounds, map, searchStatus, setScreenBounds, zoom]);
 
   const handleClickCell = (bounds: L.LatLngBounds) => () => {
     map.fitBounds(bounds, { padding: [25, 25] });
@@ -236,7 +231,6 @@ export default function TornadoTracksContainer({
   selectedTornadoId,
   setCenter,
   setScreenBounds,
-  setZoom,
   tornados,
   zoom,
 }: TornadoTracksContainerProps) {
@@ -259,7 +253,6 @@ export default function TornadoTracksContainer({
         selectedTornadoId={selectedTornadoId}
         setCenter={setCenter}
         setScreenBounds={setScreenBounds}
-        setZoom={setZoom}
         tornados={tornados}
         zoom={zoom}
       />

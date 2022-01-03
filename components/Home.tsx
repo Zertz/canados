@@ -21,7 +21,9 @@ export default function Home() {
   const [{ c, f, m, q, t: selectedTornadoId, y, z }, setSearchParams] =
     useSearchParams({
       c: "",
-      f: "0_5",
+      f: Array.from(Array(6))
+        .map((_, i) => `${i}`)
+        .join("_"),
       m: Array.from(Array(12))
         .map((_, i) => `${i}`)
         .join("_"),
@@ -32,9 +34,10 @@ export default function Home() {
     });
 
   const setCenter = useCallback(
-    (v: LatLng) => {
+    (c: LatLng, z: number) => {
       setSearchParams({
-        c: `${v.lat.toFixed(6)}_${v.lng.toFixed(6)}`,
+        c: `${c.lat.toFixed(6)}_${c.lng.toFixed(6)}`,
+        z: `${z}`,
       });
     },
     [setSearchParams]
@@ -61,7 +64,7 @@ export default function Home() {
   }, [c]);
 
   const fujitaFilter = useMemo(() => {
-    return f.split("_", 2).map((n) => Number(n)) as RangeFilter;
+    return f.split("_", 6).map((n) => Number(n));
   }, [f]);
 
   const monthFilter = useMemo(() => {
@@ -87,13 +90,18 @@ export default function Home() {
       screenBounds,
     });
 
-  const setFujitaFilter = useCallback(
-    (f: [number, number]) => {
+  const toggleFujita = useCallback(
+    (fujita: number) => {
       setSearchParams({
-        f: f.join("_"),
+        f: fujitaFilter.includes(fujita)
+          ? fujitaFilter.filter((v) => v !== fujita).join("_")
+          : fujitaFilter
+              .concat(fujita)
+              .sort((a, b) => a - b)
+              .join("_"),
       });
     },
-    [setSearchParams]
+    [fujitaFilter, setSearchParams]
   );
 
   const toggleMonth = useCallback(
@@ -168,8 +176,8 @@ export default function Home() {
               fujitaFilter={fujitaFilter}
               monthFilter={monthFilter}
               yearFilter={yearFilter}
-              setFujitaFilter={setFujitaFilter}
               setYearFilter={setYearFilter}
+              toggleFujita={toggleFujita}
               toggleMonth={toggleMonth}
             />
           </div>
@@ -190,7 +198,6 @@ export default function Home() {
         selectedTornadoId={selectedTornadoId}
         setCenter={setCenter}
         setScreenBounds={setScreenBounds}
-        setZoom={setZoom}
         tornados={tornados}
         zoom={zoom}
       />

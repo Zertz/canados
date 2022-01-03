@@ -6,31 +6,44 @@ export default function TornadoEventListFilters({
   fujitaFilter,
   monthFilter,
   yearFilter,
-  setFujitaFilter,
   setYearFilter,
+  toggleFujita,
   toggleMonth,
 }: {
-  fujitaFilter: [number, number];
+  fujitaFilter: number[];
   monthFilter: number[];
   yearFilter: [number, number];
-  setFujitaFilter: (values: [number, number]) => void;
   setYearFilter: (values: [number, number]) => void;
+  toggleFujita: (fujita: number) => void;
   toggleMonth: (monthIndex: number) => void;
 }) {
   const monthNames = useMemo(() => getMonthNames(), []);
 
   return (
     <>
-      <div className="grid grid-rows-[1fr] grid-cols-[min-content,1fr,min-content] gap-4 items-center">
-        <span>F0</span>
-        <Multirange
-          min={0}
-          max={5}
-          onChange={setFujitaFilter}
-          values={fujitaFilter}
-        />
-        <span>F5</span>
-      </div>
+      <fieldset className="flex justify-between gap-2 px-[7px] w-full">
+        <legend className="sr-only">Fujita scale</legend>
+        {Array.from(Array(6)).map((_, fujita) => (
+          <div key={fujita} className="flex flex-col items-center">
+            <div className="flex items-center h-5">
+              <input
+                checked={fujitaFilter.includes(fujita)}
+                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                id={`F${fujita}`}
+                name={`F${fujita}`}
+                onChange={() => toggleFujita(fujita)}
+                type="checkbox"
+                value={`F${fujita}`}
+              />
+            </div>
+            <div className="mt-0.5 text-sm">
+              <label className="text-gray-700" htmlFor={`F${fujita}`}>
+                {`F${fujita}`}
+              </label>
+            </div>
+          </div>
+        ))}
+      </fieldset>
       <fieldset className="flex gap-2">
         <legend className="sr-only">Months</legend>
         {monthNames.map((monthName, monthIndex) => (
