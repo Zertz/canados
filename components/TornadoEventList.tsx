@@ -84,7 +84,7 @@ export default function TornadoEventList({
     }
 
     listRef.current?.scrollToItem(tornadoIndex);
-  }, [selectedTornadoId]);
+  }, [selectedTornadoId, tornados]);
 
   useEffect(() => {
     switch (status) {

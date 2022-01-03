@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type MultirangeProps = {
   min: number;
@@ -17,25 +17,28 @@ function Multirange({ min = 0, max = 100, onChange, values }: MultirangeProps) {
     values[1],
   ]);
 
-  const updateStyles = (low, high) => {
-    if (!ghostRef.current) {
-      return;
-    }
+  const updateStyles = useCallback(
+    (low, high) => {
+      if (!ghostRef.current) {
+        return;
+      }
 
-    ghostRef.current.style.setProperty(
-      "--low",
-      100 * ((low - min) / (max - min)) + 1 + "%"
-    );
+      ghostRef.current.style.setProperty(
+        "--low",
+        100 * ((low - min) / (max - min)) + 1 + "%"
+      );
 
-    ghostRef.current.style.setProperty(
-      "--high",
-      100 * ((high - min) / (max - min)) - 1 + "%"
-    );
-  };
+      ghostRef.current.style.setProperty(
+        "--high",
+        100 * ((high - min) / (max - min)) - 1 + "%"
+      );
+    },
+    [max, min]
+  );
 
   useEffect(() => {
     updateStyles(lowValue, highValue);
-  }, []);
+  }, [highValue, lowValue, updateStyles]);
 
   const handleChange = (e) => {
     const value = Number(e.target.value);
