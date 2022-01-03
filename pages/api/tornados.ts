@@ -8,9 +8,9 @@ import { formatUnitedStatesData } from "../../utils/united-states/formatUnitedSt
 
 const lru = new QuickLRU({ maxSize: 8 });
 
-const countries = ["CA", "CA-NTP", "US"] as const
+const countries = ["CA", "CA-NTP", "US"] as const;
 
-type Country = typeof countries[number]
+type Country = typeof countries[number];
 
 function arrayify(data: Object[]) {
   return data.map((value) => Object.values(value));
@@ -19,21 +19,19 @@ function arrayify(data: Object[]) {
 async function fetchData(country: Country) {
   switch (country) {
     case "CA": {
-      const [
-        { features: rawEvents },
-        { features: rawTracks },
-      ] = await Promise.all([
-        got(
-          "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"
-        ).json<{
-          features: Array<CanadaEvents>;
-        }>(),
-        got(
-          "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-tracks-1980-2009-public-gis-en/GIS_CAN_VerifiedTracks_1980-2009.json"
-        ).json<{
-          features: Array<CanadaTracks>;
-        }>(),
-      ]);
+      const [{ features: rawEvents }, { features: rawTracks }] =
+        await Promise.all([
+          got(
+            "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"
+          ).json<{
+            features: Array<CanadaEvents>;
+          }>(),
+          got(
+            "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-tracks-1980-2009-public-gis-en/GIS_CAN_VerifiedTracks_1980-2009.json"
+          ).json<{
+            features: Array<CanadaTracks>;
+          }>(),
+        ]);
 
       return formatCanadaData(rawEvents, rawTracks);
     }
@@ -46,16 +44,20 @@ async function fetchData(country: Country) {
   }
 }
 
-export default async function tornados(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader("Content-Type", "application/json");
-
+export default async function tornados(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "GET") {
     res.status(405).end();
 
     return;
   }
 
-  const country = (typeof req.query.country==="string" ? req.query.country : "").toUpperCase() as Country;
+  const country = (
+    typeof req.query.country === "string" ? req.query.country : ""
+  ).toUpperCase() as Country;
+
   const page = Number(req.query.page) || 1;
 
   if (!countries.includes(country)) {
@@ -63,6 +65,8 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
 
     return;
   }
+
+  res.setHeader("Content-Type", "application/json");
 
   const cached = lru.has(country);
 
@@ -93,4 +97,4 @@ export default async function tornados(req: NextApiRequest, res: NextApiResponse
     console.error(e);
     res.status(500).end(JSON.stringify({ error: e.message }));
   }
-};
+}

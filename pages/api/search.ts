@@ -25,9 +25,10 @@ type SearchResult = {
   label: string;
 };
 
-export default async function search(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader("Content-Type", "application/json");
-
+export default async function search(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "GET") {
     res.status(405).end();
 
@@ -35,18 +36,23 @@ export default async function search(req: NextApiRequest, res: NextApiResponse) 
   }
 
   if (!process.env.POSITIONSTACK_ACCESS_KEY) {
-    res.status(402).end()
-    
-    return
+    res.status(402).end();
+
+    return;
   }
 
-  const q = (typeof req.query.q === "string" ? req.query.q : "").toLowerCase().trim().replace(/\s\s+/g, " ");
+  const q = (typeof req.query.q === "string" ? req.query.q : "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s\s+/g, " ");
 
   if (!q) {
     res.status(400).end();
 
     return;
   }
+
+  res.setHeader("Content-Type", "application/json");
 
   if (lru.has(q)) {
     res.end(lru.get(q));
@@ -72,4 +78,4 @@ export default async function search(req: NextApiRequest, res: NextApiResponse) 
     console.error(e);
     res.status(500).end(JSON.stringify({ error: e.message }));
   }
-};
+}
