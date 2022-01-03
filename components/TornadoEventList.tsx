@@ -6,7 +6,7 @@ import TornadoEventListItem from "./TornadoEventListItem";
 import TornadoEventListSort from "./TornadoEventListSort";
 
 type CommonProps = {
-  onClick: (tornadoId: TornadoId) => () => void;
+  onClick: (tornadoId: TornadoId) => void;
   selectedTornadoId?: TornadoId;
 };
 
@@ -38,7 +38,7 @@ const FixedSizeListRow = ({
       fujita={tornado.fujita}
       length_m={tornado.length_m}
       location={tornado.region_code}
-      onClick={onClick(tornado.id)}
+      onClick={() => onClick(tornado.id)}
       selected={selectedTornadoId === tornado.id}
       style={style}
     />

@@ -1,6 +1,7 @@
+import { LatLng } from "leaflet";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import { useSearchParamState } from "../hooks/useSearchParamState";
+import { useCallback, useMemo, useState } from "react";
+import { useSearchParams } from "../hooks/useSearchParams";
 import { useTornados } from "../hooks/useTornados";
 import Controls from "./Controls";
 import LoadingOverlay from "./LoadingOverlay";
@@ -12,46 +13,71 @@ const TornadoTracks = dynamic(() => import("./TornadoTracks"), { ssr: false });
 
 type RangeFilter = [number, number];
 
-const encodeRangeFilter = (v: RangeFilter | undefined) =>
-  v ? `${v[0]}_${v[1]}` : "";
-
-const decodeRangeFilter =
-  (defaultMin: number, defaultMax: number) =>
-  (value: string): RangeFilter => {
-    if (!value) {
-      return [defaultMin, defaultMax];
-    }
-
-    const [min, max] = value.split("_");
-
-    return [Number(min) || defaultMin, Number(max) || defaultMax];
-  };
-
-const string = (v?: string) => v || undefined;
+const getCleanQuery = (query = "") => query.trim().replace(/\s\s+/g, " ");
 
 export default function Home() {
   const [screenBounds, setScreenBounds] = useState<Common.Bounds>();
 
-  const [fujitaFilter, setFujitaFilter] = useSearchParamState<[number, number]>(
-    "f",
-    encodeRangeFilter,
-    decodeRangeFilter(0, 5)
+  const [{ c, f, m, q, t: selectedTornadoId, y, z }, setSearchParams] =
+    useSearchParams({
+      c: "",
+      f: "0_5",
+      m: Array.from(Array(12))
+        .map((_, i) => `${i}`)
+        .join("_"),
+      q: "",
+      t: "",
+      y: "1950_2021",
+      z: "",
+    });
+
+  const setCenter = useCallback(
+    (v: LatLng) => {
+      setSearchParams({
+        c: `${v.lat.toFixed(6)}_${v.lng.toFixed(6)}`,
+      });
+    },
+    [setSearchParams]
   );
 
-  const [monthFilter, setMonthFilter] = useSearchParamState<[number, number]>(
-    "m",
-    encodeRangeFilter,
-    decodeRangeFilter(0, 11)
-  );
+  const center = useMemo(() => {
+    if (!c) {
+      return;
+    }
 
-  const [yearFilter, setYearFilter] = useSearchParamState<[number, number]>(
-    "y",
-    encodeRangeFilter,
-    decodeRangeFilter(1950, 2021)
-  );
+    const [rawLat, rawLng] = c.split("_");
 
-  const [selectedTornadoId, setSelectedTornadoId] =
-    useSearchParamState<TornadoId>("t", string, string);
+    const lat = Number(rawLat);
+    const lng = Number(rawLng);
+
+    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+      return;
+    }
+
+    return {
+      lat: Number(lat),
+      lng: Number(lng),
+    };
+  }, [c]);
+
+  const fujitaFilter = useMemo(() => {
+    return f.split("_", 2).map((n) => Number(n)) as RangeFilter;
+  }, [f]);
+
+  const monthFilter = useMemo(() => {
+    return m
+      .split("_", 12)
+      .map((n) => Number(n))
+      .sort((a, b) => a - b);
+  }, [m]);
+
+  const query = useMemo(() => getCleanQuery(q), [q]);
+
+  const yearFilter = useMemo(() => {
+    return y.split("_", 2).map((n) => Number(n)) as RangeFilter;
+  }, [y]);
+
+  const zoom = useMemo(() => Number(z) || undefined, [z]);
 
   const { apiStatus, fitBounds, search, searchStatus, tornadoCount, tornados } =
     useTornados({
@@ -61,9 +87,64 @@ export default function Home() {
       screenBounds,
     });
 
-  const handleSelectTornado = (selectedTornadoId: TornadoId) => () => {
-    setSelectedTornadoId(selectedTornadoId);
-  };
+  const setFujitaFilter = useCallback(
+    (f: [number, number]) => {
+      setSearchParams({
+        f: f.join("_"),
+      });
+    },
+    [setSearchParams]
+  );
+
+  const toggleMonth = useCallback(
+    (monthIndex: number) => {
+      setSearchParams({
+        m: monthFilter.includes(monthIndex)
+          ? monthFilter.filter((v) => v !== monthIndex).join("_")
+          : monthFilter
+              .concat(monthIndex)
+              .sort((a, b) => a - b)
+              .join("_"),
+      });
+    },
+    [monthFilter, setSearchParams]
+  );
+
+  const setSelectedTornadoId = useCallback(
+    (selectedTornadoId: TornadoId) => {
+      setSearchParams({
+        t: selectedTornadoId,
+      });
+    },
+    [setSearchParams]
+  );
+
+  const setQuery = useCallback(
+    (q: string) => {
+      setSearchParams({
+        q: getCleanQuery(q),
+      });
+    },
+    [setSearchParams]
+  );
+
+  const setYearFilter = useCallback(
+    (y: [number, number]) => {
+      setSearchParams({
+        y: y.join("_"),
+      });
+    },
+    [setSearchParams]
+  );
+
+  const setZoom = useCallback(
+    (z: number) => {
+      setSearchParams({
+        z: `${z}`,
+      });
+    },
+    [setSearchParams]
+  );
 
   return (
     <div className="grid grid-rows-[1fr] grid-cols-[500px,1fr] absolute inset-0">
@@ -80,20 +161,20 @@ export default function Home() {
         </svg>
       </a>
       <Controls>
-        <SearchForm search={search} />
+        <SearchForm query={query} search={search} setQuery={setQuery} />
         <div className="flex flex-col bg-white overflow-hidden rounded-md shadow-md">
-          <div className="border-b border-gray-200 p-4 text-gray-800">
+          <div className="flex flex-col gap-4 border-b border-gray-200 p-4 text-gray-800">
             <TornadoEventListFilters
               fujitaFilter={fujitaFilter}
               monthFilter={monthFilter}
               yearFilter={yearFilter}
               setFujitaFilter={setFujitaFilter}
-              setMonthFilter={setMonthFilter}
               setYearFilter={setYearFilter}
+              toggleMonth={toggleMonth}
             />
           </div>
           <TornadoEventList
-            onClick={handleSelectTornado}
+            onClick={setSelectedTornadoId}
             selectedTornadoId={selectedTornadoId}
             status={searchStatus}
             tornadoCount={tornadoCount}
@@ -102,12 +183,16 @@ export default function Home() {
         </div>
       </Controls>
       <TornadoTracks
+        center={center}
         fitBounds={fitBounds}
-        onClick={handleSelectTornado}
+        onClick={setSelectedTornadoId}
         searchStatus={searchStatus}
         selectedTornadoId={selectedTornadoId}
+        setCenter={setCenter}
         setScreenBounds={setScreenBounds}
+        setZoom={setZoom}
         tornados={tornados}
+        zoom={zoom}
       />
       {[apiStatus, searchStatus].includes("error") && (
         <LoadingOverlay

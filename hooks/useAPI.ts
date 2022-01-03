@@ -1,6 +1,6 @@
 import haversine from "fast-haversine";
 import ky from "ky";
-import { useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 
 type State = {
   data?: Tornado[];
@@ -58,7 +58,7 @@ export const useAPI = (url: string) => {
     status: "idle",
   });
 
-  const load = async () => {
+  const load = useCallback(async () => {
     dispatch({ type: "request" });
 
     try {
@@ -146,7 +146,7 @@ export const useAPI = (url: string) => {
     } catch (e) {
       dispatch({ type: "failure", error: e });
     }
-  };
+  }, [url]);
 
   useEffect(() => {
     if (!error) {

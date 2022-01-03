@@ -55,14 +55,12 @@ export const useSearch = ({ tornados }: Props) => {
   const workerRef = useRef<Worker>();
 
   useEffect(() => {
-    workerRef.current = new Worker(new URL("../workers/search.worker.ts", import.meta.url))
+    workerRef.current = new Worker(
+      new URL("../workers/search.worker.ts", import.meta.url)
+    );
 
     workerRef.current.onmessage = (e) => {
       if (!e.isTrusted) {
-        return;
-      }
-
-      if (!Array.isArray(tornados)) {
         return;
       }
 
@@ -79,20 +77,51 @@ export const useSearch = ({ tornados }: Props) => {
 
     return () => {
       if (!workerRef.current) {
-        return
+        return;
       }
 
-      workerRef.current.terminate()
-    }
-  }, [])
-
-  const send = useCallback((data: { action: "search" | "store"; payload: any }) => {
-    if(!workerRef.current) {
-      return
-    }
-
-    workerRef.current.postMessage(JSON.stringify(data));
+      workerRef.current.terminate();
+    };
   }, []);
+
+  const send = useCallback(
+    (data: { action: "search" | "store"; payload: any }) => {
+      if (!workerRef.current) {
+        return;
+      }
+
+      workerRef.current.postMessage(JSON.stringify(data));
+    },
+    []
+  );
+
+  const search = useCallback(
+    (query: string) => {
+      if (!query) {
+        dispatch({ type: "status", payload: "idle" });
+
+        return;
+      }
+
+      if (!Array.isArray(tornados)) {
+        dispatch({ type: "queue", payload: query });
+
+        return;
+      }
+
+      dispatch({ type: "status", payload: "loading" });
+
+      (async () => {
+        const payload = await ky(`/api/search?q=${query}`).json();
+
+        send({
+          action: "search",
+          payload,
+        });
+      })();
+    },
+    [send, tornados]
+  );
 
   useEffect(() => {
     if (!Array.isArray(tornados)) {
@@ -107,32 +136,7 @@ export const useSearch = ({ tornados }: Props) => {
     if (queuedQuery) {
       search(queuedQuery);
     }
-  }, [tornados]);
-
-  const search = (query: string) => {
-    if (!query) {
-      dispatch({ type: "status", payload: "idle" });
-
-      return;
-    }
-
-    if (!Array.isArray(tornados)) {
-      dispatch({ type: "queue", payload: query });
-
-      return;
-    }
-
-    dispatch({ type: "status", payload: "loading" });
-
-    (async () => {
-      const payload = await ky(`/api/search?q=${query}`).json();
-
-      send({
-        action: "search",
-        payload,
-      });
-    })();
-  };
+  }, [queuedQuery, search, send, tornados]);
 
   return {
     results,

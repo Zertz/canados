@@ -1,22 +1,18 @@
 import SearchIcon from "@heroicons/react/solid/SearchIcon";
 import { useEffect, useState } from "react";
-import { useSearchParamState } from "../hooks/useSearchParamState";
 
 type Props = {
+  query: string;
   search: (value: string) => void;
+  setQuery: (query: string) => void;
 };
 
-const string = (v?: string) => v || "";
-
-const getCleanQuery = (query = "") => query.trim().replace(/\s\s+/g, " ");
-
-export default function SearchForm({ search }: Props) {
-  const [query, setQuery] = useSearchParamState<string>("q", string, string);
-  const [value, setValue] = useState(query || "");
+export default function SearchForm({ query, search, setQuery }: Props) {
+  const [value, setValue] = useState(query);
 
   useEffect(() => {
-    search(getCleanQuery(query));
-  }, [query]);
+    search(query);
+  }, [query, search]);
 
   const handleChange = ({ target: { value } }) => {
     setValue(value);
@@ -25,7 +21,7 @@ export default function SearchForm({ search }: Props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setQuery(getCleanQuery(value));
+    setQuery(value);
   };
 
   return (

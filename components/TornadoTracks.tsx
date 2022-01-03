@@ -9,23 +9,19 @@ import {
   Tooltip,
   useMapEvents,
 } from "react-leaflet";
-import { useSearchParamState } from "../hooks/useSearchParamState";
 import { useTornadoMatrix } from "../hooks/useTornadoMatrix";
 
 interface TornadoTracksContainerProps {
+  center: LatLng | undefined;
   fitBounds?: Common.Bounds;
-  onClick: (tornadoId: TornadoId) => () => void;
+  onClick: (tornadoId: TornadoId) => void;
   searchStatus: Common.Status;
   selectedTornadoId?: TornadoId;
-  setScreenBounds: (bounds: Common.Bounds) => void;
-  tornados?: Tornado[];
-}
-
-interface TornadoTracksProps extends TornadoTracksContainerProps {
-  center: LatLng;
   setCenter: (value: LatLng) => void;
-  setZoom: (value: number) => void;
-  zoom: number;
+  setScreenBounds: (bounds: Common.Bounds) => void;
+  setZoom: (zoom: number) => void;
+  tornados?: Tornado[];
+  zoom: number | undefined;
 }
 
 type LatLng = {
@@ -38,9 +34,6 @@ const maxColor = 50;
 
 const minOpacity = 0.25;
 const maxOpacity = 0.75;
-
-const encodeNumber = (v: number) => `${v}`;
-const decodeNumber = (v?: string) => (v ? Number(v) || undefined : undefined);
 
 function TornadoCell({ color, onClick, opacity, row, selected }) {
   return (
@@ -125,7 +118,7 @@ function TornadoTracks({
   setZoom,
   tornados,
   zoom,
-}: TornadoTracksProps) {
+}: TornadoTracksContainerProps) {
   const map = useMapEvents({
     moveend() {
       setCenter(map.getCenter());
@@ -151,8 +144,8 @@ function TornadoTracks({
     if (!fitBounds) {
       return;
     }
-
-    if (center && typeof zoom === "number" && searchStatus !== "ready") {
+    console.info("useEffect");
+    if (center && searchStatus !== "ready") {
       const bounds = map.getBounds();
 
       const sw = bounds.getSouthWest();
@@ -167,7 +160,7 @@ function TornadoTracks({
     }
 
     map.fitBounds(fitBounds, { padding: [25, 25] });
-  }, [fitBounds, searchStatus]);
+  }, [center, fitBounds, map, searchStatus, setScreenBounds]);
 
   const handleClickCell = (bounds: L.LatLngBounds) => () => {
     map.fitBounds(bounds, { padding: [25, 25] });
@@ -194,7 +187,7 @@ function TornadoTracks({
             return [...row.tornados.values()].map((tornado) => (
               <TornadoMarker
                 key={tornado.id}
-                onClick={onClick(tornado.id)}
+                onClick={() => onClick(tornado.id)}
                 selected={tornado.id === selectedTornadoId}
                 tornado={tornado}
               />
@@ -236,45 +229,17 @@ function TornadoTracks({
 }
 
 export default function TornadoTracksContainer({
+  center,
   fitBounds,
   onClick,
   searchStatus,
   selectedTornadoId,
+  setCenter,
   setScreenBounds,
+  setZoom,
   tornados,
+  zoom,
 }: TornadoTracksContainerProps) {
-  const [center, setCenter] = useSearchParamState<LatLng>(
-    "c",
-    (v: LatLng) => {
-      return `${v.lat.toFixed(6)}_${v.lng.toFixed(6)}`;
-    },
-    (v: string) => {
-      if (!v) {
-        return;
-      }
-
-      const [rawLat, rawLng] = v.split("_");
-
-      const lat = Number(rawLat);
-      const lng = Number(rawLng);
-
-      if (Number.isNaN(lat) || Number.isNaN(lng)) {
-        return;
-      }
-
-      return {
-        lat: Number(lat),
-        lng: Number(lng),
-      };
-    }
-  );
-
-  const [zoom, setZoom] = useSearchParamState<number>(
-    "z",
-    encodeNumber,
-    decodeNumber
-  );
-
   return (
     <MapContainer
       className="flex flex-col fixed inset-0"

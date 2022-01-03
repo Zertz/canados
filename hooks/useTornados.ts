@@ -54,7 +54,7 @@ function reducer(state: State, action: Action): State {
 
 type Props = {
   fujitaFilter: [number, number];
-  monthFilter: [number, number];
+  monthFilter: number[];
   yearFilter: [number, number];
   screenBounds?: Common.Bounds;
 };
@@ -67,7 +67,11 @@ export const useTornados = ({
 }: Props) => {
   const { data, error, load, status: apiStatus } = useAPI("/api/tornados");
 
-  const { results: searchResults, search, status: searchStatus } = useSearch({
+  const {
+    results: searchResults,
+    search,
+    status: searchStatus,
+  } = useSearch({
     tornados: data,
   });
 
@@ -84,7 +88,7 @@ export const useTornados = ({
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   useEffect(() => {
     if (apiStatus === "loading") {
@@ -136,7 +140,7 @@ export const useTornados = ({
       type: "fitBounds",
       payload: fitBounds,
     });
-  }, [apiStatus, searchStatus]);
+  }, [apiStatus, data, searchResults, searchStatus]);
 
   useEffect(() => {
     if (!fitBounds && !screenBounds) {
@@ -194,7 +198,17 @@ export const useTornados = ({
         break;
       }
     }
-  }, [status]);
+  }, [
+    data,
+    fitBounds,
+    fujitaFilter,
+    monthFilter,
+    screenBounds,
+    searchResults,
+    searchStatus,
+    status,
+    yearFilter,
+  ]);
 
   useEffect(() => {
     if (!boundedTornados) {
@@ -214,7 +228,7 @@ export const useTornados = ({
         tornadoCount: filteredTornados.length,
       },
     });
-  }, [fujitaFilter, monthFilter, yearFilter]);
+  }, [boundedTornados, fujitaFilter, monthFilter, yearFilter]);
 
   return {
     apiStatus,
