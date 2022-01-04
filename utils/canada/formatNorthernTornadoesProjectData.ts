@@ -1,11 +1,7 @@
 import csvtojson from "csvtojson";
 import { parse } from "date-fns";
 import got from "got";
-import { generateTornadoId } from "../generateTornadoId";
-
-function check(value: string): number | undefined {
-  return ["0", "0.0"].includes(value) ? undefined : Number(value);
-}
+import { generateShortId, generateTornadoId } from "../generateTornadoId";
 
 export function formatNorthernTornadoesProjectData(): Promise<RawTornado[]> {
   return new Promise((resolve, reject) => {
@@ -30,19 +26,26 @@ export function formatNorthernTornadoesProjectData(): Promise<RawTornado[]> {
               Number(json.X),
             ];
 
-            const coordinates_end: [number?, number?] = [undefined, undefined];
+            const coordinates_end: [number | null, number | null] = [
+              null,
+              null,
+            ];
 
             ids.add(id);
 
             events.push({
-              id,
+              id: generateShortId(),
               coordinates_start,
               coordinates_end,
-              date: parse(json._date, "yyyy/MM/dd HH:mm:ssx", new Date()),
+              date: parse(
+                json._date,
+                "yyyy/MM/dd HH:mm:ssx",
+                new Date()
+              ).toISOString(),
               fujita: json.damage.startsWith("ef")
                 ? Number(json.damage.substring(2))
                 : 0,
-              country_code: "CA-NTP",
+              country_code: "CAN",
               region_code: json.province,
             });
           }

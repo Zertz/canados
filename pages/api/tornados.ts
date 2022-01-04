@@ -1,17 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import QuickLRU from "quick-lru";
 import { PAGE_SIZE } from "../../constants";
-import { fetchTornados } from "../../data/fetchTornados";
+import { countries, Country, fetchTornados } from "../../data/fetchTornados";
+import { arrayify } from "../../utils/arrayify";
 
 const lru = new QuickLRU({ maxSize: 8 });
-
-const countries = ["CA", "CA-NTP", "US"] as const;
-
-type Country = typeof countries[number];
-
-function arrayify(data: Object[]) {
-  return data.map((value) => Object.values(value));
-}
 
 export default async function tornados(
   req: NextApiRequest,

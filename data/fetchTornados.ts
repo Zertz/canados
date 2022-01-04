@@ -3,9 +3,9 @@ import { formatCanadaData } from "../utils/canada/formatCanadaData";
 import { formatNorthernTornadoesProjectData } from "../utils/canada/formatNorthernTornadoesProjectData";
 import { formatUnitedStatesData } from "../utils/united-states/formatUnitedStatesData";
 
-const countries = ["CA", "CA-NTP", "US"] as const;
+export const countries = ["CA", "CA-NTP", "US"] as const;
 
-type Country = typeof countries[number];
+export type Country = typeof countries[number];
 
 export async function fetchTornados(country: Country) {
   switch (country) {

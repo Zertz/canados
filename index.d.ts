@@ -33,48 +33,48 @@ type CanadaTracks = {
 };
 
 type CanadaNTPProperties = {
-    X: string;
-    Y: string;
-    objectid: string;
-    globalid: string;
-    _date: string;
-    Year: string;
-    event_name: string;
-    classification_status: string;
-    rating_status: string;
-    event_type: string;
-    initial_data_sources: string;
-    location_description: string;
-    province: string;
-    surveys_completed: string;
-    damage: string;
-    investigation_initiated_by_ntp: string;
-    ground_survey_completed_indepen: string;
-    event_description: string;
-    web_map_link: string;
-    CreationDate: string;
-    Creator: string;
-    EditDate: string;
-    Editor: string;
-    event_subtype: string;
-    damage_summary: string;
-    track_length: string;
-    max_path_width: string;
-    max_wind_speed: string;
-    time: string;
-    parent_storm_type: string;
-    EFDOD: string;
-    injuries: string;
-    concurrent: string;
-    uniqueID: string;
-    mean_motion_from: string;
-    day: string;
-    month: string;
-    timeUTC: string;
-    timezone: string;
-    fatalities_text: string;
-    damage_cost_text: string;
-}
+  X: string;
+  Y: string;
+  objectid: string;
+  globalid: string;
+  _date: string;
+  Year: string;
+  event_name: string;
+  classification_status: string;
+  rating_status: string;
+  event_type: string;
+  initial_data_sources: string;
+  location_description: string;
+  province: string;
+  surveys_completed: string;
+  damage: string;
+  investigation_initiated_by_ntp: string;
+  ground_survey_completed_indepen: string;
+  event_description: string;
+  web_map_link: string;
+  CreationDate: string;
+  Creator: string;
+  EditDate: string;
+  Editor: string;
+  event_subtype: string;
+  damage_summary: string;
+  track_length: string;
+  max_path_width: string;
+  max_wind_speed: string;
+  time: string;
+  parent_storm_type: string;
+  EFDOD: string;
+  injuries: string;
+  concurrent: string;
+  uniqueID: string;
+  mean_motion_from: string;
+  day: string;
+  month: string;
+  timeUTC: string;
+  timezone: string;
+  fatalities_text: string;
+  damage_cost_text: string;
+};
 
 type UnitedStatesProperties = {
   om: string;
@@ -113,8 +113,8 @@ type TornadoId = string;
 type RawTornado = {
   id: TornadoId;
   coordinates_start: Common.Coordinates;
-  coordinates_end: [number?, number?];
-  date: Date;
+  coordinates_end: [number | null, number | null];
+  date: string;
   fujita: number;
   country_code: string;
   region_code: string;
@@ -124,13 +124,14 @@ type TupleTornado = [
   TornadoId,
   Common.Coordinates,
   [number?, number?],
-  Date,
+  string,
   number,
   string,
   string
 ];
 
 type Tornado = RawTornado & {
+  date: Date;
   length_m: number;
 };
 

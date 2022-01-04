@@ -1,10 +1,10 @@
 import csvtojson from "csvtojson";
 import { parse } from "date-fns";
 import got from "got";
-import { generateTornadoId } from "../generateTornadoId";
+import { generateShortId, generateTornadoId } from "../generateTornadoId";
 
-function check(value: string): number | undefined {
-  return ["0", "0.0"].includes(value) ? undefined : Number(value);
+function check(value: string): number | null {
+  return ["0", "0.0"].includes(value) ? null : Number(value);
 }
 
 export function formatUnitedStatesData(): Promise<RawTornado[]> {
@@ -30,7 +30,7 @@ export function formatUnitedStatesData(): Promise<RawTornado[]> {
               Number(json.slon),
             ];
 
-            const coordinates_end: [number?, number?] = [
+            const coordinates_end: [number | null, number | null] = [
               check(json.elat),
               check(json.elon),
             ];
@@ -38,14 +38,14 @@ export function formatUnitedStatesData(): Promise<RawTornado[]> {
             ids.add(id);
 
             events.push({
-              id,
+              id: generateShortId(),
               coordinates_start,
               coordinates_end,
               date: parse(
                 `${json.yr}-${json.mo}-${json.dy} ${json.time}`,
                 "yyyy-MM-dd HH:mm:ss",
                 new Date()
-              ),
+              ).toISOString(),
               fujita: Number(json.mag),
               country_code: "USA",
               region_code: json.st,

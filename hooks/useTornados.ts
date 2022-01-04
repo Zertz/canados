@@ -65,7 +65,7 @@ export const useTornados = ({
   yearFilter,
   screenBounds,
 }: Props) => {
-  const { data, error, load, status: apiStatus } = useAPI("/api/tornados");
+  const { data, error, load, status: apiStatus } = useAPI();
 
   const {
     results: searchResults,

@@ -1,8 +1,8 @@
-import { generateTornadoId } from "../generateTornadoId";
+import { generateShortId, generateTornadoId } from "../generateTornadoId";
 import { parseTornadoDate } from "./parseTornadoDate";
 
-function check(value: number | string): number | undefined {
-  return [-999, "-999"].includes(value) ? undefined : Number(value);
+function check(value: number | string): number | null {
+  return [-999, "-999"].includes(value) ? null : Number(value);
 }
 
 export function formatCanadaData(
@@ -64,7 +64,8 @@ export function formatCanadaData(
           check(START_LAT_) || 0,
           check(START_LON_) || 0,
         ];
-        const coordinates_end: [number?, number?] = [
+
+        const coordinates_end: [number | null, number | null] = [
           check(END_LAT_N),
           check(END_LON_W),
         ];
@@ -74,7 +75,7 @@ export function formatCanadaData(
           YYYY_LOCAL,
           MM_LOCAL,
           DD_LOCAL,
-        });
+        }).toISOString();
 
         const region_code = PROVINCE;
 
@@ -105,9 +106,11 @@ export function formatCanadaData(
 
       return {
         ...tornado,
+        id: generateShortId(),
         coordinates_start,
         coordinates_end,
       };
     });
+
   return events;
 }
