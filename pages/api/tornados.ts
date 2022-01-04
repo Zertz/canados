@@ -1,10 +1,7 @@
-import got from "got";
 import { NextApiRequest, NextApiResponse } from "next";
 import QuickLRU from "quick-lru";
 import { PAGE_SIZE } from "../../constants";
-import { formatCanadaData } from "../../utils/canada/formatCanadaData";
-import { formatNorthernTornadoesProjectData } from "../../utils/canada/formatNorthernTornadoesProjectData";
-import { formatUnitedStatesData } from "../../utils/united-states/formatUnitedStatesData";
+import { fetchTornados } from "../../data/fetchTornados";
 
 const lru = new QuickLRU({ maxSize: 8 });
 
@@ -14,34 +11,6 @@ type Country = typeof countries[number];
 
 function arrayify(data: Object[]) {
   return data.map((value) => Object.values(value));
-}
-
-async function fetchData(country: Country) {
-  switch (country) {
-    case "CA": {
-      const [{ features: rawEvents }, { features: rawTracks }] =
-        await Promise.all([
-          got(
-            "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-events-1980-2009-public-gis-en/GIS_CAN_VerifiedTornadoes_1980-2009.json"
-          ).json<{
-            features: Array<CanadaEvents>;
-          }>(),
-          got(
-            "http://donnees.ec.gc.ca/data/weather/products/canadian-national-tornado-database-verified-events-1980-2009-public/canadian-national-tornado-database-verified-tracks-1980-2009-public-gis-en/GIS_CAN_VerifiedTracks_1980-2009.json"
-          ).json<{
-            features: Array<CanadaTracks>;
-          }>(),
-        ]);
-
-      return formatCanadaData(rawEvents, rawTracks);
-    }
-    case "CA-NTP": {
-      return formatNorthernTornadoesProjectData();
-    }
-    case "US": {
-      return formatUnitedStatesData();
-    }
-  }
 }
 
 export default async function tornados(
@@ -73,7 +42,7 @@ export default async function tornados(
   try {
     const data = cached
       ? (lru.get(country) as RawTornado[])
-      : await fetchData(country);
+      : await fetchTornados(country);
 
     if (!cached) {
       lru.set(country, data);
