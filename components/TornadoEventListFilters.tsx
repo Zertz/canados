@@ -21,7 +21,7 @@ export default function TornadoEventListFilters({
 
   return (
     <>
-      <fieldset className="flex justify-between gap-2 px-[7px] w-full">
+      <fieldset className="flex justify-between gap-1 px-[7px] w-full">
         <legend className="sr-only">Fujita scale</legend>
         {Array.from(Array(6)).map((_, fujita) => (
           <div key={fujita} className="flex flex-col items-center">
@@ -44,7 +44,7 @@ export default function TornadoEventListFilters({
           </div>
         ))}
       </fieldset>
-      <fieldset className="flex gap-2">
+      <fieldset className="flex gap-1">
         <legend className="sr-only">Months</legend>
         {monthNames.map((monthName, monthIndex) => (
           <div key={monthName} className="flex flex-col items-center">
@@ -67,7 +67,7 @@ export default function TornadoEventListFilters({
           </div>
         ))}
       </fieldset>
-      <div className="grid grid-rows-[1fr] grid-cols-[min-content,1fr,min-content] gap-4 items-center">
+      <div className="grid grid-rows-[1fr] grid-cols-[min-content,1fr,min-content] gap-1 items-center">
         <span>1950</span>
         <Multirange
           min={1950}
