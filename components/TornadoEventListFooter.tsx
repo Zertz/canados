@@ -14,7 +14,7 @@ export default function TornadoEventListFooter({
   const searchMode = status === "ready";
 
   return (
-    <div className="grid grid-rows-[1fr] grid-cols-[1fr,min-content] gap-4 items-center bg-white border-t border-gray-200 p-4 text-gray-800 whitespace-nowrap">
+    <div className="grid grid-rows-[1fr] grid-cols-[1fr,min-content] gap-4 items-center bg-white border-t border-gray-200 -mt-px p-4 text-gray-800 whitespace-nowrap">
       <span className="truncate">
         {tornadoCount === 1
           ? `${tornadoCount} tornado ${

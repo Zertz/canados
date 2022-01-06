@@ -158,7 +158,7 @@ export default function Home() {
     <div className="grid grid-rows-[1fr] grid-cols-[500px,1fr] absolute inset-0">
       <a
         href="https://github.com/Zertz/canados"
-        className="bg-white border-2 border-white rounded-full w-10 h-10 fixed bottom-4 left-4 z-20"
+        className="bg-white border-2 border-white rounded-full w-10 h-10 fixed bottom-2 left-2 z-20"
         title="Contribute on GitHub"
       >
         <svg viewBox="0 0 16 16" version="1.1">

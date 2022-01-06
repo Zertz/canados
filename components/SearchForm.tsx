@@ -25,17 +25,17 @@ export default function SearchForm({ query, search, setQuery }: Props) {
   };
 
   return (
-    <form className="mb-4" onSubmit={handleSubmit}>
+    <form className="mb-2" onSubmit={handleSubmit}>
       <label htmlFor="search" className="sr-only">
         Search tornados
       </label>
-      <div className="mt-1 flex rounded-md shadow-sm">
+      <div className="flex rounded-md shadow-sm">
         <div className="relative flex items-stretch flex-grow focus-within:z-10">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <SearchIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
           </div>
           <input
-            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md pl-10 sm:text-sm border-gray-300"
+            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md pl-10 text-sm border-gray-300"
             id="search"
             onChange={handleChange}
             placeholder="Toronto"
