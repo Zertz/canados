@@ -21,10 +21,10 @@ export default function TornadoEventListFilters({
 
   return (
     <>
-      <fieldset className="flex justify-between gap-2 px-[7px] w-full">
+      <fieldset className="grid grid-cols-6 sm:grid-cols-12 sm:pl-[7px] gap-2 sm:gap-3">
         <legend className="sr-only">Fujita scale</legend>
         {Array.from(Array(6)).map((_, fujita) => (
-          <div key={fujita} className="flex flex-col items-center">
+          <div key={fujita} className="flex items-center sm:col-span-2">
             <div className="flex items-center h-5">
               <input
                 checked={fujitaFilter.includes(fujita)}
@@ -36,7 +36,7 @@ export default function TornadoEventListFilters({
                 value={`F${fujita}`}
               />
             </div>
-            <div className="mt-0.5 text-sm">
+            <div className="ml-1 text-sm">
               <label className="text-gray-700" htmlFor={`F${fujita}`}>
                 {`F${fujita}`}
               </label>
@@ -44,10 +44,10 @@ export default function TornadoEventListFilters({
           </div>
         ))}
       </fieldset>
-      <fieldset className="flex gap-2">
+      <fieldset className="grid grid-cols-6 sm:grid-cols-12 gap-2">
         <legend className="sr-only">Months</legend>
         {monthNames.map((monthName, monthIndex) => (
-          <div key={monthName} className="flex flex-col items-center">
+          <div key={monthName} className="flex sm:flex-col items-center">
             <div className="flex items-center h-5">
               <input
                 checked={monthFilter.includes(monthIndex)}
@@ -59,7 +59,7 @@ export default function TornadoEventListFilters({
                 value={monthIndex}
               />
             </div>
-            <div className="mt-0.5 text-sm">
+            <div className="sm:mt-0.5 ml-1 sm:ml-0 text-sm">
               <label className="text-gray-700" htmlFor={monthName}>
                 {monthName}
               </label>
