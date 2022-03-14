@@ -1959,10 +1959,10 @@ react-virtual@^2.10.4:
   dependencies:
     "@reach/observe-rect" "^1.1.0"
 
-react@^18.0.0-rc.1:
-  version "18.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-18.0.0-rc.1.tgz#fbaef1cbf8b1eddb36a869ee1ea723044aa670c2"
-  integrity sha512-IdvjOtyeFhITZwDrj+GMvY7kbWnGklRzNByO7/pOVIt0o3VZi++BUybpK3Fen1gDPkOZDP/rag7lSh6RZuWOeQ==
+react@^18.0.0-rc.2:
+  version "18.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/react/-/react-18.0.0-rc.2.tgz#f54de68a912454331f7f718794fbf5e6c01eb855"
+  integrity sha512-q32FWyA5HvqfRCN0ZOk0gUOpzJGPPh8fqbk8DYQuh4DyiGWiNgN/BxMq3/ScY0SlwDB1HOAMU1lUgtaOr5p2Ng==
   dependencies:
     loose-envify "^1.1.0"
 
