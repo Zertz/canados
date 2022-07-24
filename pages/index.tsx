@@ -5,9 +5,11 @@ import { fetchTornados } from "../data/fetchTornados";
 import { arrayify } from "../utils/arrayify";
 
 export const getStaticProps = async () => {
-  const ca = await fetchTornados("CA");
-  const caNTP = await fetchTornados("CA-NTP");
-  const us = await fetchTornados("US");
+  const [ca, caNTP, us] = await Promise.all([
+    fetchTornados("CA"),
+    fetchTornados("CA-NTP"),
+    fetchTornados("US"),
+  ]);
 
   return {
     props: {

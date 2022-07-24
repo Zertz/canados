@@ -65,7 +65,7 @@ export const useTornados = ({
   yearFilter,
   screenBounds,
 }: Props) => {
-  const { data, error, load, status: apiStatus } = useAPI();
+  const { data } = useAPI();
 
   const {
     results: searchResults,
@@ -87,14 +87,6 @@ export const useTornados = ({
   });
 
   useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
-    if (apiStatus === "loading") {
-      return;
-    }
-
     if (searchStatus === "loading") {
       return;
     }
@@ -140,7 +132,7 @@ export const useTornados = ({
       type: "fitBounds",
       payload: fitBounds,
     });
-  }, [apiStatus, data, searchResults, searchStatus]);
+  }, [data, searchResults, searchStatus]);
 
   useEffect(() => {
     if (!fitBounds && !screenBounds) {
@@ -231,8 +223,6 @@ export const useTornados = ({
   }, [boundedTornados, fujitaFilter, monthFilter, yearFilter]);
 
   return {
-    apiStatus,
-    error,
     fitBounds,
     search,
     searchStatus,

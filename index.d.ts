@@ -130,9 +130,9 @@ type TupleTornado = [
   string
 ];
 
-type Tornado = RawTornado & {
+type Tornado = Omit<RawTornado, "date"> & {
   date: Date;
-  length_m: number;
+  length_m: number | undefined;
 };
 
 type TornadoMatrix = {

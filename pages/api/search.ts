@@ -1,8 +1,5 @@
 import got from "got";
 import { NextApiRequest, NextApiResponse } from "next";
-import QuickLRU from "quick-lru";
-
-const lru = new QuickLRU({ maxSize: 256 });
 
 type SearchResult = {
   latitude: number;
@@ -53,12 +50,6 @@ export default async function search(
   }
 
   res.setHeader("Content-Type", "application/json");
-
-  if (lru.has(q)) {
-    res.end(lru.get(q));
-
-    return;
-  }
 
   try {
     const json: { data: SearchResult[] } = await got(

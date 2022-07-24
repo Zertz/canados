@@ -127,7 +127,7 @@ export default function TornadoEventList({
                   >
                     <TornadoEventListItem
                       key={tornado.id}
-                      date={tornado.date as Date}
+                      date={tornado.date}
                       fujita={tornado.fujita}
                       length_m={tornado.length_m}
                       location={tornado.region_code}

@@ -4,7 +4,7 @@ import format from "date-fns/format";
 type Props = {
   date: Date;
   fujita: number;
-  length_m?: number;
+  length_m: number | undefined;
   location: string;
   onClick: () => void;
   selected: boolean;

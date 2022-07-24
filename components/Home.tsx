@@ -82,7 +82,7 @@ export default function Home() {
 
   const zoom = useMemo(() => Number(z) || undefined, [z]);
 
-  const { apiStatus, fitBounds, search, searchStatus, tornadoCount, tornados } =
+  const { fitBounds, search, searchStatus, tornadoCount, tornados } =
     useTornados({
       fujitaFilter,
       monthFilter,
@@ -201,16 +201,10 @@ export default function Home() {
         tornados={tornados}
         zoom={zoom}
       />
-      {[apiStatus, searchStatus].includes("error") && (
+      {[searchStatus].includes("error") && (
         <LoadingOverlay
           title="Aw, snap."
           subtitle="Something twisted happened, try refreshing the page."
-        />
-      )}
-      {apiStatus === "loading" && (
-        <LoadingOverlay
-          title="Loading..."
-          subtitle="This may take a few moments."
         />
       )}
       {searchStatus === "loading" && (
