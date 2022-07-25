@@ -62,8 +62,6 @@ export default async function search(
 
     const data = JSON.stringify(coordinates);
 
-    lru.set(q, data);
-
     res.end(data);
   } catch (e) {
     console.error(e);
