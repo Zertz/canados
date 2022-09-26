@@ -20,7 +20,7 @@
     "fast-haversine": "^1.0.0",
     "got": "^12.5.0",
     "ky": "^0.31.3",
-    "leaflet": "^1.8.0",
+    "leaflet": "^1.9.1",
     "multirange": "^2.0.0",
     "nanoid": "^4.0.0",
     "next": "^12.3.1",
