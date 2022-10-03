@@ -18,7 +18,7 @@
     "csvtojson": "^2.0.10",
     "date-fns": "^2.29.3",
     "fast-haversine": "^1.0.0",
-    "got": "^12.5.0",
+    "got": "^12.5.1",
     "ky": "^0.31.3",
     "leaflet": "^1.9.1",
     "multirange": "^2.0.0",
@@ -26,22 +26,22 @@
     "next": "^12.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-leaflet": "^4.0.2",
+    "react-leaflet": "^4.1.0",
     "react-virtual": "^2.10.4"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^12.3.1",
     "@tailwindcss/forms": "^0.5.3",
     "@types/leaflet": "^1.8.0",
-    "@types/node": "^18.7.23",
+    "@types/node": "^18.8.0",
     "@types/react": "^18.0.21",
     "eslint": "^8.24.0",
     "eslint-config-next": "^12.3.1",
     "eslint-config-prettier": "^8.5.0",
     "identity-obj-proxy": "^3.0.0",
-    "postcss": "^8.4.16",
+    "postcss": "^8.4.17",
     "prettier": "^2.7.1",
     "tailwindcss": "^3.1.8",
-    "typescript": "^4.8.3"
+    "typescript": "^4.8.4"
   }
 }
