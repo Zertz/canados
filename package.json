@@ -13,7 +13,7 @@
     "start": "next"
   },
   "dependencies": {
-    "@heroicons/react": "^2.0.15",
+    "@heroicons/react": "^2.0.16",
     "classnames": "^2.3.2",
     "csvtojson": "^2.0.10",
     "date-fns": "^2.29.3",
