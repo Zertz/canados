@@ -23,7 +23,7 @@
     "leaflet": "^1.9.2",
     "multirange": "^2.0.0",
     "nanoid": "^4.0.1",
-    "next": "^13.1.6",
+    "next": "^13.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.0",
