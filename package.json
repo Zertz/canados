@@ -37,7 +37,7 @@
     "@types/react": "^18.0.28",
     "eslint": "^8.35.0",
     "eslint-config-next": "^13.1.6",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-prettier": "^8.7.0",
     "identity-obj-proxy": "^3.0.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
