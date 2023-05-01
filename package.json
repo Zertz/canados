@@ -16,7 +16,7 @@
     "@heroicons/react": "^2.0.17",
     "classnames": "^2.3.2",
     "csvtojson": "^2.0.10",
-    "date-fns": "^2.29.3",
+    "date-fns": "^2.30.0",
     "fast-haversine": "^1.0.0",
     "got": "^12.6.0",
     "ky": "^0.33.2",
